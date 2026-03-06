@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OPEMA Clothing | The Fan's Choice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#000000',
+                            white: '#FFFFFF',
+                            gray: '#1A1A1A',
+                            silver: '#E5E5E5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '400px',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+        :root {
+            --accent-color: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.8);
+            --accent-glow-bright: rgba(99, 102, 241, 1);
+        }
+
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #brand-preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+            will-change: opacity;
+        }
+
+        #brand-preloader.hidden-loader {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-logo {
+            width: 20rem;
+            height: auto;
+            margin-bottom: 2rem;
+            animation: logoPulse 2.5s infinite ease-in-out;
+            will-change: transform, filter;
+        }
+
+        /* ACTIVE FILTER FIX: Using CSS variables for instant load reliability */
+        .category-btn.active {
+            background-color: var(--accent-color) !important;
+            color: white !important;
+        }
+
+        #pagination-container {
+            flex-direction: row;
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 0px transparent);
+            }
+
+            50% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.414));
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -468px 0;
+            }
+
+            100% {
+                background-position: 468px 0;
+            }
+        }
+
+        .image-placeholder {
+            background: #f6f7f8;
+            background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-repeat: no-repeat;
+            background-size: 800px 800px;
+            animation: shimmer 1.5s infinite linear forwards;
+        }
+
+        .dark .image-placeholder {
+            background: #111;
+            background-image: linear-gradient(to right, #111 0%, #1a1a1a 20%, #111 40%, #111 100%);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .progress-container {
+            width: 240px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 2.5s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+
+        .loader-text {
+            margin-top: 1.5rem;
+            color: white;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.6em;
+            text-transform: uppercase;
+            opacity: 0.4;
+            animation: textFade 2.5s infinite ease-in-out;
+        }
+
+        @keyframes textFade {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                letter-spacing: 0.6em;
+            }
+
+            50% {
+                opacity: 0.6;
+                letter-spacing: 0.7em;
+            }
+        }
+
+        .text-accent {
+            color: var(--accent-color) !important;
+        }
+
+        .bg-accent {
+            background-color: var(--accent-color) !important;
+        }
+
+        .border-accent {
+            border-color: var(--accent-color) !important;
+        }
+
+        .social-glow {
+            transition: all 0.3s ease;
+        }
+
+        .social-glow:hover {
+            color: var(--accent-color);
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+            transform: translateY(-3px);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px -3px var(--accent-glow);
+        }
+
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .dark .custom-checkbox {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-checkbox:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .custom-checkbox:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 10px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #filter-dropdown {
+            transform-origin: top right;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        #filter-dropdown.show {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 1rem;
+            pointer-events: auto;
+            visibility: visible;
+        }
+
+        .shadow-catalog-glow {
+            box-shadow: 0 0 1px var(--accent-glow-bright), 0 4px 15px -1px var(--accent-glow-bright), 0 8px 20px -4px var(--accent-glow);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .shadow-catalog-glow:hover {
+            box-shadow: 0 0 2px var(--accent-glow-bright), 0 6px 20px 0px var(--accent-glow-bright), 0 12px 30px -5px var(--accent-glow);
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .sidebar {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .product-card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-item {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            touch-action: pan-y;
+        }
+
+        .carousel-item.active {
+            opacity: 1;
+        }
+
+        #accent-picker {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(10px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 60;
+        }
+
+        #accent-picker.visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #product-modal.hidden,
+        #sizing-modal.hidden {
+            display: none;
+        }
+
+        #product-modal:not(.hidden),
+        #sizing-modal:not(.hidden) {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        .heart-pop {
+            animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes heartPop {
+            50% {
+                transform: scale(1.4);
+            }
+        }
+
+        .page-dot.active {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 10px var(--accent-glow);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-white text-brand-black dark:bg-brand-black dark:text-brand-white transition-colors duration-500 overflow-hidden">
+
+    <!-- Preloader Section -->
+    <div id="brand-preloader">
+        <img src="Images/opema.png" alt="OPEMA" class="loader-logo"
+            onerror="this.src='https://placehold.co/400x150/000/FFF?text=OPEMA'">
+        <div class="progress-container">
+            <div id="preloader-bar" class="progress-bar"></div>
+        </div>
+        <span class="loader-text">Loading Excellence</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav
+        class="fixed w-full z-50 top-0 left-0 bg-white/20 dark:bg-black/20 backdrop-blur-2xl border-b border-white/30 dark:border-white/10 transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0" onclick="window.scrollTo(0,0)">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1TAE8oJn_TiFGoRa7-Cb0h9fJFRdBiHSY"
+                        alt="OPEMA Logo" class="h-9 sm:h-10 w-auto">
+                    <div class="flex flex-col leading-none">
+                        <span class="text-lg sm:text-xl font-black tracking-tighter uppercase">OPEMA</span>
+                        <span
+                            class="text-[8px] sm:text-[10px] tracking-[0.3em] font-light text-gray-500 uppercase hidden xs:block">Clothing</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 sm:gap-4 relative shrink-0">
+                    <div id="accent-picker"
+                        class="flex items-center gap-2 bg-white/90 dark:bg-black/90 p-2 rounded-2xl border border-gray-200 dark:border-white/10 backdrop-blur-xl shadow-2xl">
+                        <button onclick="setAccent('#FF0800')"
+                            class="w-6 h-6 rounded-full bg-[#FF0800] hover:scale-125 transition-transform"
+                            title="Candy Apple Red"></button>
+                        <button onclick="setAccent('#22c55e')"
+                            class="w-6 h-6 rounded-full bg-[#22c55e] hover:scale-125 transition-transform"
+                            title="Success Green"></button>
+                        <button onclick="setAccent('#ec4899')"
+                            class="w-6 h-6 rounded-full bg-pink-500 hover:scale-125 transition-transform"
+                            title="Pink"></button>
+                        <button onclick="setAccent('#f59e0b')"
+                            class="w-6 h-6 rounded-full bg-amber-500 hover:scale-125 transition-transform"
+                            title="Amber"></button>
+                        <div class="w-px h-4 bg-gray-300 dark:bg-white/20 mx-1"></div>
+                        <button onclick="setAccent('#6366f1')"
+                            class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-white dark:border-brand-black hover:scale-125 transition-transform"
+                            title="Default Brand"></button>
+                    </div>
+
+                    <button id="theme-btn"
+                        class="p-2 sm:p-2.5 rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-all active:scale-75 touch-none">
+                        <i id="theme-icon" class="fas fa-moon text-base sm:text-lg"></i>
+                    </button>
+
+                    <button onclick="toggleWishlistSidebar()" class="p-2 sm:p-2.5 mr-2 sm:mr-3 relative group">
+                        <i class="fas fa-heart text-base sm:text-lg group-hover:text-accent transition-colors"></i>
+                        <span id="wishlist-count"
+                            class="absolute top-0 right-0 bg-accent text-white text-[8px] font-black w-3.5 h-3.5 flex items-center justify-center rounded-full transition-all opacity-0 scale-0">0</span>
+                    </button>
+
+                    <button onclick="toggleCart()"
+                        class="group relative flex items-center gap-1.5 sm:gap-2 bg-accent text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-full transition-all hover:scale-105 active:scale-95">
+                        <i class="fas fa-shopping-cart text-xs sm:text-sm"></i>
+                        <span id="cart-count"
+                            class="bg-white text-accent text-[9px] sm:text-[10px] font-black w-4 sm:h-5 sm:w-5 h-4 flex items-center justify-center rounded-full transition-colors duration-500">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-4 overflow-hidden">
+        <div class="max-w-7xl mx-auto w-full flex flex-col lg:grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            <div id="mobile-hero-container"
+                class="mobile-hero-carousel w-full h-72 sm:h-[400px] rounded-[40px] overflow-hidden relative lg:hidden bg-transparent touch-pan-y">
+                <div class="carousel-item active"><img src="Images/neymer11.PNG" loading="eager"
+                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+1'"
+                        class="w-full h-full object-contain"></div>
+                <div class="carousel-item"><img src="Images/opema main.png" loading="eager"
+                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+2'"
+                        class="w-full h-full object-contain"></div>
+                <div class="carousel-item"><img src="Images/opema carousal.png" loading="eager"
+                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+3'"
+                        class="w-full h-full object-contain"></div>
+            </div>
+
+            <div class="animate-fade-in text-center lg:text-left">
+                <span
+                    class="inline-block bg-accent text-white px-4 py-1 text-xs font-black tracking-[0.2em] uppercase mb-6 transition-colors duration-500 rounded-sm shadow-sm">The
+                    Fan's Choice</span>
+                <h1
+                    class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 uppercase dark:text-white">
+                    Elite Gear. <br><span class="text-accent transition-colors duration-500 font-black">Fan
+                        Prices.</span></h1>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-lg mb-10 font-medium italic mx-auto lg:mx-0">
+                    "Why pay for the brand name when you can play for the crest?"</p>
+                <div class="flex flex-wrap justify-center lg:justify-start gap-4">
+                    <a href="#collection"
+                        class="bg-white text-black px-12 py-4 rounded-full font-black text-sm uppercase transition-all duration-500 shadow-catalog-glow inline-flex items-center gap-3">View
+                        Catalog <i class="fas fa-arrow-down text-xs"></i></a>
+                </div>
+            </div>
+
+            <div id="desktop-hero-container"
+                class="relative hidden lg:block h-[550px] xl:h-[650px] w-full rounded-[40px] overflow-hidden bg-transparent touch-pan-y">
+                <div class="carousel-item active"><img src="Images/neymer11.PNG" loading="eager"
+                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+1'"
+                        class="w-full h-full object-contain"></div>
+                <div class="carousel-item"><img src="Images/opema main.png" loading="eager"
+                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+2'"
+                        class="w-full h-full object-contain"></div>
+                <div class="carousel-item"><img src="Images/opema carousal.png" loading="eager"
+                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+3'"
+                        class="w-full h-full object-contain"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Collection Section -->
+    <section class="max-w-7xl mx-auto px-4 py-24 border-t dark:border-white/5" id="collection">
+        <div class="flex flex-col items-center text-center mb-12 space-y-4">
+            <h2
+                class="text-4xl sm:text-6xl font-[900] uppercase tracking-tighter leading-none text-accent transition-colors duration-500">
+                The Locker Room</h2>
+            <p class="text-xl text-gray-500 dark:text-gray-400 italic font-medium">High-grade replicas, unmatched value.
+            </p>
+        </div>
+
+        <div class="w-full max-w-3xl mx-auto flex flex-col items-center gap-6 mb-16">
+            <div class="relative w-full group">
+                <i
+                    class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-accent transition-colors"></i>
+                <input type="text" id="product-search" oninput="handleSearch(this.value)"
+                    placeholder="Search jersey, club, player..."
+                    class="search-input w-full pl-14 pr-16 py-5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full text-lg font-bold focus:outline-none transition-all duration-300">
+                <button onclick="toggleFilterDropdown()"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-white dark:bg-white/10 rounded-full shadow-sm hover:scale-110 active:scale-95 transition-all text-accent border border-gray-100 dark:border-transparent">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+                <div id="filter-dropdown"
+                    class="absolute top-full right-0 w-full sm:w-80 z-40 bg-white dark:bg-[#0a0a0a] border border-gray-100 dark:border-white/10 rounded-[32px] shadow-2xl p-6 sm:p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h5 class="text-[10px] font-black uppercase tracking-widest text-gray-400">Lockable Features
+                        </h5>
+                        <button onclick="clearPrecisionFilters()"
+                            class="text-[9px] font-black uppercase text-accent/60 hover:text-accent transition-colors">Clear
+                            All</button>
+                    </div>
+                    <div id="precision-options-list" class="grid grid-cols-2 gap-4"></div>
+                </div>
+            </div>
+
+            <div class="w-full flex justify-center mt-2">
+                <div
+                    class="flex bg-gray-50 dark:bg-white/5 p-1.5 rounded-full border border-gray-100 dark:border-white/5 shadow-sm overflow-x-auto no-scrollbar w-max max-w-full">
+                    <button id="filter-all" onclick="filterProducts('all', this)"
+                        class="category-btn active text-white px-8 sm:px-12 py-3 rounded-full text-xs font-black uppercase transition-all duration-300 shrink-0">All</button>
+                    <button onclick="filterProducts('jersey', this)"
+                        class="category-btn px-8 sm:px-12 py-3 rounded-full text-xs font-bold text-gray-400 dark:text-gray-500 uppercase transition-all duration-300 hover:text-black dark:hover:text-white shrink-0">Jerseys</button>
+                    <button onclick="filterProducts('clothing', this)"
+                        class="category-btn px-8 sm:px-12 py-3 rounded-full text-xs font-bold text-gray-400 dark:text-gray-500 uppercase transition-all duration-300 hover:text-black dark:hover:text-white shrink-0">Apparel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+
+        <div id="pagination-container" class="mt-16 flex flex-col items-center gap-6">
+            <div id="page-numbers" class="flex flex-wrap justify-center gap-3"></div>
+            <button id="next-page-btn" onclick="nextPage()"
+                class="hidden bg-accent text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">Next
+                Page <i class="fas fa-chevron-right ml-2 text-[10px]"></i></button>
+        </div>
+
+        <div id="no-results" class="hidden flex flex-col items-center justify-center py-20 text-center animate-fade-in">
+            <i class="fas fa-search text-5xl text-gray-300 dark:text-gray-700 mb-6"></i>
+            <h3 class="text-xl font-black uppercase mb-2">No Results Found</h3>
+            <p class="text-gray-500 text-sm mb-6 max-w-xs">We couldn't find any items matching your selected features or
+                keywords.</p>
+            <button onclick="resetFilters()"
+                class="text-accent font-black text-xs uppercase border-b-2 border-accent pb-1">Reset Filters</button>
+        </div>
+    </section>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeModal()"></div>
+        <div
+            class="relative bg-white dark:bg-[#111] w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[32px] sm:rounded-[40px] shadow-2xl flex flex-col lg:flex-row">
+            <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-[110] flex flex-row items-center gap-2">
+                <button id="modal-wish-btn"
+                    class="w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full hover:scale-110 transition-all border border-white/10 text-white shadow-xl"><i
+                        class="far fa-heart text-base sm:text-lg"></i></button>
+                <button onclick="closeModal()"
+                    class="w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full hover:scale-110 transition-transform border border-white/10 text-white shadow-xl"><i
+                        class="fas fa-times text-base sm:text-lg"></i></button>
+            </div>
+
+            <div id="modal-carousel-parent"
+                class="w-full lg:w-1/2 min-h-[300px] h-[300px] sm:h-[400px] lg:min-h-0 lg:h-auto relative bg-gray-50 dark:bg-white/5 group flex-shrink-0 touch-pan-y">
+                <div id="modal-carousel-container" class="w-full h-full overflow-hidden relative"></div>
+                <div
+                    class="absolute inset-0 flex items-center justify-between px-4 transition-opacity lg:opacity-0 lg:group-hover:opacity-100 pointer-events-none">
+                    <button onclick="prevModalSlide()"
+                        class="w-10 h-10 bg-white/90 dark:bg-black/80 rounded-full pointer-events-auto hover:scale-110 shadow-lg flex items-center justify-center transition-transform"><i
+                            class="fas fa-chevron-left text-sm"></i></button>
+                    <button onclick="nextModalSlide()"
+                        class="w-10 h-10 bg-white/90 dark:bg-black/80 rounded-full pointer-events-auto hover:scale-110 shadow-lg flex items-center justify-center transition-transform"><i
+                            class="fas fa-chevron-right text-sm"></i></button>
+                </div>
+                <div id="modal-dots" class="absolute bottom-6 left-0 right-0 flex justify-center gap-2"></div>
+            </div>
+            <div class="w-full lg:w-1/2 p-5 sm:p-8 lg:p-10 flex flex-col">
+                <div class="flex items-start mb-3 lg:pr-24">
+                    <div class="flex items-center gap-2 mt-1.5">
+                        <span id="modal-tag"
+                            class="bg-accent text-white text-[9px] font-black uppercase px-2.5 py-1 rounded-full transition-colors duration-500">Top
+                            Seller</span>
+                        <span class="text-green-500 text-[10px] font-bold flex items-center gap-1"><i
+                                class="fas fa-check-circle text-[9px]"></i> In Stock</span>
+                    </div>
+                </div>
+                <h2 id="modal-title"
+                    class="text-xl sm:text-3xl font-black uppercase leading-tight mb-1 dark:text-white lg:pr-20"></h2>
+                <div class="flex items-baseline gap-3 mb-5">
+                    <span id="modal-price"
+                        class="text-xl sm:text-2xl font-black text-accent transition-colors duration-500"></span>
+                    <span class="text-gray-400 line-through text-xs font-bold italic tracking-tighter">₹12000.00
+                        (Retail)</span>
+                </div>
+                <div class="mb-5">
+                    <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Description</h4>
+                    <p id="modal-description"
+                        class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed"></p>
+                </div>
+                <div class="mb-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 id="size-label" class="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                            Select Size</h4>
+                        <button onclick="openSizingModal()"
+                            class="text-[8px] font-black uppercase text-accent border-b border-accent/20 hover:border-accent transition-all">Sizing
+                            Guide</button>
+                    </div>
+                    <div id="modal-sizes" class="flex flex-wrap gap-2"></div>
+                </div>
+                <div id="modal-players-section" class="mb-6">
+                    <h4 id="player-label" class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
+                        Select Player</h4>
+                    <div id="modal-players" class="flex flex-wrap gap-2"></div>
+                </div>
+                <div class="mt-auto flex flex-col sm:flex-row gap-3 pt-6 border-t dark:border-white/10">
+                    <button id="modal-add-btn"
+                        class="flex-grow bg-accent text-white py-3.5 rounded-2xl text-sm font-black uppercase transition-all duration-500 active:scale-95">Add
+                        to Bag</button>
+                    <button onclick="shareProduct()"
+                        class="w-full sm:w-14 h-12 sm:h-auto border dark:border-white/20 rounded-2xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/5 transition-all"><i
+                            class="fas fa-share-alt dark:text-white"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sizing Guide Modal -->
+    <div id="sizing-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="closeSizingModal()"></div>
+        <div
+            class="relative bg-white dark:bg-[#111] w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-[40px] shadow-2xl p-6 sm:p-12 border dark:border-white/10">
+            <button onclick="closeSizingModal()"
+                class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-white/5 rounded-full hover:scale-110 transition-transform dark:text-white"><i
+                    class="fas fa-times"></i></button>
+            <div class="text-center mb-10">
+                <span class="text-accent font-black text-[10px] uppercase tracking-widest mb-2 block">Measurement
+                    Guide</span>
+                <h2 class="text-3xl sm:text-4xl font-black uppercase dark:text-white">Find Your Fit</h2>
+            </div>
+            <div class="space-y-12">
+                <div class="animate-fade-in">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-3">
+                        <i class="fas fa-tshirt text-accent"></i> Football Jerseys (Inches)
+                    </h3>
+                    <div class="overflow-x-auto rounded-3xl border dark:border-white/10">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest">
+                                    <th class="px-6 py-4 dark:text-white">Size</th>
+                                    <th class="px-6 py-4 dark:text-white">Chest (Pit-to-Pit)</th>
+                                    <th class="px-6 py-4 dark:text-white">Length</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y dark:divide-white/5">
+                                <tr class="dark:text-gray-300">
+                                    <td class="px-6 py-4 font-black">S</td>
+                                    <td class="px-6 py-4">19"</td>
+                                    <td class="px-6 py-4">27"</td>
+                                </tr>
+                                <tr class="dark:text-gray-300">
+                                    <td class="px-6 py-4 font-black">M</td>
+                                    <td class="px-6 py-4">20"</td>
+                                    <td class="px-6 py-4">28"</td>
+                                </tr>
+                                <tr class="dark:text-gray-300">
+                                    <td class="px-6 py-4 font-black">L</td>
+                                    <td class="px-6 py-4">21.5"</td>
+                                    <td class="px-6 py-4">29"</td>
+                                </tr>
+                                <tr class="dark:text-gray-300">
+                                    <td class="px-6 py-4 font-black">XL</td>
+                                    <td class="px-6 py-4">23"</td>
+                                    <td class="px-6 py-4">30"</td>
+                                </tr>
+                                <tr class="dark:text-gray-300">
+                                    <td class="px-6 py-4 font-black">XXL</td>
+                                    <td class="px-6 py-4">24.5"</td>
+                                    <td class="px-6 py-4">31"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 dark:bg-brand-gray/50 border-t dark:border-white/5 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-16">
+                <div class="flex flex-col items-center text-center">
+                    <img src="https://lh3.googleusercontent.com/u/0/d/1Bm3qJkYn5wZj29594YpRCxtaBmh_tuFI"
+                        alt="OPEMA Logo"
+                        class="w-full max-w-sm h-auto mb-6 block brightness-0 dark:brightness-100 transition-all duration-500">
+                    <p class="text-gray-400 dark:text-gray-500 max-w-sm font-medium italic text-center">High-grade
+                        replicas for the high-energy fan. Affordability meets match-day quality.</p>
+                </div>
+                <div class="flex flex-col items-center gap-10">
+                    <div class="flex flex-row justify-center gap-12 sm:gap-24 w-full text-center">
+                        <div class="flex flex-col items-center">
+                            <h4
+                                class="font-black uppercase text-xs tracking-widest mb-6 text-accent transition-colors duration-500">
+                                Support</h4>
+                            <ul class="space-y-4 text-gray-500 text-sm font-medium">
+                                <li><button onclick="openSizingModal()"
+                                        class="hover:text-accent transition-colors">Sizing Guide</button></li>
+                                <li><a href="#" class="hover:text-accent transition-colors">Shipping Policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <h4
+                                class="font-black uppercase text-xs tracking-widest mb-6 text-accent transition-colors duration-500">
+                                OPEMA Desk</h4>
+                            <a href="https://wa.me/8089408747"
+                                class="flex items-center gap-2 bg-accent text-white px-6 py-3 rounded-full font-bold text-sm shadow-sm active:scale-95 transition-all duration-500">
+                                <i class="fab fa-whatsapp"></i> Chat Support
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex gap-8 pt-6 w-full justify-center">
+                        <a href="#" class="social-glow text-gray-400 text-2xl" title="Instagram"><i
+                                class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-glow text-gray-400 text-2xl" title="Facebook"><i
+                                class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-glow text-gray-400 text-2xl" title="X (Twitter)"><i
+                                class="fab fa-x-twitter"></i></a>
+                        <a href="#" class="social-glow text-gray-400 text-2xl" title="WhatsApp"><i
+                                class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="social-glow text-gray-400 text-2xl" title="YouTube"><i
+                                class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t dark:border-white/5 pt-8 text-center">
+                <p class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-[0.2em]">&copy; 2026 OPEMA
+                    Clothing. Custom coded for high-grade performance.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sidebars -->
+    <div id="global-overlay" onclick="closeSidebars()" class="fixed inset-0 bg-black/80 z-[60] hidden backdrop-blur-sm">
+    </div>
+    <div id="cart-sidebar"
+        class="sidebar fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-black z-[70] shadow-2xl flex flex-col transition-colors">
+        <div class="p-8 border-b dark:border-white/10 flex justify-between items-center">
+            <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Your Bag</h2>
+            <button onclick="toggleCart()"
+                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto p-8 space-y-6"></div>
+        <div id="bag-empty-msg" class="hidden text-center py-20 text-gray-400">
+            <p class="text-xs font-black uppercase tracking-widest">Bag is empty</p>
+        </div>
+        <div class="p-8 border-t dark:border-white/10 bg-gray-50 dark:bg-white/5">
+            <div class="flex justify-between text-xl font-black mb-6 uppercase dark:text-white"><span>Total:</span><span
+                    id="cart-total" class="text-accent">₹0.00</span></div>
+            <button onclick="checkoutToWhatsApp()"
+                class="w-full bg-accent text-white py-5 rounded-2xl font-black uppercase flex items-center justify-center gap-3 active:scale-95"><i
+                    class="fab fa-whatsapp text-2xl"></i> Checkout via WhatsApp</button>
+        </div>
+    </div>
+
+    <div id="wishlist-sidebar"
+        class="sidebar fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-black z-[70] shadow-2xl flex flex-col transition-colors border-l dark:border-white/5">
+        <div class="p-8 border-b dark:border-white/10 flex justify-between items-center">
+            <div class="flex items-center gap-3"><i class="fas fa-heart text-accent"></i>
+                <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Wishlist</h2>
+            </div>
+            <button onclick="toggleWishlistSidebar()"
+                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        <div id="wishlist-items" class="flex-grow overflow-y-auto p-8 space-y-6"></div>
+        <div id="wishlist-empty-msg" class="hidden text-center py-20 text-gray-400">
+            <p class="text-xs font-black uppercase tracking-widest">No items saved yet</p>
+        </div>
+    </div>
+
+    <div id="toast"
+        class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-brand-black dark:bg-white text-white dark:text-brand-black px-8 py-4 rounded-full shadow-2xl z-[200] transform translate-y-32 opacity-0 transition-all duration-500 font-black text-xs uppercase tracking-widest">
+        Added to bag</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyANh2_XctpF3yDKGFHUtT0mvAfvxrhZ0Rw",
+            authDomain: "opema-clothing.firebaseapp.com",
+            projectId: "opema-clothing",
+            storageBucket: "opema-clothing.firebasestorage.app",
+            messagingSenderId: "98655439502",
+            appId: "1:98655439502:web:1dbab35ea74aa766c297df"
+        };
+
+        let app, auth, db;
+        let isFirebaseActive = false;
+
+        if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey.trim() !== "") {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                isFirebaseActive = true;
+            } catch (e) {
+                console.warn("Firebase App Init failed, falling back to local mode.", e);
+            }
+        }
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        let userId = null;
+        let products = [];
+        let cart = [];
+        let wishlist = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let activePrecision = [];
+        let activeModalSlide = 0;
+        let currentModalProduct = null;
+        let selectedSize = "";
+        let selectedPlayer = "";
+
+        const WHATSAPP_NUMBER = "8089408747";
+        const CURRENCY = "₹";
+
+        const precisionMap = {
+            all: ["V Neck", "Round Neck", "Five Sleeve", "Normal Sleeves", "Long Sleeves", "Logo Printed", "Embroidery", "Round Neck T-Shirt", "V-Neck T-Shirt", "Round Neck (Embroidery)", "V-Neck (Embroidery)", "Collar T-Shirt", "Collar T-Shirt (Embroidery)", "Five Sleeve T-Shirt", "Collar Five Sleeve"],
+            jersey: ["V Neck", "Round Neck", "Five Sleeve", "Normal Sleeves", "Long Sleeves", "Embroidery", "Logo Printed", "Round Neck T-Shirt", "V-Neck T-Shirt", "Round Neck (Embroidery)", "V-Neck (Embroidery)", "Collar T-Shirt", "Collar T-Shirt (Embroidery)", "Five Sleeve T-Shirt", "Collar Five Sleeve"],
+            clothing: ["Round Neck", "Normal Sleeves", "Long Sleeves", "Logo Printed", "Embroidery", "Round Neck T-Shirt", "V-Neck T-Shirt", "Round Neck (Embroidery)", "V-Neck (Embroidery)", "Collar T-Shirt", "Collar T-Shirt (Embroidery)", "Five Sleeve T-Shirt", "Collar Five Sleeve"]
+        };
+
+        const defaultProducts = [
+            { id: "1", name: "FC Barcelona 25/26 Home Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (3).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (1).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (2).png"], description: "Official 25/26 Home kit featuring a sharp V-Neck and aggressive lightning-bolt patterns. High-performance Dot Knit fabric for maximum airflow.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Lamine Yamal 10", "Raphinha 11"], tag: "New Season", specs: ["V Neck", "Normal Sleeves", "Dot Knit Material"] },
+            { id: "2", name: "Real Madrid 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (6).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (4).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (5).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (7).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (9).png"], description: "Sleek navy Away jersey with horizontal micro-stripe detailing. Built for the European champions.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Trent 12", "Vini Jr. 7", "Valverde 8", "Arda Güler 15"], tag: "Bestseller", specs: ["Round Neck", "Normal Sleeves", "Dot Knit Material"] },
+            { id: "3", name: "Arsenal FC 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (8).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (10).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (11).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (12).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (15).png"], description: "Sophisticated cream Away kit with vintage maroon detailing and the iconic cannon crest.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Rice 41", "Gyökeres 14", "Martinelli 11", "Ødegaard 8"], tag: "Limited Edition", specs: ["V Neck", "Normal Sleeves", "Dot Knit Material"] },
+            { id: "4", name: "Manchester City 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (13).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (16).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (17).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (18).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (14).png"], description: "White Away jersey with neon lime accents and fluid 'Water Droplet' sublimation graphics.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Foden 47", "Rodrigo 16", "Cherki 10", "Reijnders 4"], tag: "New Drop", specs: ["Round Neck", "Normal Sleeves", "Dot Knit Material"] },
+            { id: "5", name: "Manchester United 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (20).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (19).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (21).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (24).png"], description: "Minimalist white Away kit with lavender detailing and geometric 'Heat Ready' patterns.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Cunha 10", "Martinez 6", "B. Fernandes 8"], tag: "Essential", specs: ["V Neck", "Normal Sleeves", "Dot Knit Material"] }
+        ];
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        function observeNewProducts() {
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+        }
+
+        window.setAccent = setAccent;
+        window.toggleFilterDropdown = toggleFilterDropdown;
+        window.clearPrecisionFilters = clearPrecisionFilters;
+        window.handleSearch = handleSearch;
+        window.filterProducts = filterProducts;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.openSizingModal = openSizingModal;
+        window.closeSizingModal = closeSizingModal;
+        window.setSize = setSize;
+        window.setPlayer = setPlayer;
+        window.prevModalSlide = prevModalSlide;
+        window.nextModalSlide = nextModalSlide;
+        window.toggleCart = toggleCart;
+        window.toggleWishlistSidebar = toggleWishlistSidebar;
+        window.closeSidebars = closeSidebars;
+        window.checkoutToWhatsApp = checkoutToWhatsApp;
+        window.shareProduct = shareProduct;
+        window.togglePrecision = togglePrecision;
+        window.resetFilters = resetFilters;
+        window.nextPage = nextPage;
+        window.goToPage = goToPage;
+
+        function fallbackToLocal() {
+            if (!products || products.length === 0) products = [...defaultProducts];
+            cart = JSON.parse(localStorage.getItem('opema_cart')) || [];
+            wishlist = JSON.parse(localStorage.getItem('opema_wishlist')) || [];
+            renderProducts();
+            if (document.getElementById('cart-items')) updateCartUI();
+            if (document.getElementById('wishlist-items')) updateWishlistUI();
+        }
+
+        async function checkAndEnsureAuth() {
+            if (!isFirebaseActive) return true;
+            if (userId) return true;
+            try {
+                const cred = await signInAnonymously(auth);
+                userId = cred.user.uid;
+                setupRealtimeListeners();
+                return true;
+            } catch (err) {
+                isFirebaseActive = false;
+                fallbackToLocal();
+                return true;
+            }
+        }
+
+        if (isFirebaseActive) {
+            onAuthStateChanged(auth, (user) => {
+                if (!isFirebaseActive) return;
+                if (user) { userId = user.uid; setupRealtimeListeners(); }
+                else { userId = null; }
+            });
+
+            (async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+                    else await signInAnonymously(auth);
+                } catch (e) { isFirebaseActive = false; fallbackToLocal(); }
+            })();
+        } else {
+            fallbackToLocal();
+        }
+
+        function setupRealtimeListeners() {
+            const productsRef = collection(db, 'artifacts', appId, 'public', 'data', 'products');
+            onSnapshot(productsRef, (snapshot) => {
+                products = [];
+                snapshot.forEach(doc => products.push({ ...doc.data(), id: doc.id }));
+                renderProducts();
+            });
+
+            const cartRef = collection(db, 'artifacts', appId, 'users', userId, 'cart');
+            onSnapshot(cartRef, (snapshot) => {
+                cart = [];
+                snapshot.forEach(doc => cart.push(doc.data()));
+                updateCartUI();
+            });
+
+            const wishlistRef = collection(db, 'artifacts', appId, 'users', userId, 'wishlist');
+            onSnapshot(wishlistRef, (snapshot) => {
+                wishlist = [];
+                snapshot.forEach(doc => wishlist.push(doc.data().id));
+                updateWishlistUI();
+                renderProducts();
+            });
+        }
+
+        async function saveCartItem(item) {
+            if (isFirebaseActive && userId) await setDoc(doc(db, 'artifacts', appId, 'users', userId, 'cart', item.cartId), item);
+            else localStorage.setItem('opema_cart', JSON.stringify(cart));
+        }
+        async function removeCartItem(cartId) {
+            if (isFirebaseActive && userId) await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'cart', cartId));
+            else localStorage.setItem('opema_cart', JSON.stringify(cart));
+        }
+        async function saveWishlistItem(pid) {
+            if (isFirebaseActive && userId) await setDoc(doc(db, 'artifacts', appId, 'users', userId, 'wishlist', pid.toString()), { id: pid });
+            else localStorage.setItem('opema_wishlist', JSON.stringify(wishlist));
+        }
+        async function removeWishlistItem(pid) {
+            if (isFirebaseActive && userId) await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'wishlist', pid.toString()));
+            else localStorage.setItem('opema_wishlist', JSON.stringify(wishlist));
+        }
+
+        let pressTimer;
+        const themeBtn = document.getElementById('theme-btn');
+        const picker = document.getElementById('accent-picker');
+
+        if (themeBtn) {
+            themeBtn.addEventListener('mousedown', startPress);
+            themeBtn.addEventListener('touchstart', (e) => startPress(e), { passive: true });
+            themeBtn.addEventListener('mouseup', endPress);
+            themeBtn.addEventListener('touchend', endPress);
+        }
+
+        document.addEventListener('mousedown', (e) => {
+            if (picker && picker.classList.contains('visible')) {
+                if (!picker.contains(e.target) && !themeBtn.contains(e.target)) {
+                    picker.classList.remove('visible');
+                }
+            }
+        });
+
+        function startPress(e) { pressTimer = setTimeout(() => { if (picker) picker.classList.toggle('visible'); pressTimer = null; }, 600); }
+        function endPress(e) { if (pressTimer) { clearTimeout(pressTimer); toggleTheme(); } }
+
+        function setAccent(color) {
+            document.documentElement.style.setProperty('--accent-color', color);
+            const r = parseInt(color.slice(1, 3), 16), g = parseInt(color.slice(3, 5), 16), b = parseInt(color.slice(5, 7), 16);
+            document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.8)`);
+            document.documentElement.style.setProperty('--accent-glow-bright', `rgba(${r}, ${g}, ${b}, 1)`);
+            localStorage.accentColor = color;
+
+            // UI Sync: Logic moved to CSS fallback for better load reliability
+            renderProducts();
+            if (picker) picker.classList.remove('visible');
+        }
+
+        function initTheme() {
+            if (localStorage.theme === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+            if (localStorage.accentColor) setAccent(localStorage.accentColor);
+            updateThemeIcon(document.documentElement.classList.contains('dark'));
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.theme = isDark ? 'dark' : 'light';
+            updateThemeIcon(isDark);
+        }
+
+        function updateThemeIcon(isDark) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = isDark ? 'fas fa-sun text-base sm:text-lg' : 'fas fa-moon text-base sm:text-lg';
+        }
+
+        function toggleFilterDropdown() { document.getElementById('filter-dropdown').classList.toggle('show'); renderPrecisionOptions(); }
+
+        function renderPrecisionOptions() {
+            const container = document.getElementById('precision-options-list');
+            const opts = precisionMap[currentCategory];
+            container.innerHTML = opts.map(opt => `
+                <label class="flex items-center gap-3 cursor-pointer group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
+                    <input type="checkbox" class="custom-checkbox shrink-0" ${activePrecision.includes(opt) ? 'checked' : ''} onchange="togglePrecision('${opt}')">
+                    <span class="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 group-hover:text-accent transition-colors">${opt}</span>
+                </label>
+            `).join('');
+        }
+
+        function togglePrecision(opt) {
+            const idx = activePrecision.indexOf(opt);
+            if (idx > -1) activePrecision.splice(idx, 1);
+            else activePrecision.push(opt);
+            currentPage = 1;
+            renderProducts();
+        }
+
+        function clearPrecisionFilters() { activePrecision = []; currentPage = 1; renderPrecisionOptions(); renderProducts(); }
+        function handleSearch(val) { searchQuery = val.toLowerCase(); currentPage = 1; renderProducts(); }
+
+        function filterProducts(cat, btn) {
+            currentCategory = cat; activePrecision = []; currentPage = 1;
+            document.querySelectorAll('.category-btn').forEach(b => {
+                b.className = "category-btn px-8 sm:px-12 py-3 rounded-full text-xs font-bold text-gray-400 dark:text-gray-500 uppercase transition-all duration-300 hover:text-black dark:hover:text-white shrink-0";
+                b.style.backgroundColor = "";
+                b.classList.remove('active', 'text-white');
+            });
+            btn.className = "category-btn active text-white px-8 sm:px-12 py-3 rounded-full text-xs font-black uppercase transition-all duration-300 shrink-0";
+            // Background is handled by CSS .active class + var(--accent-color)
+            renderProducts();
+        }
+
+        window.removePlaceholder = function (img) {
+            img.parentElement.classList.remove('image-placeholder');
+        };
+
+        let currentPage = 1;
+        const getItemsPerPage = () => window.innerWidth < 768 ? 20 : 40;
+
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            const empty = document.getElementById('no-results');
+            if (!grid) return;
+
+            const listToRender = (products && products.length > 0) ? products : defaultProducts;
+            const filtered = listToRender.filter(p => {
+                const matchCat = currentCategory === 'all' || p.category === currentCategory;
+                const matchSearch = p.name.toLowerCase().includes(searchQuery);
+                const matchPrecision = activePrecision.length === 0 || (p.specs && activePrecision.every(opt => p.specs.includes(opt)));
+                return matchCat && matchSearch && matchPrecision;
+            });
+
+            if (filtered.length === 0) {
+                grid.classList.add('hidden'); empty.classList.remove('hidden');
+                document.getElementById('pagination-container').classList.add('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden'); empty.classList.add('hidden');
+            document.getElementById('pagination-container').classList.remove('hidden');
+
+            const limit = getItemsPerPage();
+            const totalPages = Math.ceil(filtered.length / limit);
+            const start = (currentPage - 1) * limit;
+            const end = start + limit;
+            const paginatedItems = filtered.slice(start, end);
+
+            grid.innerHTML = paginatedItems.map(p => {
+                const isWished = wishlist.includes(p.id);
+                return `
+                    <div class="product-card-hover reveal group bg-white dark:bg-brand-gray/30 border border-gray-100 dark:border-white/5 rounded-[32px] overflow-hidden transition-all duration-500 cursor-pointer" onclick="openModal('${p.id}')">
+                        <div class="relative h-80 overflow-hidden image-placeholder">
+                            <img src="${p.images[0]}" 
+                                 loading="lazy" 
+                                 onload="removePlaceholder(this)"
+                                 class="w-full h-full object-contain transition-all duration-700 group-hover:scale-110" 
+                                 onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'; removePlaceholder(this)">
+                            <button onclick="toggleWishlist('${p.id}', event)" class="absolute top-4 right-4 w-12 h-12 bg-white/90 dark:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center transition-all hover:scale-110 z-20">
+                                <i class="${isWished ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'} text-base transition-colors"></i>
+                            </button>
+                        </div>
+                        <div class="p-8 text-center sm:text-left">
+                            <h3 class="font-black text-sm uppercase tracking-tight truncate dark:text-white">${p.name}</h3>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">${p.category}</span>
+                                <span class="font-black text-lg text-accent">${CURRENCY}${p.price}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            renderPaginationControls(totalPages);
+            observeNewProducts();
+        }
+
+        function renderPaginationControls(totalPages) {
+            const container = document.getElementById('page-numbers');
+            const nextBtn = document.getElementById('next-page-btn');
+            if (totalPages <= 1) { container.innerHTML = ''; nextBtn.classList.add('hidden'); return; }
+            container.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1).map(num => `
+                <button onclick="goToPage(${num})" class="page-dot w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs transition-all border border-gray-100 dark:border-white/10 dark:text-white ${currentPage === num ? 'active' : 'hover:bg-gray-50 dark:hover:bg-white/5'}">
+                    ${num}
+                </button>
+            `).join('');
+            if (currentPage < totalPages) nextBtn.classList.remove('hidden');
+            else nextBtn.classList.add('hidden');
+        }
+
+        function goToPage(num) { currentPage = num; renderProducts(); document.getElementById('collection').scrollIntoView({ behavior: 'smooth' }); }
+        function nextPage() { currentPage++; renderProducts(); document.getElementById('collection').scrollIntoView({ behavior: 'smooth' }); }
+        function resetFilters() { searchQuery = ''; activePrecision = []; currentPage = 1; document.getElementById('product-search').value = ''; filterProducts('all', document.getElementById('filter-all')); }
+
+        function openModal(pid) {
+            const list = (products && products.length > 0) ? products : defaultProducts;
+            const p = list.find(i => i.id === pid);
+            if (!p) return;
+            currentModalProduct = p;
+            activeModalSlide = 0; selectedSize = ""; selectedPlayer = "";
+            document.getElementById('modal-title').textContent = p.name;
+            document.getElementById('modal-price').textContent = `${CURRENCY}${p.price}`;
+            document.getElementById('modal-description').textContent = p.description || "";
+            document.getElementById('modal-tag').textContent = p.tag || "Available";
+
+            const carousel = document.getElementById('modal-carousel-container');
+            carousel.innerHTML = p.images.map((img, i) => `
+                <div class="absolute inset-0 w-full h-full image-placeholder transition-opacity duration-500 ${i === 0 ? 'opacity-100' : 'opacity-0'}">
+                    <img src="${img}" onload="removePlaceholder(this)" class="w-full h-full object-contain">
+                </div>
+            `).join('');
+
+            const dots = document.getElementById('modal-dots');
+            dots.innerHTML = p.images.length > 1 ? p.images.map((_, i) => `<div class="w-2.5 h-2.5 rounded-full bg-gray-200 dark:bg-white/20 ${i === 0 ? 'bg-accent' : ''}"></div>`).join('') : '';
+
+            const sizes = p.sizes || ["S", "M", "L", "XL", "XXL"];
+            document.getElementById('modal-sizes').innerHTML = sizes.map(s => `<button onclick="setSize('${s}', this)" class="w-10 h-10 rounded-xl border-2 border-gray-100 dark:border-white/10 font-bold text-xs dark:text-white transition-all">${s}</button>`).join('');
+
+            const playerCont = document.getElementById('modal-players');
+            if (p.players && p.players.length > 0) {
+                document.getElementById('modal-players-section').classList.remove('hidden');
+                // PLAYER CAROUSEL JUMP: Passing index + 1 as standard (assuming generic front is index 0)
+                playerCont.innerHTML = p.players.map((pl, idx) => `
+                    <button onclick="setPlayer('${pl}', ${idx + 1}, this)" 
+                            class="px-4 py-2.5 rounded-xl border-2 border-gray-100 dark:border-white/10 text-[10px] font-black uppercase dark:text-white transition-all">${pl}</button>
+                `).join('');
+            } else {
+                document.getElementById('modal-players-section').classList.add('hidden');
+            }
+
+            document.getElementById('product-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            updateModalWishlistButton();
+
+            document.getElementById('modal-add-btn').onclick = () => {
+                if (!selectedSize) { showToast("Select Size"); return; }
+                addToCart(p.id, selectedSize, selectedPlayer || "Standard");
+                closeModal();
+            };
+        }
+
+        function closeModal() { document.getElementById('product-modal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
+        function openSizingModal() { document.getElementById('sizing-modal').classList.remove('hidden'); }
+        function closeSizingModal() { document.getElementById('sizing-modal').classList.add('hidden'); }
+
+        function setSize(s, el) {
+            selectedSize = s;
+            el.parentElement.querySelectorAll('button').forEach(b => { b.style.backgroundColor = ""; b.classList.remove('text-white'); b.classList.add('dark:text-white'); });
+            el.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+            el.classList.add('text-white');
+            el.classList.remove('dark:text-white');
+        }
+
+        function setPlayer(pl, imgIndex, el) {
+            selectedPlayer = pl;
+            el.parentElement.querySelectorAll('button').forEach(b => { b.style.backgroundColor = ""; b.classList.remove('text-white'); b.classList.add('dark:text-white'); });
+            el.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+            el.classList.add('text-white');
+            el.classList.remove('dark:text-white');
+
+            // PLAYER CAROUSEL JUMP: If the jersey image exists for this player
+            if (currentModalProduct && imgIndex < currentModalProduct.images.length) {
+                activeModalSlide = imgIndex;
+                updateModalCarousel();
+            }
+        }
+
+        function prevModalSlide() { if (activeModalSlide > 0) { activeModalSlide--; updateModalCarousel(); } }
+        function nextModalSlide() { if (currentModalProduct && activeModalSlide < currentModalProduct.images.length - 1) { activeModalSlide++; updateModalCarousel(); } }
+
+        function updateModalCarousel() {
+            const containers = document.querySelectorAll('#modal-carousel-container > div');
+            const dots = document.querySelectorAll('#modal-dots div');
+            containers.forEach((div, i) => div.style.opacity = i === activeModalSlide ? '1' : '0');
+            dots.forEach((dot, i) => dot.style.backgroundColor = i === activeModalSlide ? getComputedStyle(document.documentElement).getPropertyValue('--accent-color') : "");
+        }
+
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('hidden'); }
+        function toggleWishlistSidebar() { document.getElementById('wishlist-sidebar').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('hidden'); }
+        function closeSidebars() { document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('open')); document.getElementById('global-overlay').classList.add('hidden'); }
+
+        window.toggleWishlist = async function (pid, event) {
+            if (event) event.stopPropagation();
+            await checkAndEnsureAuth();
+            const idx = wishlist.indexOf(pid);
+            if (idx > -1) { wishlist.splice(idx, 1); await removeWishlistItem(pid); }
+            else { wishlist.push(pid); await saveWishlistItem(pid); }
+            updateWishlistUI(); renderProducts();
+        }
+
+        function updateWishlistUI() {
+            const cont = document.getElementById('wishlist-items');
+            const count = document.getElementById('wishlist-count');
+            count.textContent = wishlist.length;
+            count.classList.toggle('opacity-0', wishlist.length === 0);
+            count.classList.toggle('scale-0', wishlist.length === 0);
+            document.getElementById('wishlist-empty-msg').classList.toggle('hidden', wishlist.length > 0);
+            const list = (products && products.length > 0) ? products : defaultProducts;
+            cont.innerHTML = wishlist.map(id => {
+                const p = list.find(i => i.id === id);
+                if (!p) return '';
+                return `<div class="flex gap-4 items-center bg-gray-50 dark:bg-white/5 p-4 rounded-3xl"><img src="${p.images[0]}" class="w-16 h-16 object-contain rounded-2xl"><div class="flex-grow"><h4 class="font-black text-[10px] uppercase truncate dark:text-white">${p.name}</h4><p class="text-[9px] text-accent font-bold">${CURRENCY}${p.price}</p></div><button onclick="toggleWishlist('${p.id}')" class="text-accent p-3"><i class="fas fa-heart"></i></button></div>`;
+            }).join('');
+        }
+
+        function updateModalWishlistButton() {
+            const btn = document.getElementById('modal-wish-btn');
+            if (!btn || !currentModalProduct) return;
+            const icon = btn.querySelector('i');
+            const isWished = wishlist.includes(currentModalProduct.id);
+            icon.className = isWished ? "fas fa-heart text-red-500 heart-pop" : "far fa-heart text-white";
+        }
+
+        window.addToCart = async function (pid, size, player) {
+            await checkAndEnsureAuth();
+            const list = (products && products.length > 0) ? products : defaultProducts;
+            const p = list.find(i => i.id === pid);
+            const cartId = `${pid}-${size}-${player}`;
+            const existing = cart.find(i => i.cartId === cartId);
+            if (existing) existing.quantity++;
+            else cart.push({ ...p, cartId, size, player, quantity: 1 });
+            showToast("Added to Bag");
+            updateCartUI();
+            await saveCartItem(existing || cart[cart.length - 1]);
+        }
+
+        function updateCartUI() {
+            const cont = document.getElementById('cart-items');
+            const total = document.getElementById('cart-total');
+            const count = document.getElementById('cart-count');
+            let sum = 0, items = 0;
+            cont.innerHTML = cart.map(i => {
+                sum += i.price * i.quantity; items += i.quantity;
+                return `<div class="flex gap-4 bg-gray-50 dark:bg-white/5 p-4 rounded-3xl relative"><img src="${i.images[0]}" class="w-16 h-16 object-contain rounded-2xl"><div><h4 class="font-black text-[10px] uppercase truncate dark:text-white">${i.name}</h4><p class="text-[9px] text-gray-400">${i.size} | ${i.player}</p><p class="text-xs font-black text-accent mt-2">${CURRENCY}${i.price} x ${i.quantity}</p></div><button onclick="removeFromCart('${i.cartId}')" class="absolute top-4 right-4 text-gray-300"><i class="fas fa-trash"></i></button></div>`;
+            }).join('');
+            total.textContent = `${CURRENCY}${sum.toFixed(2)}`;
+            count.textContent = items;
+            document.getElementById('bag-empty-msg').classList.toggle('hidden', cart.length > 0);
+        }
+
+        window.removeFromCart = async function (id) { cart = cart.filter(i => i.cartId !== id); updateCartUI(); await removeCartItem(id); }
+
+        function checkoutToWhatsApp() {
+            let text = "*ORDER FROM OPEMA*%0A";
+            cart.forEach(i => text += `• ${i.name} (${i.size}) x${i.quantity}%0A`);
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.replace('translate-y-32', 'translate-y-0'); t.classList.replace('opacity-0', 'opacity-100');
+            setTimeout(() => { t.classList.replace('translate-y-0', 'translate-y-32'); t.classList.replace('opacity-100', 'opacity-0'); }, 2000);
+        }
+
+        function shareProduct() { if (currentModalProduct) window.open(`https://wa.me/?text=Check this: ${currentModalProduct.name}`, '_blank'); }
+
+        const initApp = () => {
+            initTheme();
+            renderProducts();
+            const bar = document.getElementById('preloader-bar');
+            if (bar) bar.style.transform = "scaleX(1)";
+            setTimeout(() => {
+                document.getElementById('brand-preloader').classList.add('hidden-loader');
+                document.body.classList.remove('overflow-hidden');
+            }, 2500);
+        };
+
+        window.onload = initApp;
+        window.onresize = renderProducts;
+    </script>
+</body>
+
+</html>
