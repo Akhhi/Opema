@@ -82,7 +82,6 @@
             will-change: transform, filter;
         }
 
-        /* ACTIVE FILTER FIX: Using CSS variables for instant load reliability */
         .category-btn.active {
             background-color: var(--accent-color) !important;
             color: white !important;
@@ -984,7 +983,8 @@
                 wishlist = [];
                 snapshot.forEach(doc => wishlist.push(doc.data().id));
                 updateWishlistUI();
-                renderProducts();
+                // Avoid calling renderProducts here to prevent shuttering on background sync
+                syncWishlistIconsOnPage();
             });
         }
 
@@ -1010,13 +1010,12 @@
         const picker = document.getElementById('accent-picker');
 
         if (themeBtn) {
-            themeBtn.addEventListener('mousedown', startPress);
-            themeBtn.addEventListener('touchstart', (e) => startPress(e), { passive: true });
-            themeBtn.addEventListener('mouseup', endPress);
-            themeBtn.addEventListener('touchend', endPress);
+            themeBtn.addEventListener('pointerdown', startPress);
+            themeBtn.addEventListener('pointerup', endPress);
+            themeBtn.addEventListener('pointerleave', () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
         }
 
-        document.addEventListener('mousedown', (e) => {
+        document.addEventListener('pointerdown', (e) => {
             if (picker && picker.classList.contains('visible')) {
                 if (!picker.contains(e.target) && !themeBtn.contains(e.target)) {
                     picker.classList.remove('visible');
@@ -1024,8 +1023,22 @@
             }
         });
 
-        function startPress(e) { pressTimer = setTimeout(() => { if (picker) picker.classList.toggle('visible'); pressTimer = null; }, 600); }
-        function endPress(e) { if (pressTimer) { clearTimeout(pressTimer); toggleTheme(); } }
+        function startPress(e) {
+            if (e.pointerType === 'touch') e.target.releasePointerCapture(e.pointerId);
+
+            pressTimer = setTimeout(() => {
+                if (picker) picker.classList.toggle('visible');
+                pressTimer = null;
+            }, 600);
+        }
+
+        function endPress(e) {
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
+                toggleTheme();
+            }
+        }
 
         function setAccent(color) {
             document.documentElement.style.setProperty('--accent-color', color);
@@ -1033,8 +1046,6 @@
             document.documentElement.style.setProperty('--accent-glow', `rgba(${r}, ${g}, ${b}, 0.8)`);
             document.documentElement.style.setProperty('--accent-glow-bright', `rgba(${r}, ${g}, ${b}, 1)`);
             localStorage.accentColor = color;
-
-            // UI Sync: Logic moved to CSS fallback for better load reliability
             renderProducts();
             if (picker) picker.classList.remove('visible');
         }
@@ -1089,7 +1100,6 @@
                 b.classList.remove('active', 'text-white');
             });
             btn.className = "category-btn active text-white px-8 sm:px-12 py-3 rounded-full text-xs font-black uppercase transition-all duration-300 shrink-0";
-            // Background is handled by CSS .active class + var(--accent-color)
             renderProducts();
         }
 
@@ -1142,7 +1152,7 @@
                                  class="w-full h-full object-contain transition-all duration-700 group-hover:scale-110" 
                                  onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'; removePlaceholder(this)">
                             <button onclick="toggleWishlist('${p.id}', event)" class="absolute top-4 right-4 w-12 h-12 bg-white/90 dark:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center transition-all hover:scale-110 z-20">
-                                <i class="${isWished ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'} text-base transition-colors"></i>
+                                <i data-wish-icon="${p.id}" class="${isWished ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'} text-base transition-colors"></i>
                             </button>
                         </div>
                         <div class="p-8 text-center sm:text-left">
@@ -1213,7 +1223,6 @@
             const playerCont = document.getElementById('modal-players');
             if (p.players && p.players.length > 0) {
                 document.getElementById('modal-players-section').classList.remove('hidden');
-                // PLAYER CAROUSEL JUMP: Passing index + 1 as standard (assuming generic front is index 0)
                 playerCont.innerHTML = p.players.map((pl, idx) => `
                     <button onclick="setPlayer('${pl}', ${idx + 1}, this)" 
                             class="px-4 py-2.5 rounded-xl border-2 border-gray-100 dark:border-white/10 text-[10px] font-black uppercase dark:text-white transition-all">${pl}</button>
@@ -1224,6 +1233,10 @@
 
             document.getElementById('product-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+
+            // ATTACH WISHLIST HANDLER TO MODAL BUTTON
+            document.getElementById('modal-wish-btn').onclick = (e) => toggleWishlist(p.id, e);
+
             updateModalWishlistButton();
 
             document.getElementById('modal-add-btn').onclick = () => {
@@ -1252,7 +1265,6 @@
             el.classList.add('text-white');
             el.classList.remove('dark:text-white');
 
-            // PLAYER CAROUSEL JUMP: If the jersey image exists for this player
             if (currentModalProduct && imgIndex < currentModalProduct.images.length) {
                 activeModalSlide = imgIndex;
                 updateModalCarousel();
@@ -1277,9 +1289,28 @@
             if (event) event.stopPropagation();
             await checkAndEnsureAuth();
             const idx = wishlist.indexOf(pid);
-            if (idx > -1) { wishlist.splice(idx, 1); await removeWishlistItem(pid); }
-            else { wishlist.push(pid); await saveWishlistItem(pid); }
-            updateWishlistUI(); renderProducts();
+            if (idx > -1) {
+                wishlist.splice(idx, 1);
+                await removeWishlistItem(pid);
+            } else {
+                wishlist.push(pid);
+                await saveWishlistItem(pid);
+            }
+            // TARGETED UPDATES: Fixes shuttering by avoiding renderProducts()
+            updateWishlistUI();
+            updateModalWishlistButton();
+            syncWishlistIconsOnPage();
+        }
+
+        // Updates all heart icons visible on the page without re-rendering the catalog
+        function syncWishlistIconsOnPage() {
+            document.querySelectorAll('[data-wish-icon]').forEach(icon => {
+                const pid = icon.getAttribute('data-wish-icon');
+                const isWished = wishlist.includes(pid);
+                icon.className = isWished
+                    ? 'fas fa-heart text-red-500 text-base transition-colors'
+                    : 'far fa-heart text-gray-400 text-base transition-colors';
+            });
         }
 
         function updateWishlistUI() {
