@@ -411,7 +411,6 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 sm:gap-4 relative shrink-0">
-                    <!-- Accent Pill Implementation Refined -->
                     <div id="accent-picker"
                         class="flex items-center gap-2 bg-white/95 dark:bg-black/95 p-2 rounded-2xl border border-gray-200 dark:border-white/10 backdrop-blur-xl shadow-2xl">
                         <button onclick="setAccent('#FF0800')"
@@ -555,7 +554,7 @@
 
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
 
-        <div id="pagination-container" class="mt-16 flex flex-col items-center gap-6">
+        <div id="pagination-container" class="mt-16 hidden flex-col items-center gap-6">
             <div id="page-numbers" class="flex flex-wrap justify-center gap-3"></div>
             <button id="next-page-btn" onclick="nextPage()"
                 class="hidden bg-accent text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">Next
@@ -637,7 +636,7 @@
                 </div>
                 <div id="modal-players-section" class="mb-6">
                     <h4 id="player-label" class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
-                        Select Player</h4>
+                        Select Variant</h4>
                     <div id="modal-players" class="flex flex-wrap gap-2"></div>
                 </div>
                 <div
@@ -653,26 +652,31 @@
         </div>
     </div>
 
-    <!-- Image Fullscreen Viewer Overlay (Updated with Swipe Support) -->
-    <div id="image-viewer" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/95 backdrop-blur-2xl transition-all duration-500 touch-none">
+    <!-- Image Fullscreen Viewer -->
+    <div id="image-viewer"
+        class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/95 backdrop-blur-2xl transition-all duration-500 touch-none">
         <div class="absolute inset-0 cursor-zoom-out" onclick="closeFullImage()"></div>
-        
-        <button onclick="closeFullImage()" class="absolute top-8 right-8 w-12 h-12 sm:w-14 sm:h-14 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl sm:text-2xl transition-all z-[210]">
+
+        <button onclick="closeFullImage()"
+            class="absolute top-8 right-8 w-12 h-12 sm:w-14 sm:h-14 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl sm:text-2xl transition-all z-[210]">
             <i class="fas fa-times"></i>
         </button>
 
-        <div id="zoom-nav-controls" class="absolute inset-x-0 top-1/2 -translate-y-1/2 hidden lg:flex justify-between px-8 pointer-events-none">
-            <button onclick="prevFullImage()" id="zoom-prev-btn" class="w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl transition-all pointer-events-auto">
+        <div id="zoom-nav-controls"
+            class="absolute inset-x-0 top-1/2 -translate-y-1/2 hidden lg:flex justify-between px-8 pointer-events-none">
+            <button onclick="prevFullImage()" id="zoom-prev-btn"
+                class="w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl transition-all pointer-events-auto">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button onclick="nextFullImage()" id="zoom-next-btn" class="w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl transition-all pointer-events-auto">
+            <button onclick="nextFullImage()" id="zoom-next-btn"
+                class="w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl transition-all pointer-events-auto">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
 
-        <img id="viewer-img" src="" class="relative max-w-[95%] max-h-[90vh] object-contain shadow-2xl rounded-2xl animate-fade-in transition-all duration-300" 
-             onclick="event.stopPropagation()"
-             onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
+        <img id="viewer-img" src=""
+            class="relative max-w-[95%] max-h-[90vh] object-contain shadow-2xl rounded-2xl animate-fade-in transition-all duration-300"
+            onclick="event.stopPropagation()" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
     </div>
 
     <!-- Sizing Guide Modal -->
@@ -893,7 +897,6 @@
         let selectedSize = "";
         let selectedPlayer = "";
 
-        // ZOOM VIEWER STATE & SWIPE VARS
         let activeZoomSlide = 0;
         let touchStartX = 0;
         let touchEndX = 0;
@@ -907,13 +910,7 @@
             clothing: ["Round Neck", "Normal Sleeves", "Long Sleeves", "Logo Printed", "Embroidery", "Round Neck T-Shirt", "V-Neck T-Shirt", "Round Neck (Embroidery)", "V-Neck (Embroidery)", "Collar T-Shirt", "Collar T-Shirt (Embroidery)", "Five Sleeve T-Shirt", "Collar Five Sleeve"]
         };
 
-        const defaultProducts = [
-            { id: "1", name: "FC Barcelona 25/26 Home Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (3).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (1).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (2).png"], description: "Official 25/26 Home kit featuring a sharp V-Neck and aggressive lightning-bolt patterns. High-performance Dot Knit fabric for maximum airflow.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Lamine Yamal 10", "Raphinha 11"], tag: "New Season", specs: ["V Neck", "Normal Sleeves", "Dot Knit Material"] },
-            { id: "2", name: "Real Madrid 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (6).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (4).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (5).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (7).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (9).png"], description: "Sleek navy Away jersey with horizontal micro-stripe detailing. Built for the European champions.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Trent 12", "Vini Jr. 7", "Valverde 8", "Arda Güler 15"], tag: "Bestseller", specs: ["Round Neck", "Normal Sleeves", "Dot Knit Material"] },
-            { id: "3", name: "Arsenal FC 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (8).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (10).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (11).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (12).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (15).png"], description: "Sophisticated cream Away kit with vintage maroon detailing and the iconic cannon crest.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Rice 41", "Gyökeres 14", "Martinelli 11", "Ødegaard 8"], tag: "Limited Edition", specs: ["V Neck", "Normal Sleeves", "Dot Knit Material"] },
-            { id: "4", name: "Manchester City 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (13).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (16).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (17).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (18).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (14).png"], description: "White Away jersey with neon lime accents and fluid 'Water Droplet' sublimation graphics.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Foden 47", "Rodrigo 16", "Cherki 10", "Reijnders 4"], tag: "New Drop", specs: ["Round Neck", "Normal Sleeves", "Dot Knit Material"] },
-            { id: "5", name: "Manchester United 25/26 Away Kit", price: 2999, category: "jersey", images: ["products/MENS_NS_S25-26_DOT-KNIT_RV (20).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (19).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (21).png", "products/MENS_NS_S25-26_DOT-KNIT_RV (24).png"], description: "Minimalist white Away kit with lavender detailing and geometric 'Heat Ready' patterns.", sizes: ["S", "M", "L", "XL", "XXL"], players: ["Cunha 10", "Martinez 6", "B. Fernandes 8"], tag: "Essential", specs: ["V Neck", "Normal Sleeves", "Dot Knit Material"] }
-        ];
+        const defaultProducts = [];
 
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -957,7 +954,7 @@
         window.changeQty = changeQty;
 
         function fallbackToLocal() {
-            if (!products || products.length === 0) products = [...defaultProducts];
+            if (!products || products.length === 0) products = [];
             cart = JSON.parse(localStorage.getItem('opema_cart')) || [];
             wishlist = JSON.parse(localStorage.getItem('opema_wishlist')) || [];
             renderProducts();
@@ -1030,8 +1027,8 @@
             else localStorage.setItem('opema_cart', JSON.stringify(cart));
         }
         async function updateCartItemQty(cartId, newQty) {
-             if (isFirebaseActive && userId) await updateDoc(doc(db, 'artifacts', appId, 'users', userId, 'cart', cartId), { quantity: newQty });
-             else localStorage.setItem('opema_cart', JSON.stringify(cart));
+            if (isFirebaseActive && userId) await updateDoc(doc(db, 'artifacts', appId, 'users', userId, 'cart', cartId), { quantity: newQty });
+            else localStorage.setItem('opema_cart', JSON.stringify(cart));
         }
         async function saveWishlistItem(pid) {
             if (isFirebaseActive && userId) await setDoc(doc(db, 'artifacts', appId, 'users', userId, 'wishlist', pid.toString()), { id: pid });
@@ -1060,21 +1057,20 @@
             }
         });
 
-        function startPress(e) { 
+        function startPress(e) {
             if (e.pointerType === 'touch') e.target.releasePointerCapture(e.pointerId);
-            
-            pressTimer = setTimeout(() => { 
-                if (picker) picker.classList.toggle('visible'); 
-                pressTimer = null; 
-            }, 600); 
+            pressTimer = setTimeout(() => {
+                if (picker) picker.classList.toggle('visible');
+                pressTimer = null;
+            }, 600);
         }
 
-        function endPress(e) { 
-            if (pressTimer) { 
-                clearTimeout(pressTimer); 
+        function endPress(e) {
+            if (pressTimer) {
+                clearTimeout(pressTimer);
                 pressTimer = null;
-                toggleTheme(); 
-            } 
+                toggleTheme();
+            }
         }
 
         function setAccent(color) {
@@ -1109,7 +1105,8 @@
 
         function renderPrecisionOptions() {
             const container = document.getElementById('precision-options-list');
-            const opts = precisionMap[currentCategory];
+            if (!container) return;
+            const opts = precisionMap[currentCategory] || precisionMap['all'];
             container.innerHTML = opts.map(opt => `
                 <label class="flex items-center gap-3 cursor-pointer group p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
                     <input type="checkbox" class="custom-checkbox shrink-0" ${activePrecision.includes(opt) ? 'checked' : ''} onchange="togglePrecision('${opt}')">
@@ -1130,13 +1127,18 @@
         function handleSearch(val) { searchQuery = val.toLowerCase(); currentPage = 1; renderProducts(); }
 
         function filterProducts(cat, btn) {
-            currentCategory = cat; activePrecision = []; currentPage = 1;
+            currentCategory = cat;
+            activePrecision = [];
+            currentPage = 1;
+
             document.querySelectorAll('.category-btn').forEach(b => {
                 b.className = "category-btn px-8 sm:px-12 py-3 rounded-full text-xs font-bold text-gray-400 dark:text-gray-500 uppercase transition-all duration-300 hover:text-black dark:hover:text-white shrink-0";
                 b.style.backgroundColor = "";
                 b.classList.remove('active', 'text-white');
             });
             btn.className = "category-btn active text-white px-8 sm:px-12 py-3 rounded-full text-xs font-black uppercase transition-all duration-300 shrink-0";
+
+            renderPrecisionOptions();
             renderProducts();
         }
 
@@ -1151,26 +1153,55 @@
             const grid = document.getElementById('product-grid');
             const empty = document.getElementById('no-results');
             const pagination = document.getElementById('pagination-container');
+            const nextBtn = document.getElementById('next-page-btn');
+
             if (!grid) return;
 
-            const listToRender = (products && products.length > 0) ? products : defaultProducts;
-            const filtered = listToRender.filter(p => {
-                const matchCat = currentCategory === 'all' || p.category === currentCategory;
-                const matchSearch = p.name.toLowerCase().includes(searchQuery);
-                const matchPrecision = activePrecision.length === 0 || (p.specs && activePrecision.every(opt => p.specs.includes(opt)));
+            const filtered = products.filter(p => {
+                const pCat = p.category ? p.category.toLowerCase() : '';
+                const pSubCat = p.sub_category ? p.sub_category.toLowerCase() : '';
+
+                const matchCat = currentCategory === 'all' ||
+                    pCat === currentCategory.toLowerCase() ||
+                    pSubCat === currentCategory.toLowerCase();
+
+                const pName = p.name ? p.name.toLowerCase() : '';
+                const pKeywords = Array.isArray(p.keywords) ? p.keywords.join(' ').toLowerCase() : '';
+                const matchSearch = searchQuery === '' ||
+                    pName.includes(searchQuery) ||
+                    pKeywords.includes(searchQuery);
+
+                const matchPrecision = activePrecision.length === 0 ||
+                    (p.specs && activePrecision.every(opt => p.specs.includes(opt)));
+
                 return matchCat && matchSearch && matchPrecision;
             });
 
+            // REPAIRED: Reset visibility states before rendering
+            if (pagination) {
+                pagination.classList.add('hidden');
+                pagination.classList.remove('flex');
+            }
+            if (nextBtn) {
+                nextBtn.classList.add('hidden');
+            }
+
             if (filtered.length === 0) {
                 grid.classList.add('hidden');
+                grid.classList.remove('grid');
+                grid.innerHTML = '';
                 empty.classList.remove('hidden');
-                if (pagination) pagination.classList.add('hidden');
+                empty.classList.add('flex');
+
+                const numCont = document.getElementById('page-numbers');
+                if (numCont) numCont.innerHTML = '';
                 return;
             }
 
             grid.classList.remove('hidden');
+            grid.classList.add('grid');
             empty.classList.add('hidden');
-            if (pagination) pagination.classList.remove('hidden');
+            empty.classList.remove('flex');
 
             const limit = getItemsPerPage();
             const totalPages = Math.ceil(filtered.length / limit);
@@ -1180,15 +1211,17 @@
 
             grid.innerHTML = paginatedItems.map(p => {
                 const isWished = wishlist.includes(p.id);
+                const displayImg = (p.images && p.images.length > 0) ? p.images[0] : '';
+
                 return `
                     <div class="product-card-hover reveal group bg-white dark:bg-brand-gray/30 border border-gray-100 dark:border-white/5 rounded-[32px] overflow-hidden transition-all duration-500 cursor-pointer" onclick="openModal('${p.id}')">
                         <div class="relative h-80 overflow-hidden image-placeholder">
-                            <img src="${p.images[0]}" 
+                            <img src="${displayImg}" 
                                  loading="lazy" 
                                  onload="removePlaceholder(this)"
                                  class="w-full h-full object-contain transition-all duration-700 group-hover:scale-110" 
                                  onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'; removePlaceholder(this)">
-                            <button onclick="toggleWishlist('${p.id}', event)" class="absolute top-4 right-4 w-12 h-12 bg-white/90 dark:bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center transition-all hover:scale-110 z-20">
+                            <button onclick="toggleWishlist('${p.id}', event)" class="absolute top-4 right-4 w-12 h-12 bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-full flex items-center justify-center transition-all hover:scale-110 z-20 shadow-lg">
                                 <i data-wish-icon="${p.id}" class="${isWished ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'} text-base transition-colors"></i>
                             </button>
                         </div>
@@ -1211,22 +1244,35 @@
             const nextBtn = document.getElementById('next-page-btn');
             const pagination = document.getElementById('pagination-container');
 
+            // REPAIRED: If no results or only 1 page, keep everything hidden
             if (totalPages <= 1) {
-                container.innerHTML = '';
+                if (container) container.innerHTML = '';
                 if (nextBtn) nextBtn.classList.add('hidden');
-                if (pagination) pagination.classList.add('hidden');
+                if (pagination) {
+                    pagination.classList.add('hidden');
+                    pagination.classList.remove('flex');
+                }
                 return;
             }
 
-            if (pagination) pagination.classList.remove('hidden');
+            // REPAIRED: Only show if valid content exists and we didn't return early
+            if (pagination) {
+                pagination.classList.remove('hidden');
+                pagination.classList.add('flex');
+            }
 
             container.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1).map(num => `
                 <button onclick="goToPage(${num})" class="page-dot w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs transition-all border border-gray-100 dark:border-white/10 dark:text-white ${currentPage === num ? 'active' : 'hover:bg-gray-50 dark:hover:bg-white/5'}">
                     ${num}
                 </button>
             `).join('');
-            if (currentPage < totalPages) nextBtn.classList.remove('hidden');
-            else nextBtn.classList.add('hidden');
+
+            // REPAIRED: Strictly hide next button if we are on the last page
+            if (currentPage < totalPages) {
+                nextBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.add('hidden');
+            }
         }
 
         function goToPage(num) { currentPage = num; renderProducts(); document.getElementById('collection').scrollIntoView({ behavior: 'smooth' }); }
@@ -1234,8 +1280,7 @@
         function resetFilters() { searchQuery = ''; activePrecision = []; currentPage = 1; document.getElementById('product-search').value = ''; filterProducts('all', document.getElementById('filter-all')); }
 
         function openModal(pid) {
-            const list = (products && products.length > 0) ? products : defaultProducts;
-            const p = list.find(i => i.id === pid);
+            const p = products.find(i => i.id === pid);
             if (!p) return;
             currentModalProduct = p;
             activeModalSlide = 0; selectedSize = ""; selectedPlayer = "";
@@ -1244,8 +1289,10 @@
             document.getElementById('modal-description').textContent = p.description || "";
             document.getElementById('modal-tag').textContent = p.tag || "Available";
 
+            const gallery = p.images || [];
+
             const carousel = document.getElementById('modal-carousel-container');
-            carousel.innerHTML = p.images.map((img, i) => `
+            carousel.innerHTML = gallery.map((img, i) => `
                 <div class="absolute inset-0 w-full h-full image-placeholder transition-opacity duration-500 ${i === 0 ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}">
                     <img src="${img}" 
                          onclick="openFullImage(${i})" 
@@ -1256,7 +1303,7 @@
             `).join('');
 
             const dots = document.getElementById('modal-dots');
-            dots.innerHTML = p.images.length > 1 ? p.images.map((_, i) => `<div class="w-2.5 h-2.5 rounded-full bg-gray-200 dark:bg-white/20 ${i === 0 ? 'bg-accent' : ''}"></div>`).join('') : '';
+            dots.innerHTML = gallery.length > 1 ? gallery.map((_, i) => `<div class="w-2.5 h-2.5 rounded-full bg-gray-200 dark:bg-white/20 ${i === 0 ? 'bg-accent' : ''}"></div>`).join('') : '';
 
             const sizes = p.sizes || ["S", "M", "L", "XL", "XXL"];
             document.getElementById('modal-sizes').innerHTML = sizes.map(s => `<button onclick="setSize('${s}', this)" class="w-10 h-10 rounded-xl border-2 border-gray-100 dark:border-white/10 font-bold text-xs dark:text-white transition-all">${s}</button>`).join('');
@@ -1265,7 +1312,7 @@
             if (p.players && p.players.length > 0) {
                 document.getElementById('modal-players-section').classList.remove('hidden');
                 playerCont.innerHTML = p.players.map((pl, idx) => `
-                    <button onclick="setPlayer('${pl}', ${idx + 1}, this)" 
+                    <button onclick="setPlayer('${pl}', ${idx}, this)" 
                             class="px-4 py-2.5 rounded-xl border-2 border-gray-100 dark:border-white/10 text-[10px] font-black uppercase dark:text-white transition-all">${pl}</button>
                 `).join('');
             } else {
@@ -1279,7 +1326,11 @@
 
             document.getElementById('modal-add-btn').onclick = () => {
                 if (!selectedSize) { showToast("Select Size"); return; }
-                addToCart(p.id, selectedSize, selectedPlayer || "Standard");
+                let finalPrice = p.price;
+                if (p.extra_price && p.extra_price[selectedSize]) {
+                    finalPrice += p.extra_price[selectedSize];
+                }
+                addToCart(p.id, selectedSize, selectedPlayer || "Standard", finalPrice);
                 closeModal();
             };
         }
@@ -1288,17 +1339,14 @@
         function openSizingModal() { document.getElementById('sizing-modal').classList.remove('hidden'); }
         function closeSizingModal() { document.getElementById('sizing-modal').classList.add('hidden'); }
 
-        // SWIPE SUPPORTED FULL IMAGE VIEWER
         function openFullImage(index) {
             if (!currentModalProduct) return;
             activeZoomSlide = index;
             updateFullImageView();
             document.getElementById('image-viewer').classList.remove('hidden');
-            
-            // Add Swipe Listeners
             const viewer = document.getElementById('image-viewer');
-            viewer.addEventListener('touchstart', handleTouchStart, {passive: true});
-            viewer.addEventListener('touchend', handleTouchEnd, {passive: true});
+            viewer.addEventListener('touchstart', handleTouchStart, { passive: true });
+            viewer.addEventListener('touchend', handleTouchEnd, { passive: true });
         }
 
         function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; }
@@ -1309,41 +1357,40 @@
 
         function handleSwipe() {
             const threshold = 50;
-            if (touchEndX < touchStartX - threshold) nextFullImage(); // Swipe Left
-            if (touchEndX > touchStartX + threshold) prevFullImage(); // Swipe Right
+            if (touchEndX < touchStartX - threshold) nextFullImage();
+            if (touchEndX > touchStartX + threshold) prevFullImage();
         }
 
         function updateFullImageView() {
             if (!currentModalProduct) return;
+            const gallery = currentModalProduct.images || [];
             const imgElement = document.getElementById('viewer-img');
             const controls = document.getElementById('zoom-nav-controls');
-            
+
             imgElement.style.opacity = "0";
             imgElement.style.transform = "scale(0.95)";
-            
+
             setTimeout(() => {
-                imgElement.src = currentModalProduct.images[activeZoomSlide];
+                imgElement.src = gallery[activeZoomSlide];
                 imgElement.style.opacity = "1";
                 imgElement.style.transform = "scale(1)";
             }, 100);
 
-            // Hide arrows on desktop if only one image
-            if (currentModalProduct.images.length <= 1) {
-                controls.classList.add('lg:hidden');
-            } else {
-                controls.classList.remove('lg:hidden');
-            }
+            if (gallery.length <= 1) controls.classList.add('lg:hidden');
+            else controls.classList.remove('lg:hidden');
         }
 
         function prevFullImage() {
-            if (!currentModalProduct || currentModalProduct.images.length <= 1) return;
-            activeZoomSlide = (activeZoomSlide - 1 + currentModalProduct.images.length) % currentModalProduct.images.length;
+            const gallery = currentModalProduct.images || [];
+            if (!currentModalProduct || gallery.length <= 1) return;
+            activeZoomSlide = (activeZoomSlide - 1 + gallery.length) % gallery.length;
             updateFullImageView();
         }
 
         function nextFullImage() {
-            if (!currentModalProduct || currentModalProduct.images.length <= 1) return;
-            activeZoomSlide = (activeZoomSlide + 1) % currentModalProduct.images.length;
+            const gallery = currentModalProduct.images || [];
+            if (!currentModalProduct || gallery.length <= 1) return;
+            activeZoomSlide = (activeZoomSlide + 1) % gallery.length;
             updateFullImageView();
         }
 
@@ -1360,6 +1407,12 @@
             el.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
             el.classList.add('text-white');
             el.classList.remove('dark:text-white');
+
+            let displayPrice = currentModalProduct.price;
+            if (currentModalProduct.extra_price && currentModalProduct.extra_price[s]) {
+                displayPrice += currentModalProduct.extra_price[s];
+            }
+            document.getElementById('modal-price').textContent = `${CURRENCY}${displayPrice}`;
         }
 
         function setPlayer(pl, imgIndex, el) {
@@ -1376,7 +1429,9 @@
         }
 
         function prevModalSlide() { if (activeModalSlide > 0) { activeModalSlide--; updateModalCarousel(); } }
-        function nextModalSlide() { if (currentModalProduct && activeModalSlide < currentModalProduct.images.length - 1) { activeModalSlide++; updateModalCarousel(); } }
+        function nextModalSlide() {
+            if (currentModalProduct && activeModalSlide < currentModalProduct.images.length - 1) { activeModalSlide++; updateModalCarousel(); }
+        }
 
         function updateModalCarousel() {
             const containers = document.querySelectorAll('#modal-carousel-container > div');
@@ -1396,14 +1451,14 @@
             if (event) event.stopPropagation();
             await checkAndEnsureAuth();
             const idx = wishlist.indexOf(pid);
-            if (idx > -1) { 
-                wishlist.splice(idx, 1); 
-                await removeWishlistItem(pid); 
-            } else { 
-                wishlist.push(pid); 
-                await saveWishlistItem(pid); 
+            if (idx > -1) {
+                wishlist.splice(idx, 1);
+                await removeWishlistItem(pid);
+            } else {
+                wishlist.push(pid);
+                await saveWishlistItem(pid);
             }
-            updateWishlistUI(); 
+            updateWishlistUI();
             updateModalWishlistButton();
             syncWishlistIconsOnPage();
         }
@@ -1412,8 +1467,8 @@
             document.querySelectorAll('[data-wish-icon]').forEach(icon => {
                 const pid = icon.getAttribute('data-wish-icon');
                 const isWished = wishlist.includes(pid);
-                icon.className = isWished 
-                    ? 'fas fa-heart text-red-500 text-base transition-colors' 
+                icon.className = isWished
+                    ? 'fas fa-heart text-red-500 text-base transition-colors'
                     : 'far fa-heart text-gray-400 text-base transition-colors';
             });
         }
@@ -1425,13 +1480,14 @@
             count.classList.toggle('opacity-0', wishlist.length === 0);
             count.classList.toggle('scale-0', wishlist.length === 0);
             document.getElementById('wishlist-empty-msg').classList.toggle('hidden', wishlist.length > 0);
-            const list = (products && products.length > 0) ? products : defaultProducts;
+
             cont.innerHTML = wishlist.map(id => {
-                const p = list.find(i => i.id === id);
+                const p = products.find(i => i.id === id);
                 if (!p) return '';
+                const displayImg = (p.images && p.images.length > 0) ? p.images[0] : '';
                 return `
                     <div class="flex gap-4 items-center bg-gray-50 dark:bg-[#0d0d0d] p-4 sm:p-5 rounded-[2rem] transition-all duration-500 shadow-lg border border-gray-100 dark:border-white/5 relative group">
-                        <img src="${p.images[0]}" 
+                        <img src="${displayImg}" 
                              class="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl cursor-pointer hover:scale-105 transition-transform" 
                              onclick="closeSidebars(); openModal('${p.id}')">
                         <div class="flex-grow flex flex-col justify-center gap-1">
@@ -1464,19 +1520,20 @@
             icon.className = isWished ? "fas fa-heart text-red-500 heart-pop" : "far fa-heart text-white";
         }
 
-        window.addToCart = async function (pid, size, player) {
+        window.addToCart = async function (pid, size, player, priceOverride) {
             await checkAndEnsureAuth();
-            const list = (products && products.length > 0) ? products : defaultProducts;
-            const p = list.find(i => i.id === pid);
+            const p = products.find(i => i.id === pid);
             const cartId = `${pid}-${size}-${player}`;
             const existing = cart.find(i => i.cartId === cartId);
+            const finalPrice = priceOverride || p.price;
+
             if (existing) {
-                 existing.quantity++;
-                 await updateCartItemQty(cartId, existing.quantity);
+                existing.quantity++;
+                await updateCartItemQty(cartId, existing.quantity);
             } else {
-                 const newItem = { ...p, cartId, size, player, quantity: 1 };
-                 cart.push(newItem);
-                 await saveCartItem(newItem);
+                const newItem = { ...p, cartId, size, player, quantity: 1, price: finalPrice };
+                cart.push(newItem);
+                await saveCartItem(newItem);
             }
             showToast("Added to Bag");
             updateCartUI();
@@ -1486,9 +1543,7 @@
             const item = cart.find(i => i.cartId === cartId);
             if (!item) return;
             const newQty = item.quantity + delta;
-            
             if (newQty < 1) return;
-            
             item.quantity = newQty;
             updateCartUI();
             await updateCartItemQty(cartId, newQty);
@@ -1500,11 +1555,12 @@
             const count = document.getElementById('cart-count');
             let sum = 0, items = 0;
             cont.innerHTML = cart.map(i => {
-                sum += i.price * i.quantity; items += i.quantity;
+                sum += (i.price * i.quantity); items += i.quantity;
                 const isMin = i.quantity <= 1;
+                const displayImg = (i.images && i.images.length > 0) ? i.images[0] : '';
                 return `
                     <div class="flex gap-4 items-center bg-gray-50 dark:bg-[#0d0d0d] p-4 sm:p-5 rounded-[2.5rem] transition-all duration-500 shadow-lg border border-gray-100 dark:border-white/5 relative">
-                        <img src="${i.images[0]}" 
+                        <img src="${displayImg}" 
                              class="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl cursor-pointer hover:scale-105 transition-transform shrink-0" 
                              onclick="closeSidebars(); openModal('${i.id}')"
                              onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
@@ -1514,7 +1570,6 @@
                                 ${i.name}
                             </h4>
                             <p class="text-[9px] text-gray-400 font-bold">${i.size} | ${i.player}</p>
-                            
                             <div class="flex items-center justify-between mt-1">
                                 <p class="text-xs font-black text-accent shrink-0">
                                     ${CURRENCY}${i.price}
@@ -1570,7 +1625,19 @@
         };
 
         window.onload = initApp;
-        window.onresize = renderProducts;
+
+        let resizeTimer;
+        let lastLimit = getItemsPerPage();
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                const currentLimit = getItemsPerPage();
+                if (currentLimit !== lastLimit) {
+                    renderProducts();
+                    lastLimit = currentLimit;
+                }
+            }, 150);
+        });
     </script>
 </body>
 
