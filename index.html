@@ -441,7 +441,7 @@
                         <i
                             class="fas fa-heart text-base sm:text-lg group-hover:text-accent transition-colors duration-300"></i>
                         <span id="wishlist-count"
-                            class="absolute top-0 right-0 bg-accent text-white text-[8px] font-black w-3.5 h-3.5 flex items-center justify-center rounded-full transition-all opacity-0 scale-0">0</span>
+                            class="absolute top-0 right-0 bg-accent text-white text-[8px] font-black w-3.5 h-3.5 flex items-center justify-center rounded-full transition-all opacity-0 scale-0 hidden">0</span>
                     </button>
 
                     <button onclick="toggleCart()"
@@ -910,8 +910,6 @@
             clothing: ["Round Neck", "Normal Sleeves", "Long Sleeves", "Logo Printed", "Embroidery", "Round Neck T-Shirt", "V-Neck T-Shirt", "Round Neck (Embroidery)", "V-Neck (Embroidery)", "Collar T-Shirt", "Collar T-Shirt (Embroidery)", "Five Sleeve T-Shirt", "Collar Five Sleeve"]
         };
 
-        const defaultProducts = [];
-
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -953,28 +951,12 @@
         window.nextFullImage = nextFullImage;
         window.changeQty = changeQty;
 
-        function fallbackToLocal() {
-            if (!products || products.length === 0) products = [];
+        function loadLocalData() {
             cart = JSON.parse(localStorage.getItem('opema_cart')) || [];
             wishlist = JSON.parse(localStorage.getItem('opema_wishlist')) || [];
-            renderProducts();
-            if (document.getElementById('cart-items')) updateCartUI();
-            if (document.getElementById('wishlist-items')) updateWishlistUI();
-        }
-
-        async function checkAndEnsureAuth() {
-            if (!isFirebaseActive) return true;
-            if (userId) return true;
-            try {
-                const cred = await signInAnonymously(auth);
-                userId = cred.user.uid;
-                setupRealtimeListeners();
-                return true;
-            } catch (err) {
-                isFirebaseActive = false;
-                fallbackToLocal();
-                return true;
-            }
+            updateCartUI();
+            updateWishlistUI();
+            syncWishlistIconsOnPage();
         }
 
         if (isFirebaseActive) {
@@ -988,10 +970,8 @@
                 try {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
                     else await signInAnonymously(auth);
-                } catch (e) { isFirebaseActive = false; fallbackToLocal(); }
+                } catch (e) { isFirebaseActive = false; }
             })();
-        } else {
-            fallbackToLocal();
         }
 
         function setupRealtimeListeners() {
@@ -1000,43 +980,16 @@
                 products = [];
                 snapshot.forEach(doc => products.push({ ...doc.data(), id: doc.id }));
                 renderProducts();
-            });
-
-            const cartRef = collection(db, 'artifacts', appId, 'users', userId, 'cart');
-            onSnapshot(cartRef, (snapshot) => {
-                cart = [];
-                snapshot.forEach(doc => cart.push(doc.data()));
-                updateCartUI();
-            });
-
-            const wishlistRef = collection(db, 'artifacts', appId, 'users', userId, 'wishlist');
-            onSnapshot(wishlistRef, (snapshot) => {
-                wishlist = [];
-                snapshot.forEach(doc => wishlist.push(doc.data().id));
+                // Ensure wishlist UI refreshes once products are loaded from database
                 updateWishlistUI();
-                syncWishlistIconsOnPage();
             });
         }
 
-        async function saveCartItem(item) {
-            if (isFirebaseActive && userId) await setDoc(doc(db, 'artifacts', appId, 'users', userId, 'cart', item.cartId), item);
-            else localStorage.setItem('opema_cart', JSON.stringify(cart));
+        function saveCartItem() {
+            localStorage.setItem('opema_cart', JSON.stringify(cart));
         }
-        async function removeCartItem(cartId) {
-            if (isFirebaseActive && userId) await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'cart', cartId));
-            else localStorage.setItem('opema_cart', JSON.stringify(cart));
-        }
-        async function updateCartItemQty(cartId, newQty) {
-            if (isFirebaseActive && userId) await updateDoc(doc(db, 'artifacts', appId, 'users', userId, 'cart', cartId), { quantity: newQty });
-            else localStorage.setItem('opema_cart', JSON.stringify(cart));
-        }
-        async function saveWishlistItem(pid) {
-            if (isFirebaseActive && userId) await setDoc(doc(db, 'artifacts', appId, 'users', userId, 'wishlist', pid.toString()), { id: pid });
-            else localStorage.setItem('opema_wishlist', JSON.stringify(wishlist));
-        }
-        async function removeWishlistItem(pid) {
-            if (isFirebaseActive && userId) await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'wishlist', pid.toString()));
-            else localStorage.setItem('opema_wishlist', JSON.stringify(wishlist));
+        function saveWishlistItem() {
+            localStorage.setItem('opema_wishlist', JSON.stringify(wishlist));
         }
 
         let pressTimer;
@@ -1177,7 +1130,6 @@
                 return matchCat && matchSearch && matchPrecision;
             });
 
-            // REPAIRED: Reset visibility states before rendering
             if (pagination) {
                 pagination.classList.add('hidden');
                 pagination.classList.remove('flex');
@@ -1244,7 +1196,6 @@
             const nextBtn = document.getElementById('next-page-btn');
             const pagination = document.getElementById('pagination-container');
 
-            // REPAIRED: If no results or only 1 page, keep everything hidden
             if (totalPages <= 1) {
                 if (container) container.innerHTML = '';
                 if (nextBtn) nextBtn.classList.add('hidden');
@@ -1255,7 +1206,6 @@
                 return;
             }
 
-            // REPAIRED: Only show if valid content exists and we didn't return early
             if (pagination) {
                 pagination.classList.remove('hidden');
                 pagination.classList.add('flex');
@@ -1267,7 +1217,6 @@
                 </button>
             `).join('');
 
-            // REPAIRED: Strictly hide next button if we are on the last page
             if (currentPage < totalPages) {
                 nextBtn.classList.remove('hidden');
             } else {
@@ -1447,16 +1396,15 @@
         function toggleWishlistSidebar() { document.getElementById('wishlist-sidebar').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('hidden'); }
         function closeSidebars() { document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('open')); document.getElementById('global-overlay').classList.add('hidden'); }
 
-        window.toggleWishlist = async function (pid, event) {
+        window.toggleWishlist = function (pid, event) {
             if (event) event.stopPropagation();
-            await checkAndEnsureAuth();
             const idx = wishlist.indexOf(pid);
             if (idx > -1) {
                 wishlist.splice(idx, 1);
-                await removeWishlistItem(pid);
+                saveWishlistItem();
             } else {
                 wishlist.push(pid);
-                await saveWishlistItem(pid);
+                saveWishlistItem();
             }
             updateWishlistUI();
             updateModalWishlistButton();
@@ -1476,12 +1424,21 @@
         function updateWishlistUI() {
             const cont = document.getElementById('wishlist-items');
             const count = document.getElementById('wishlist-count');
-            count.textContent = wishlist.length;
-            count.classList.toggle('opacity-0', wishlist.length === 0);
-            count.classList.toggle('scale-0', wishlist.length === 0);
-            document.getElementById('wishlist-empty-msg').classList.toggle('hidden', wishlist.length > 0);
+            if (!cont || !count) return;
 
-            cont.innerHTML = wishlist.map(id => {
+            // Only display and count items that actually exist in the current product catalog
+            const validWishlistItems = wishlist.filter(id => products.some(p => p.id === id));
+
+            count.textContent = validWishlistItems.length;
+
+            const isEmpty = validWishlistItems.length === 0;
+            count.classList.toggle('opacity-0', isEmpty);
+            count.classList.toggle('scale-0', isEmpty);
+            count.classList.toggle('hidden', isEmpty);
+
+            document.getElementById('wishlist-empty-msg').classList.toggle('hidden', validWishlistItems.length > 0);
+
+            cont.innerHTML = validWishlistItems.map(id => {
                 const p = products.find(i => i.id === id);
                 if (!p) return '';
                 const displayImg = (p.images && p.images.length > 0) ? p.images[0] : '';
@@ -1520,8 +1477,7 @@
             icon.className = isWished ? "fas fa-heart text-red-500 heart-pop" : "far fa-heart text-white";
         }
 
-        window.addToCart = async function (pid, size, player, priceOverride) {
-            await checkAndEnsureAuth();
+        window.addToCart = function (pid, size, player, priceOverride) {
             const p = products.find(i => i.id === pid);
             const cartId = `${pid}-${size}-${player}`;
             const existing = cart.find(i => i.cartId === cartId);
@@ -1529,24 +1485,23 @@
 
             if (existing) {
                 existing.quantity++;
-                await updateCartItemQty(cartId, existing.quantity);
             } else {
                 const newItem = { ...p, cartId, size, player, quantity: 1, price: finalPrice };
                 cart.push(newItem);
-                await saveCartItem(newItem);
             }
+            saveCartItem();
             showToast("Added to Bag");
             updateCartUI();
         }
 
-        async function changeQty(cartId, delta) {
+        function changeQty(cartId, delta) {
             const item = cart.find(i => i.cartId === cartId);
             if (!item) return;
             const newQty = item.quantity + delta;
             if (newQty < 1) return;
             item.quantity = newQty;
+            saveCartItem();
             updateCartUI();
-            await updateCartItemQty(cartId, newQty);
         }
 
         function updateCartUI() {
@@ -1596,7 +1551,11 @@
             document.getElementById('bag-empty-msg').classList.toggle('hidden', cart.length > 0);
         }
 
-        window.removeFromCart = async function (id) { cart = cart.filter(i => i.cartId !== id); updateCartUI(); await removeCartItem(id); }
+        window.removeFromCart = function (id) {
+            cart = cart.filter(i => i.cartId !== id);
+            saveCartItem();
+            updateCartUI();
+        }
 
         function checkoutToWhatsApp() {
             let text = "*ORDER FROM OPEMA*%0A";
@@ -1615,6 +1574,7 @@
 
         const initApp = () => {
             initTheme();
+            loadLocalData();
             renderProducts();
             const bar = document.getElementById('preloader-bar');
             if (bar) bar.style.transform = "scaleX(1)";
