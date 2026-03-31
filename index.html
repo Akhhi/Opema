@@ -55,6 +55,20 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* STRICT NAV OVERRIDE: 
+           Disables text selection and system callouts (Copy/Share popups) 
+           specifically for the navigation area to allow for the long-press 
+           accent toggle interaction without interference.
+        */
+        nav {
+            -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
+            -khtml-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+
         #brand-preloader {
             position: fixed;
             inset: 0;
@@ -323,13 +337,15 @@
 
         #product-modal.hidden,
         #sizing-modal.hidden,
-        #image-viewer.hidden {
+        #image-viewer.hidden,
+        #exit-modal.hidden {
             display: none;
         }
 
         #product-modal:not(.hidden),
         #sizing-modal:not(.hidden),
-        #image-viewer:not(.hidden) {
+        #image-viewer:not(.hidden),
+        #exit-modal:not(.hidden) {
             display: flex;
             animation: fadeIn 0.3s ease-out;
         }
@@ -396,7 +412,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav
+    <nav id="main-nav"
         class="fixed w-full z-50 top-0 left-0 bg-white/20 dark:bg-black/20 backdrop-blur-2xl border-b border-white/30 dark:border-white/10 transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -483,7 +499,7 @@
                     class="text-lg text-gray-600 dark:text-gray-400 max-w-lg mb-10 font-medium italic mx-auto lg:mx-0 transition-colors duration-500">
                     "Why pay for the brand name when you can play for the crest?"</p>
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-                    <a href="#collection"
+                    <a href="#collection" id="view-catalog-link"
                         class="bg-white text-black px-12 py-4 rounded-full font-black text-sm uppercase transition-all duration-500 shadow-catalog-glow inline-flex items-center gap-3">View
                         Catalog <i class="fas fa-arrow-down text-xs"></i></a>
                 </div>
@@ -738,6 +754,27 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit Confirmation Modal -->
+    <div id="exit-modal" class="fixed inset-0 z-[300] hidden items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-xl"></div>
+        <div
+            class="relative bg-white dark:bg-[#111] w-full max-w-sm rounded-[32px] p-8 text-center shadow-2xl border dark:border-white/10">
+            <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-sign-out-alt text-2xl text-accent"></i>
+            </div>
+            <h3 class="text-xl font-black uppercase mb-2 dark:text-white">Ready to Leave?</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-8">Do you really want to exit OPEMA Clothing?</p>
+            <div class="flex gap-3">
+                <button onclick="stayOnPage()"
+                    class="flex-1 bg-gray-100 dark:bg-white/5 py-4 rounded-2xl font-black uppercase text-xs dark:text-white hover:bg-gray-200 transition-all">No,
+                    Stay</button>
+                <button onclick="exitApp()"
+                    class="flex-1 bg-accent text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg shadow-accent/20 active:scale-95 transition-all">Yes,
+                    Exit</button>
             </div>
         </div>
     </div>
@@ -1576,12 +1613,25 @@
             initTheme();
             loadLocalData();
             renderProducts();
+
+            // Initial state management: Trap the back button
+            if (window.history && window.history.pushState) {
+                window.history.pushState('base', null, null);
+                window.history.pushState('home', null, null);
+            }
+
             const bar = document.getElementById('preloader-bar');
             if (bar) bar.style.transform = "scaleX(1)";
             setTimeout(() => {
                 document.getElementById('brand-preloader').classList.add('hidden-loader');
                 document.body.classList.remove('overflow-hidden');
             }, 2500);
+
+            // Prevent system context menu on the main navigation specifically
+            const nav = document.getElementById('main-nav');
+            if (nav) {
+                nav.addEventListener('contextmenu', (e) => e.preventDefault());
+            }
         };
 
         window.onload = initApp;
@@ -1598,6 +1648,145 @@
                 }
             }, 150);
         });
+    </script>
+
+    <!-- BACK GESTURE HANDLING SCRIPT -->
+    <script>
+        /**
+         * Enhanced Back Gesture / Hardware Back Button Management
+         */
+        (function () {
+            let hasOverlayState = false;
+
+            // Handle "View Catalog" link separately to prevent history issues
+            const catalogLink = document.getElementById('view-catalog-link');
+            if (catalogLink) {
+                catalogLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
+            window.stayOnPage = function () {
+                document.getElementById('exit-modal').classList.add('hidden');
+                // Re-trap the history
+                history.pushState('home', null, null);
+            };
+
+            window.exitApp = function () {
+                window.location.href = "about:blank";
+            };
+
+            function isAnyOverlayOpen() {
+                const modal = document.getElementById('product-modal');
+                const sizing = document.getElementById('sizing-modal');
+                const viewer = document.getElementById('image-viewer');
+                const cart = document.getElementById('cart-sidebar');
+                const wishlist = document.getElementById('wishlist-sidebar');
+                const exitModal = document.getElementById('exit-modal');
+                const filter = document.getElementById('filter-dropdown');
+
+                return (modal && !modal.classList.contains('hidden')) ||
+                    (sizing && !sizing.classList.contains('hidden')) ||
+                    (viewer && !viewer.classList.contains('hidden')) ||
+                    (cart && cart.classList.contains('open')) ||
+                    (wishlist && wishlist.classList.contains('open')) ||
+                    (exitModal && !exitModal.classList.contains('hidden')) ||
+                    (filter && filter.classList.contains('show'));
+            }
+
+            function pushHistoryState() {
+                if (!hasOverlayState) {
+                    hasOverlayState = true;
+                    // Push a specific state for the overlay
+                    history.pushState({ page: 'overlay' }, "");
+                }
+            }
+
+            function closeAllOverlays() {
+                if (typeof window.closeModal === 'function') window.closeModal();
+                if (typeof window.closeSidebars === 'function') window.closeSidebars();
+                if (typeof window.closeSizingModal === 'function') window.closeSizingModal();
+                if (typeof window.closeFullImage === 'function') window.closeFullImage();
+                document.getElementById('exit-modal').classList.add('hidden');
+
+                const filter = document.getElementById('filter-dropdown');
+                if (filter) filter.classList.remove('show');
+
+                hasOverlayState = false;
+            }
+
+            window.addEventListener('popstate', function (event) {
+                if (isAnyOverlayOpen()) {
+                    closeAllOverlays();
+                    // We stayed on the page, so ensure we are back in "home" trap
+                    history.pushState('home', null, null);
+                } else {
+                    // Show Exit Modal
+                    document.getElementById('exit-modal').classList.remove('hidden');
+                }
+            });
+
+            // Intercept Openers
+            const originalOpenModal = window.openModal;
+            window.openModal = function () {
+                pushHistoryState();
+                originalOpenModal.apply(this, arguments);
+            };
+
+            const originalOpenSizing = window.openSizingModal;
+            window.openSizingModal = function () {
+                pushHistoryState();
+                originalOpenSizing.apply(this, arguments);
+            };
+
+            const originalOpenFullImage = window.openFullImage;
+            window.openFullImage = function () {
+                pushHistoryState();
+                originalOpenFullImage.apply(this, arguments);
+            };
+
+            const originalToggleCart = window.toggleCart;
+            window.toggleCart = function () {
+                const sidebar = document.getElementById('cart-sidebar');
+                if (sidebar && !sidebar.classList.contains('open')) pushHistoryState();
+                originalToggleCart.apply(this, arguments);
+            };
+
+            const originalToggleWishlist = window.toggleWishlistSidebar;
+            window.toggleWishlistSidebar = function () {
+                const sidebar = document.getElementById('wishlist-sidebar');
+                if (sidebar && !sidebar.classList.contains('open')) pushHistoryState();
+                originalToggleWishlist.apply(this, arguments);
+            };
+
+            const originalToggleFilter = window.toggleFilterDropdown;
+            window.toggleFilterDropdown = function () {
+                const dropdown = document.getElementById('filter-dropdown');
+                if (dropdown && !dropdown.classList.contains('show')) pushHistoryState();
+                originalToggleFilter.apply(this, arguments);
+            };
+
+            // Manual close cleanup to keep history synced
+            function cleanupHistoryOnManualClose() {
+                if (hasOverlayState) {
+                    hasOverlayState = false;
+                    history.back();
+                }
+            }
+
+            const originalCloseModal = window.closeModal;
+            window.closeModal = function () {
+                if (isAnyOverlayOpen()) cleanupHistoryOnManualClose();
+                originalCloseModal.apply(this, arguments);
+            };
+
+            const originalCloseSidebars = window.closeSidebars;
+            window.closeSidebars = function () {
+                if (isAnyOverlayOpen()) cleanupHistoryOnManualClose();
+                originalCloseSidebars.apply(this, arguments);
+            };
+        })();
     </script>
 </body>
 
