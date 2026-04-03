@@ -55,6 +55,15 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        nav {
+            -webkit-user-select: none !important;
+            -webkit-touch-callout: none !important;
+            -khtml-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+
         #brand-preloader {
             position: fixed;
             inset: 0;
@@ -306,13 +315,11 @@
             position: absolute;
             right: 0;
             top: calc(100% + 0.75rem);
-            margin-top: 0;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateY(10px);
             opacity: 0;
             pointer-events: none;
             z-index: 60;
-            will-change: transform, opacity;
         }
 
         #accent-picker.visible {
@@ -323,13 +330,15 @@
 
         #product-modal.hidden,
         #sizing-modal.hidden,
-        #image-viewer.hidden {
+        #image-viewer.hidden,
+        #exit-modal.hidden {
             display: none;
         }
 
         #product-modal:not(.hidden),
         #sizing-modal:not(.hidden),
-        #image-viewer:not(.hidden) {
+        #image-viewer:not(.hidden),
+        #exit-modal:not(.hidden) {
             display: flex;
             animation: fadeIn 0.3s ease-out;
         }
@@ -396,7 +405,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav
+    <nav id="main-nav"
         class="fixed w-full z-50 top-0 left-0 bg-white/20 dark:bg-black/20 backdrop-blur-2xl border-b border-white/30 dark:border-white/10 transition-colors duration-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -473,17 +482,15 @@
 
             <div class="animate-fade-in text-center lg:text-left">
                 <span
-                    class="inline-block bg-accent text-white px-4 py-1 text-xs font-black tracking-[0.2em] uppercase mb-6 transition-colors duration-500 rounded-sm shadow-sm">The
+                    class="inline-block bg-accent text-white px-4 py-1 text-xs font-black tracking-[0.2em] uppercase mb-6 rounded-sm shadow-sm">The
                     Fan's Choice</span>
                 <h1
-                    class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 uppercase dark:text-white transition-colors duration-500">
-                    Elite Gear. <br><span class="text-accent transition-colors duration-500 font-black">Fan
-                        Prices.</span></h1>
-                <p
-                    class="text-lg text-gray-600 dark:text-gray-400 max-w-lg mb-10 font-medium italic mx-auto lg:mx-0 transition-colors duration-500">
+                    class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8 uppercase dark:text-white">
+                    Elite Gear. <br><span class="text-accent font-black">Fan Prices.</span></h1>
+                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-lg mb-10 font-medium italic mx-auto lg:mx-0">
                     "Why pay for the brand name when you can play for the crest?"</p>
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-                    <a href="#collection"
+                    <a href="#collection" id="view-catalog-link"
                         class="bg-white text-black px-12 py-4 rounded-full font-black text-sm uppercase transition-all duration-500 shadow-catalog-glow inline-flex items-center gap-3">View
                         Catalog <i class="fas fa-arrow-down text-xs"></i></a>
                 </div>
@@ -510,8 +517,7 @@
             <h2
                 class="text-4xl sm:text-6xl font-[900] uppercase tracking-tighter leading-none text-accent transition-colors duration-500">
                 The Locker Room</h2>
-            <p class="text-xl text-gray-500 dark:text-gray-400 italic font-medium transition-colors duration-500">
-                High-grade replicas, unmatched value.
+            <p class="text-xl text-gray-500 dark:text-gray-400 italic font-medium">High-grade replicas, unmatched value.
             </p>
         </div>
 
@@ -543,7 +549,7 @@
                 <div
                     class="flex bg-gray-50 dark:bg-white/5 p-1.5 rounded-full border border-gray-100 dark:border-white/5 shadow-sm overflow-x-auto no-scrollbar w-max max-w-full">
                     <button id="filter-all" onclick="filterProducts('all', this)"
-                        class="category-btn active text-white px-8 sm:px-12 py-3 rounded-full text-xs font-black uppercase transition-colors duration-300 shrink-0">All</button>
+                        class="category-btn active text-white px-8 sm:px-12 py-3 rounded-full text-xs font-black uppercase shrink-0">All</button>
                     <button onclick="filterProducts('jersey', this)"
                         class="category-btn px-8 sm:px-12 py-3 rounded-full text-xs font-bold text-gray-400 dark:text-gray-500 uppercase transition-all duration-300 hover:text-black dark:hover:text-white shrink-0">Jerseys</button>
                     <button onclick="filterProducts('clothing', this)"
@@ -584,7 +590,6 @@
                     class="w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full hover:scale-110 transition-transform border border-white/10 text-white shadow-xl"><i
                         class="fas fa-times text-base sm:text-lg"></i></button>
             </div>
-
             <div id="modal-carousel-parent"
                 class="w-full lg:w-1/2 min-h-[300px] h-[300px] sm:h-[400px] lg:min-h-0 lg:h-auto relative bg-gray-50 dark:bg-white/5 group flex-shrink-0 touch-pan-y">
                 <div id="modal-carousel-container" class="w-full h-full overflow-hidden relative"></div>
@@ -603,26 +608,23 @@
                 <div class="flex items-start mb-3 lg:pr-24">
                     <div class="flex items-center gap-2 mt-1.5">
                         <span id="modal-tag"
-                            class="bg-accent text-white text-[9px] font-black uppercase px-2.5 py-1 rounded-full transition-colors duration-500">Top
+                            class="bg-accent text-white text-[9px] font-black uppercase px-2.5 py-1 rounded-full">Top
                             Seller</span>
                         <span class="text-green-500 text-[10px] font-bold flex items-center gap-1"><i
                                 class="fas fa-check-circle text-[9px]"></i> In Stock</span>
                     </div>
                 </div>
                 <h2 id="modal-title"
-                    class="text-xl sm:text-3xl font-black uppercase leading-tight mb-1 dark:text-white lg:pr-20 transition-colors duration-500">
-                </h2>
+                    class="text-xl sm:text-3xl font-black uppercase leading-tight mb-1 dark:text-white lg:pr-20"></h2>
                 <div class="flex items-baseline gap-3 mb-5">
-                    <span id="modal-price"
-                        class="text-xl sm:text-2xl font-black text-accent transition-colors duration-500"></span>
+                    <span id="modal-price" class="text-xl sm:text-2xl font-black text-accent"></span>
                     <span class="text-gray-400 line-through text-xs font-bold italic tracking-tighter">₹12000.00
                         (Retail)</span>
                 </div>
                 <div class="mb-5">
                     <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Description</h4>
                     <p id="modal-description"
-                        class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed transition-colors duration-500">
-                    </p>
+                        class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed"></p>
                 </div>
                 <div class="mb-5">
                     <div class="flex justify-between items-center mb-3">
@@ -639,97 +641,97 @@
                         Select Variant</h4>
                     <div id="modal-players" class="flex flex-wrap gap-2"></div>
                 </div>
-                <div
-                    class="mt-auto flex flex-col sm:flex-row gap-3 pt-6 border-t dark:border-white/10 transition-colors duration-500">
+                <div class="mt-auto flex flex-col sm:flex-row gap-3 pt-6 border-t dark:border-white/10">
                     <button id="modal-add-btn"
                         class="flex-grow bg-accent text-white py-3.5 rounded-2xl text-sm font-black uppercase transition-all duration-500 active:scale-95">Add
                         to Bag</button>
                     <button onclick="shareProduct()"
                         class="w-full sm:w-14 h-12 sm:h-auto border dark:border-white/20 rounded-2xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300"><i
-                            class="fas fa-share-alt dark:text-white transition-colors duration-500"></i></button>
+                            class="fas fa-share-alt dark:text-white"></i></button>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Image Fullscreen Viewer -->
     <div id="image-viewer"
         class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/95 backdrop-blur-2xl transition-all duration-500 touch-none">
-        <div class="absolute inset-0 cursor-zoom-out" onclick="closeFullImage()"></div>
-
+        <div id="viewer-backdrop" class="absolute inset-0 cursor-zoom-out" onclick="closeFullImage()"></div>
         <button onclick="closeFullImage()"
             class="absolute top-8 right-8 w-12 h-12 sm:w-14 sm:h-14 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl sm:text-2xl transition-all z-[210]">
             <i class="fas fa-times"></i>
         </button>
-
         <div id="zoom-nav-controls"
-            class="absolute inset-x-0 top-1/2 -translate-y-1/2 hidden lg:flex justify-between px-8 pointer-events-none">
-            <button onclick="prevFullImage()" id="zoom-prev-btn"
+            class="absolute inset-x-0 top-1/2 -translate-y-1/2 hidden lg:flex justify-between px-8 pointer-events-none z-[210]">
+            <button onclick="prevFullImage()"
                 class="w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl transition-all pointer-events-auto">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button onclick="nextFullImage()" id="zoom-next-btn"
+            <button onclick="nextFullImage()"
                 class="w-16 h-16 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl transition-all pointer-events-auto">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
-
-        <img id="viewer-img" src=""
-            class="relative max-w-[95%] max-h-[90vh] object-contain shadow-2xl rounded-2xl animate-fade-in transition-all duration-300"
-            onclick="event.stopPropagation()" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
+        <!-- Zoomable container -->
+        <div id="viewer-container"
+            style="position:relative; width:100%; height:100%; overflow:hidden; display:flex; align-items:center; justify-content:center; cursor:grab;">
+            <img id="viewer-img" src=""
+                style="max-width:100%; max-height:100vh; object-fit:contain; transform-origin:0 0; transform:translate(0px,0px) scale(1); transition:none; user-select:none; -webkit-user-drag:none;">
+        </div>
+        <!-- Zoom hint -->
+        <div id="zoom-hint"
+            style="position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); font-size:10px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; padding:8px 20px; border-radius:100px; pointer-events:none; transition:opacity 0.5s ease;">
+            Pinch or scroll to zoom
+        </div>
     </div>
-
     <!-- Sizing Guide Modal -->
     <div id="sizing-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="closeSizingModal()"></div>
         <div
-            class="relative bg-white dark:bg-[#111] w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-[40px] shadow-2xl p-6 sm:p-12 border dark:border-white/10 transition-colors duration-500">
+            class="relative bg-white dark:bg-[#111] w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-[40px] shadow-2xl p-6 sm:p-12 border dark:border-white/10">
             <button onclick="closeSizingModal()"
                 class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-white/5 rounded-full hover:scale-110 transition-transform dark:text-white"><i
                     class="fas fa-times"></i></button>
             <div class="text-center mb-10">
                 <span class="text-accent font-black text-[10px] uppercase tracking-widest mb-2 block">Measurement
                     Guide</span>
-                <h2 class="text-3xl sm:text-4xl font-black uppercase dark:text-white transition-colors duration-500">
-                    Find Your Fit</h2>
+                <h2 class="text-3xl sm:text-4xl font-black uppercase dark:text-white">Find Your Fit</h2>
             </div>
             <div class="space-y-12">
                 <div class="animate-fade-in">
                     <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-3">
                         <i class="fas fa-tshirt text-accent"></i> Football Jerseys (Inches)
                     </h3>
-                    <div class="overflow-x-auto rounded-3xl border dark:border-white/10 transition-colors duration-500">
+                    <div class="overflow-x-auto rounded-3xl border dark:border-white/10">
                         <table class="w-full text-left text-sm">
                             <thead>
                                 <tr class="bg-gray-50 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest">
-                                    <th class="px-6 py-4 dark:text-white transition-colors duration-500">Size</th>
-                                    <th class="px-6 py-4 dark:text-white transition-colors duration-500">Chest
-                                        (Pit-to-Pit)</th>
-                                    <th class="px-6 py-4 dark:text-white transition-colors duration-500">Length</th>
+                                    <th class="px-6 py-4 dark:text-white">Size</th>
+                                    <th class="px-6 py-4 dark:text-white">Chest (Pit-to-Pit)</th>
+                                    <th class="px-6 py-4 dark:text-white">Length</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y dark:divide-white/5">
-                                <tr class="dark:text-gray-300 transition-colors duration-500">
+                                <tr class="dark:text-gray-300">
                                     <td class="px-6 py-4 font-black">S</td>
                                     <td class="px-6 py-4">19"</td>
                                     <td class="px-6 py-4">27"</td>
                                 </tr>
-                                <tr class="dark:text-gray-300 transition-colors duration-500">
+                                <tr class="dark:text-gray-300">
                                     <td class="px-6 py-4 font-black">M</td>
                                     <td class="px-6 py-4">20"</td>
                                     <td class="px-6 py-4">28"</td>
                                 </tr>
-                                <tr class="dark:text-gray-300 transition-colors duration-500">
+                                <tr class="dark:text-gray-300">
                                     <td class="px-6 py-4 font-black">L</td>
                                     <td class="px-6 py-4">21.5"</td>
                                     <td class="px-6 py-4">29"</td>
                                 </tr>
-                                <tr class="dark:text-gray-300 transition-colors duration-500">
+                                <tr class="dark:text-gray-300">
                                     <td class="px-6 py-4 font-black">XL</td>
                                     <td class="px-6 py-4">23"</td>
                                     <td class="px-6 py-4">30"</td>
                                 </tr>
-                                <tr class="dark:text-gray-300 transition-colors duration-500">
+                                <tr class="dark:text-gray-300">
                                     <td class="px-6 py-4 font-black">XXL</td>
                                     <td class="px-6 py-4">24.5"</td>
                                     <td class="px-6 py-4">31"</td>
@@ -738,6 +740,26 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit Confirmation Modal -->
+    <div id="exit-modal" class="fixed inset-0 z-[300] hidden items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-xl"></div>
+        <div
+            class="relative bg-white dark:bg-[#111] w-full max-w-sm rounded-[32px] p-8 text-center shadow-2xl border dark:border-white/10">
+            <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6"><i
+                    class="fas fa-sign-out-alt text-2xl text-accent"></i></div>
+            <h3 class="text-xl font-black uppercase mb-2 dark:text-white">Ready to Leave?</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-8">Do you really want to exit OPEMA Clothing?</p>
+            <div class="flex gap-3">
+                <button onclick="stayOnPage()"
+                    class="flex-1 bg-gray-100 dark:bg-white/5 py-4 rounded-2xl font-black uppercase text-xs dark:text-white hover:bg-gray-200 transition-all">No,
+                    Stay</button>
+                <button onclick="exitApp()"
+                    class="flex-1 bg-accent text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg shadow-accent/20 active:scale-95 transition-all">Yes,
+                    Exit</button>
             </div>
         </div>
     </div>
@@ -751,17 +773,13 @@
                     <img src="https://lh3.googleusercontent.com/u/0/d/1Bm3qJkYn5wZj29594YpRCxtaBmh_tuFI"
                         alt="OPEMA Logo"
                         class="w-full max-w-sm h-auto mb-6 block brightness-0 dark:brightness-100 transition-all duration-500">
-                    <p
-                        class="text-gray-400 dark:text-gray-500 max-w-sm font-medium italic text-center transition-colors duration-500">
-                        High-grade
+                    <p class="text-gray-400 dark:text-gray-500 max-w-sm font-medium italic text-center">High-grade
                         replicas for the high-energy fan. Affordability meets match-day quality.</p>
                 </div>
                 <div class="flex flex-col items-center gap-10">
                     <div class="flex flex-row justify-center gap-12 sm:gap-24 w-full text-center">
                         <div class="flex flex-col items-center">
-                            <h4
-                                class="font-black uppercase text-xs tracking-widest mb-6 text-accent transition-colors duration-500">
-                                Support</h4>
+                            <h4 class="font-black uppercase text-xs tracking-widest mb-6 text-accent">Support</h4>
                             <ul class="space-y-4 text-gray-500 text-sm font-medium">
                                 <li><button onclick="openSizingModal()"
                                         class="hover:text-accent transition-colors duration-300">Sizing Guide</button>
@@ -771,9 +789,7 @@
                             </ul>
                         </div>
                         <div class="flex flex-col items-center">
-                            <h4
-                                class="font-black uppercase text-xs tracking-widest mb-6 text-accent transition-colors duration-500">
-                                OPEMA Desk</h4>
+                            <h4 class="font-black uppercase text-xs tracking-widest mb-6 text-accent">OPEMA Desk</h4>
                             <a href="https://wa.me/8089408747"
                                 class="flex items-center gap-2 bg-accent text-white px-6 py-3 rounded-full font-bold text-sm shadow-sm active:scale-95 transition-transform duration-300">
                                 <i class="fab fa-whatsapp"></i> Chat Support
@@ -798,9 +814,7 @@
                 </div>
             </div>
             <div class="border-t dark:border-white/5 pt-8 text-center transition-colors duration-500">
-                <p
-                    class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-[0.2em] transition-colors duration-500">
-                    &copy; 2026 OPEMA
+                <p class="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-[0.2em]">&copy; 2026 OPEMA
                     Clothing. Custom coded for high-grade performance.</p>
             </div>
         </div>
@@ -812,8 +826,7 @@
     <div id="cart-sidebar"
         class="sidebar fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-black z-[70] shadow-2xl flex flex-col transition-transform duration-400">
         <div class="p-8 border-b dark:border-white/10 flex justify-between items-center transition-colors duration-500">
-            <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white transition-colors duration-500">
-                Your Bag</h2>
+            <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Your Bag</h2>
             <button onclick="toggleCart()"
                 class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-colors duration-300"><i
                     class="fas fa-times"></i></button>
@@ -823,10 +836,8 @@
             <p class="text-xs font-black uppercase tracking-widest">Bag is empty</p>
         </div>
         <div class="p-8 border-t dark:border-white/10 bg-gray-50 dark:bg-white/5 transition-colors duration-500">
-            <div
-                class="flex justify-between text-xl font-black mb-6 uppercase dark:text-white transition-colors duration-500">
-                <span>Total:</span><span id="cart-total" class="text-accent transition-colors duration-500">₹0.00</span>
-            </div>
+            <div class="flex justify-between text-xl font-black mb-6 uppercase dark:text-white"><span>Total:</span><span
+                    id="cart-total" class="text-accent">₹0.00</span></div>
             <button onclick="checkoutToWhatsApp()"
                 class="w-full bg-accent text-white py-5 rounded-2xl font-black uppercase flex items-center justify-center gap-3 active:scale-95 transition-transform duration-300"><i
                     class="fab fa-whatsapp text-2xl"></i> Checkout via WhatsApp</button>
@@ -834,12 +845,10 @@
     </div>
 
     <div id="wishlist-sidebar"
-        class="sidebar fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-black z-[70] shadow-2xl flex flex-col transition-transform duration-400 border-l dark:border-white/5 transition-colors duration-500">
+        class="sidebar fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-black z-[70] shadow-2xl flex flex-col transition-transform duration-400 border-l dark:border-white/5">
         <div class="p-8 border-b dark:border-white/10 flex justify-between items-center transition-colors duration-500">
-            <div class="flex items-center gap-3"><i class="fas fa-heart text-accent transition-colors duration-500"></i>
-                <h2
-                    class="text-2xl font-black uppercase tracking-tighter dark:text-white transition-colors duration-500">
-                    Wishlist</h2>
+            <div class="flex items-center gap-3"><i class="fas fa-heart text-accent"></i>
+                <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Wishlist</h2>
             </div>
             <button onclick="toggleWishlistSidebar()"
                 class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-colors duration-300"><i
@@ -853,7 +862,66 @@
 
     <div id="toast"
         class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-brand-black dark:bg-white text-white dark:text-brand-black px-8 py-4 rounded-full shadow-2xl z-[200] transform translate-y-32 opacity-0 transition-all duration-500 font-black text-xs uppercase tracking-widest">
-        Added to bag</div>
+        Added to bag</div><!-- Scroll to Top Button -->
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        class="fixed bottom-8 right-6 z-[150] w-16 h-16 flex items-center justify-center rounded-full bg-accent text-white shadow-xl"
+        style="opacity:0; pointer-events:none; transform:translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease;"
+        aria-label="Scroll to top">
+        <i class="fas fa-chevron-up font-size: 18px"></i>
+    </button>
+    <script>
+            (function () {
+                const btn = document.getElementById('scroll-top-btn');
+                let lastScrollY = window.scrollY;
+                let hideTimer = null;
+
+                function showBtn() {
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.transform = 'translateY(0) scale(1)';
+                }
+
+                function hideBtn() {
+                    btn.style.opacity = '0';
+                    btn.style.pointerEvents = 'none';
+                    btn.style.transform = 'translateY(16px) scale(0.9)';
+                }
+
+                // Subtle hover shimmer via JS (can't use :hover in inline styles)
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.background = 'rgba(255,255,255,0.22)';
+                    btn.style.boxShadow = '0 6px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.4)';
+                    btn.style.transform = 'translateY(-2px) scale(1.08)';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.background = 'rgba(255,255,255,0.12)';
+                    btn.style.boxShadow = '0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.3)';
+                    btn.style.transform = 'translateY(0) scale(1)';
+                });
+                btn.addEventListener('mousedown', () => {
+                    btn.style.transform = 'translateY(0) scale(0.95)';
+                });
+                btn.addEventListener('mouseup', () => {
+                    btn.style.transform = 'translateY(0) scale(1)';
+                });
+
+                window.addEventListener('scroll', () => {
+                    const currentScrollY = window.scrollY;
+                    const scrollingUp = currentScrollY < lastScrollY;
+                    lastScrollY = currentScrollY;
+
+                    clearTimeout(hideTimer);
+
+                    if (scrollingUp && currentScrollY > 200) {
+                        showBtn();
+                        hideTimer = setTimeout(hideBtn, 1500);
+                    } else {
+                        hideBtn();
+                    }
+                }, { passive: true });
+            })();
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -896,10 +964,7 @@
         let currentModalProduct = null;
         let selectedSize = "";
         let selectedPlayer = "";
-
         let activeZoomSlide = 0;
-        let touchStartX = 0;
-        let touchEndX = 0;
 
         const WHATSAPP_NUMBER = "8089408747";
         const CURRENCY = "₹";
@@ -919,9 +984,7 @@
             });
         }, { threshold: 0.1 });
 
-        function observeNewProducts() {
-            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-        }
+        function observeNewProducts() { document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el)); }
 
         window.setAccent = setAccent;
         window.toggleFilterDropdown = toggleFilterDropdown;
@@ -961,11 +1024,8 @@
 
         if (isFirebaseActive) {
             onAuthStateChanged(auth, (user) => {
-                if (!isFirebaseActive) return;
                 if (user) { userId = user.uid; setupRealtimeListeners(); }
-                else { userId = null; }
             });
-
             (async () => {
                 try {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
@@ -980,17 +1040,12 @@
                 products = [];
                 snapshot.forEach(doc => products.push({ ...doc.data(), id: doc.id }));
                 renderProducts();
-                // Ensure wishlist UI refreshes once products are loaded from database
                 updateWishlistUI();
             });
         }
 
-        function saveCartItem() {
-            localStorage.setItem('opema_cart', JSON.stringify(cart));
-        }
-        function saveWishlistItem() {
-            localStorage.setItem('opema_wishlist', JSON.stringify(wishlist));
-        }
+        function saveCartItem() { localStorage.setItem('opema_cart', JSON.stringify(cart)); }
+        function saveWishlistItem() { localStorage.setItem('opema_wishlist', JSON.stringify(wishlist)); }
 
         let pressTimer;
         const themeBtn = document.getElementById('theme-btn');
@@ -1003,28 +1058,17 @@
         }
 
         document.addEventListener('pointerdown', (e) => {
-            if (picker && picker.classList.contains('visible')) {
-                if (!picker.contains(e.target) && !themeBtn.contains(e.target)) {
-                    picker.classList.remove('visible');
-                }
+            if (picker && picker.classList.contains('visible') && !picker.contains(e.target) && !themeBtn.contains(e.target)) {
+                picker.classList.remove('visible');
             }
         });
 
         function startPress(e) {
             if (e.pointerType === 'touch') e.target.releasePointerCapture(e.pointerId);
-            pressTimer = setTimeout(() => {
-                if (picker) picker.classList.toggle('visible');
-                pressTimer = null;
-            }, 600);
+            pressTimer = setTimeout(() => { if (picker) picker.classList.toggle('visible'); pressTimer = null; }, 600);
         }
 
-        function endPress(e) {
-            if (pressTimer) {
-                clearTimeout(pressTimer);
-                pressTimer = null;
-                toggleTheme();
-            }
-        }
+        function endPress() { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; toggleTheme(); } }
 
         function setAccent(color) {
             document.documentElement.style.setProperty('--accent-color', color);
@@ -1080,24 +1124,16 @@
         function handleSearch(val) { searchQuery = val.toLowerCase(); currentPage = 1; renderProducts(); }
 
         function filterProducts(cat, btn) {
-            currentCategory = cat;
-            activePrecision = [];
-            currentPage = 1;
-
+            currentCategory = cat; activePrecision = []; currentPage = 1;
             document.querySelectorAll('.category-btn').forEach(b => {
                 b.className = "category-btn px-8 sm:px-12 py-3 rounded-full text-xs font-bold text-gray-400 dark:text-gray-500 uppercase transition-all duration-300 hover:text-black dark:hover:text-white shrink-0";
-                b.style.backgroundColor = "";
-                b.classList.remove('active', 'text-white');
+                b.style.backgroundColor = ""; b.classList.remove('active', 'text-white');
             });
             btn.className = "category-btn active text-white px-8 sm:px-12 py-3 rounded-full text-xs font-black uppercase transition-all duration-300 shrink-0";
-
-            renderPrecisionOptions();
-            renderProducts();
+            renderPrecisionOptions(); renderProducts();
         }
 
-        window.removePlaceholder = function (img) {
-            img.parentElement.classList.remove('image-placeholder');
-        };
+        window.removePlaceholder = function (img) { img.parentElement.classList.remove('image-placeholder'); };
 
         let currentPage = 1;
         const getItemsPerPage = () => window.innerWidth < 768 ? 20 : 40;
@@ -1107,54 +1143,29 @@
             const empty = document.getElementById('no-results');
             const pagination = document.getElementById('pagination-container');
             const nextBtn = document.getElementById('next-page-btn');
-
             if (!grid) return;
 
             const filtered = products.filter(p => {
                 const pCat = p.category ? p.category.toLowerCase() : '';
                 const pSubCat = p.sub_category ? p.sub_category.toLowerCase() : '';
-
-                const matchCat = currentCategory === 'all' ||
-                    pCat === currentCategory.toLowerCase() ||
-                    pSubCat === currentCategory.toLowerCase();
-
+                const matchCat = currentCategory === 'all' || pCat === currentCategory.toLowerCase() || pSubCat === currentCategory.toLowerCase();
                 const pName = p.name ? p.name.toLowerCase() : '';
                 const pKeywords = Array.isArray(p.keywords) ? p.keywords.join(' ').toLowerCase() : '';
-                const matchSearch = searchQuery === '' ||
-                    pName.includes(searchQuery) ||
-                    pKeywords.includes(searchQuery);
-
-                const matchPrecision = activePrecision.length === 0 ||
-                    (p.specs && activePrecision.every(opt => p.specs.includes(opt)));
-
+                const matchSearch = searchQuery === '' || pName.includes(searchQuery) || pKeywords.includes(searchQuery);
+                const matchPrecision = activePrecision.length === 0 || (p.specs && activePrecision.every(opt => p.specs.includes(opt)));
                 return matchCat && matchSearch && matchPrecision;
             });
 
-            if (pagination) {
-                pagination.classList.add('hidden');
-                pagination.classList.remove('flex');
-            }
-            if (nextBtn) {
-                nextBtn.classList.add('hidden');
-            }
+            if (pagination) pagination.classList.add('hidden');
+            if (nextBtn) nextBtn.classList.add('hidden');
 
             if (filtered.length === 0) {
-                grid.classList.add('hidden');
-                grid.classList.remove('grid');
-                grid.innerHTML = '';
-                empty.classList.remove('hidden');
-                empty.classList.add('flex');
-
+                grid.classList.add('hidden'); grid.innerHTML = ''; empty.classList.remove('hidden'); empty.classList.add('flex');
                 const numCont = document.getElementById('page-numbers');
-                if (numCont) numCont.innerHTML = '';
-                return;
+                if (numCont) numCont.innerHTML = ''; return;
             }
 
-            grid.classList.remove('hidden');
-            grid.classList.add('grid');
-            empty.classList.add('hidden');
-            empty.classList.remove('flex');
-
+            grid.classList.remove('hidden'); grid.classList.add('grid'); empty.classList.add('hidden'); empty.classList.remove('flex');
             const limit = getItemsPerPage();
             const totalPages = Math.ceil(filtered.length / limit);
             const start = (currentPage - 1) * limit;
@@ -1164,24 +1175,19 @@
             grid.innerHTML = paginatedItems.map(p => {
                 const isWished = wishlist.includes(p.id);
                 const displayImg = (p.images && p.images.length > 0) ? p.images[0] : '';
-
                 return `
                     <div class="product-card-hover reveal group bg-white dark:bg-brand-gray/30 border border-gray-100 dark:border-white/5 rounded-[32px] overflow-hidden transition-all duration-500 cursor-pointer" onclick="openModal('${p.id}')">
                         <div class="relative h-80 overflow-hidden image-placeholder">
-                            <img src="${displayImg}" 
-                                 loading="lazy" 
-                                 onload="removePlaceholder(this)"
-                                 class="w-full h-full object-contain transition-all duration-700 group-hover:scale-110" 
-                                 onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'; removePlaceholder(this)">
+                            <img src="${displayImg}" loading="lazy" onload="removePlaceholder(this)" class="w-full h-full object-contain transition-all duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'; removePlaceholder(this)">
                             <button onclick="toggleWishlist('${p.id}', event)" class="absolute top-4 right-4 w-12 h-12 bg-white/40 dark:bg-black/40 backdrop-blur-md border border-white/60 dark:border-white/10 rounded-full flex items-center justify-center transition-all hover:scale-110 z-20 shadow-lg">
                                 <i data-wish-icon="${p.id}" class="${isWished ? 'fas fa-heart text-red-500' : 'far fa-heart text-gray-400'} text-base transition-colors"></i>
                             </button>
                         </div>
                         <div class="p-8 text-center sm:text-left">
-                            <h3 class="font-black text-sm uppercase tracking-tight truncate dark:text-white transition-colors duration-500">${p.name}</h3>
+                            <h3 class="font-black text-sm uppercase tracking-tight truncate dark:text-white">${p.name}</h3>
                             <div class="flex justify-between items-center mt-2">
                                 <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">${p.category}</span>
-                                <span class="font-black text-lg text-accent transition-colors duration-500">${CURRENCY}${p.price}</span>
+                                <span class="font-black text-lg text-accent">${CURRENCY}${p.price}</span>
                             </div>
                         </div>
                     </div>`;
@@ -1195,33 +1201,18 @@
             const container = document.getElementById('page-numbers');
             const nextBtn = document.getElementById('next-page-btn');
             const pagination = document.getElementById('pagination-container');
-
             if (totalPages <= 1) {
-                if (container) container.innerHTML = '';
-                if (nextBtn) nextBtn.classList.add('hidden');
-                if (pagination) {
-                    pagination.classList.add('hidden');
-                    pagination.classList.remove('flex');
-                }
-                return;
+                if (container) container.innerHTML = ''; if (nextBtn) nextBtn.classList.add('hidden');
+                if (pagination) pagination.classList.add('hidden'); return;
             }
-
-            if (pagination) {
-                pagination.classList.remove('hidden');
-                pagination.classList.add('flex');
-            }
-
+            if (pagination) pagination.classList.remove('hidden');
             container.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1).map(num => `
                 <button onclick="goToPage(${num})" class="page-dot w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs transition-all border border-gray-100 dark:border-white/10 dark:text-white ${currentPage === num ? 'active' : 'hover:bg-gray-50 dark:hover:bg-white/5'}">
                     ${num}
                 </button>
             `).join('');
-
-            if (currentPage < totalPages) {
-                nextBtn.classList.remove('hidden');
-            } else {
-                nextBtn.classList.add('hidden');
-            }
+            if (currentPage < totalPages) nextBtn.classList.remove('hidden');
+            else nextBtn.classList.add('hidden');
         }
 
         function goToPage(num) { currentPage = num; renderProducts(); document.getElementById('collection').scrollIntoView({ behavior: 'smooth' }); }
@@ -1231,23 +1222,17 @@
         function openModal(pid) {
             const p = products.find(i => i.id === pid);
             if (!p) return;
-            currentModalProduct = p;
-            activeModalSlide = 0; selectedSize = ""; selectedPlayer = "";
+            currentModalProduct = p; activeModalSlide = 0; selectedSize = ""; selectedPlayer = "";
             document.getElementById('modal-title').textContent = p.name;
             document.getElementById('modal-price').textContent = `${CURRENCY}${p.price}`;
             document.getElementById('modal-description').textContent = p.description || "";
             document.getElementById('modal-tag').textContent = p.tag || "Available";
 
             const gallery = p.images || [];
-
             const carousel = document.getElementById('modal-carousel-container');
             carousel.innerHTML = gallery.map((img, i) => `
                 <div class="absolute inset-0 w-full h-full image-placeholder transition-opacity duration-500 ${i === 0 ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}">
-                    <img src="${img}" 
-                         onclick="openFullImage(${i})" 
-                         onload="removePlaceholder(this)" 
-                         class="w-full h-full object-contain cursor-zoom-in"
-                         onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
+                    <img src="${img}" onclick="openFullImage(${i})" onload="removePlaceholder(this)" class="w-full h-full object-contain cursor-zoom-in" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
                 </div>
             `).join('');
 
@@ -1260,10 +1245,7 @@
             const playerCont = document.getElementById('modal-players');
             if (p.players && p.players.length > 0) {
                 document.getElementById('modal-players-section').classList.remove('hidden');
-                playerCont.innerHTML = p.players.map((pl, idx) => `
-                    <button onclick="setPlayer('${pl}', ${idx}, this)" 
-                            class="px-4 py-2.5 rounded-xl border-2 border-gray-100 dark:border-white/10 text-[10px] font-black uppercase dark:text-white transition-all">${pl}</button>
-                `).join('');
+                playerCont.innerHTML = p.players.map((pl, idx) => `<button onclick="setPlayer('${pl}', ${idx}, this)" class="px-4 py-2.5 rounded-xl border-2 border-gray-100 dark:border-white/10 text-[10px] font-black uppercase dark:text-white transition-all">${pl}</button>`).join('');
             } else {
                 document.getElementById('modal-players-section').classList.add('hidden');
             }
@@ -1276,9 +1258,7 @@
             document.getElementById('modal-add-btn').onclick = () => {
                 if (!selectedSize) { showToast("Select Size"); return; }
                 let finalPrice = p.price;
-                if (p.extra_price && p.extra_price[selectedSize]) {
-                    finalPrice += p.extra_price[selectedSize];
-                }
+                if (p.extra_price && p.extra_price[selectedSize]) finalPrice += p.extra_price[selectedSize];
                 addToCart(p.id, selectedSize, selectedPlayer || "Standard", finalPrice);
                 closeModal();
             };
@@ -1293,21 +1273,8 @@
             activeZoomSlide = index;
             updateFullImageView();
             document.getElementById('image-viewer').classList.remove('hidden');
-            const viewer = document.getElementById('image-viewer');
-            viewer.addEventListener('touchstart', handleTouchStart, { passive: true });
-            viewer.addEventListener('touchend', handleTouchEnd, { passive: true });
-        }
-
-        function handleTouchStart(e) { touchStartX = e.changedTouches[0].screenX; }
-        function handleTouchEnd(e) {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }
-
-        function handleSwipe() {
-            const threshold = 50;
-            if (touchEndX < touchStartX - threshold) nextFullImage();
-            if (touchEndX > touchStartX + threshold) prevFullImage();
+            window._zoomInit();
+            // ← NO handleTouchStart / handleTouchEnd listeners here at all
         }
 
         function updateFullImageView() {
@@ -1315,16 +1282,8 @@
             const gallery = currentModalProduct.images || [];
             const imgElement = document.getElementById('viewer-img');
             const controls = document.getElementById('zoom-nav-controls');
-
             imgElement.style.opacity = "0";
-            imgElement.style.transform = "scale(0.95)";
-
-            setTimeout(() => {
-                imgElement.src = gallery[activeZoomSlide];
-                imgElement.style.opacity = "1";
-                imgElement.style.transform = "scale(1)";
-            }, 100);
-
+            setTimeout(() => { imgElement.src = gallery[activeZoomSlide]; imgElement.style.opacity = "1"; }, 100);
             if (gallery.length <= 1) controls.classList.add('lg:hidden');
             else controls.classList.remove('lg:hidden');
         }
@@ -1332,35 +1291,29 @@
         function prevFullImage() {
             const gallery = currentModalProduct.images || [];
             if (!currentModalProduct || gallery.length <= 1) return;
+            window._zoomReset(); // reset zoom before switching
             activeZoomSlide = (activeZoomSlide - 1 + gallery.length) % gallery.length;
             updateFullImageView();
         }
-
         function nextFullImage() {
             const gallery = currentModalProduct.images || [];
             if (!currentModalProduct || gallery.length <= 1) return;
+            window._zoomReset(); // reset zoom before switching
             activeZoomSlide = (activeZoomSlide + 1) % gallery.length;
             updateFullImageView();
         }
-
         function closeFullImage() {
+            window._zoomDestroy();
             document.getElementById('image-viewer').classList.add('hidden');
-            const viewer = document.getElementById('image-viewer');
-            viewer.removeEventListener('touchstart', handleTouchStart);
-            viewer.removeEventListener('touchend', handleTouchEnd);
         }
 
         function setSize(s, el) {
             selectedSize = s;
             el.parentElement.querySelectorAll('button').forEach(b => { b.style.backgroundColor = ""; b.classList.remove('text-white'); b.classList.add('dark:text-white'); });
             el.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
-            el.classList.add('text-white');
-            el.classList.remove('dark:text-white');
-
+            el.classList.add('text-white'); el.classList.remove('dark:text-white');
             let displayPrice = currentModalProduct.price;
-            if (currentModalProduct.extra_price && currentModalProduct.extra_price[s]) {
-                displayPrice += currentModalProduct.extra_price[s];
-            }
+            if (currentModalProduct.extra_price && currentModalProduct.extra_price[s]) displayPrice += currentModalProduct.extra_price[s];
             document.getElementById('modal-price').textContent = `${CURRENCY}${displayPrice}`;
         }
 
@@ -1368,27 +1321,17 @@
             selectedPlayer = pl;
             el.parentElement.querySelectorAll('button').forEach(b => { b.style.backgroundColor = ""; b.classList.remove('text-white'); b.classList.add('dark:text-white'); });
             el.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
-            el.classList.add('text-white');
-            el.classList.remove('dark:text-white');
-
-            if (currentModalProduct && imgIndex < currentModalProduct.images.length) {
-                activeModalSlide = imgIndex;
-                updateModalCarousel();
-            }
+            el.classList.add('text-white'); el.classList.remove('dark:text-white');
+            if (currentModalProduct && imgIndex < currentModalProduct.images.length) { activeModalSlide = imgIndex; updateModalCarousel(); }
         }
 
         function prevModalSlide() { if (activeModalSlide > 0) { activeModalSlide--; updateModalCarousel(); } }
-        function nextModalSlide() {
-            if (currentModalProduct && activeModalSlide < currentModalProduct.images.length - 1) { activeModalSlide++; updateModalCarousel(); }
-        }
+        function nextModalSlide() { if (currentModalProduct && activeModalSlide < currentModalProduct.images.length - 1) { activeModalSlide++; updateModalCarousel(); } }
 
         function updateModalCarousel() {
             const containers = document.querySelectorAll('#modal-carousel-container > div');
             const dots = document.querySelectorAll('#modal-dots div');
-            containers.forEach((div, i) => {
-                div.style.opacity = i === activeModalSlide ? '1' : '0';
-                div.style.pointerEvents = i === activeModalSlide ? 'auto' : 'none';
-            });
+            containers.forEach((div, i) => { div.style.opacity = i === activeModalSlide ? '1' : '0'; div.style.pointerEvents = i === activeModalSlide ? 'auto' : 'none'; });
             dots.forEach((dot, i) => dot.style.backgroundColor = i === activeModalSlide ? getComputedStyle(document.documentElement).getPropertyValue('--accent-color') : "");
         }
 
@@ -1399,25 +1342,16 @@
         window.toggleWishlist = function (pid, event) {
             if (event) event.stopPropagation();
             const idx = wishlist.indexOf(pid);
-            if (idx > -1) {
-                wishlist.splice(idx, 1);
-                saveWishlistItem();
-            } else {
-                wishlist.push(pid);
-                saveWishlistItem();
-            }
-            updateWishlistUI();
-            updateModalWishlistButton();
-            syncWishlistIconsOnPage();
+            if (idx > -1) wishlist.splice(idx, 1);
+            else wishlist.push(pid);
+            saveWishlistItem(); updateWishlistUI(); updateModalWishlistButton(); syncWishlistIconsOnPage();
         }
 
         function syncWishlistIconsOnPage() {
             document.querySelectorAll('[data-wish-icon]').forEach(icon => {
                 const pid = icon.getAttribute('data-wish-icon');
                 const isWished = wishlist.includes(pid);
-                icon.className = isWished
-                    ? 'fas fa-heart text-red-500 text-base transition-colors'
-                    : 'far fa-heart text-gray-400 text-base transition-colors';
+                icon.className = isWished ? 'fas fa-heart text-red-500 text-base transition-colors' : 'far fa-heart text-gray-400 text-base transition-colors';
             });
         }
 
@@ -1425,46 +1359,23 @@
             const cont = document.getElementById('wishlist-items');
             const count = document.getElementById('wishlist-count');
             if (!cont || !count) return;
-
-            // Only display and count items that actually exist in the current product catalog
             const validWishlistItems = wishlist.filter(id => products.some(p => p.id === id));
-
             count.textContent = validWishlistItems.length;
-
             const isEmpty = validWishlistItems.length === 0;
-            count.classList.toggle('opacity-0', isEmpty);
-            count.classList.toggle('scale-0', isEmpty);
             count.classList.toggle('hidden', isEmpty);
-
             document.getElementById('wishlist-empty-msg').classList.toggle('hidden', validWishlistItems.length > 0);
-
             cont.innerHTML = validWishlistItems.map(id => {
                 const p = products.find(i => i.id === id);
                 if (!p) return '';
-                const displayImg = (p.images && p.images.length > 0) ? p.images[0] : '';
                 return `
-                    <div class="flex gap-4 items-center bg-gray-50 dark:bg-[#0d0d0d] p-4 sm:p-5 rounded-[2rem] transition-all duration-500 shadow-lg border border-gray-100 dark:border-white/5 relative group">
-                        <img src="${displayImg}" 
-                             class="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl cursor-pointer hover:scale-105 transition-transform" 
-                             onclick="closeSidebars(); openModal('${p.id}')">
+                    <div class="flex gap-4 items-center bg-gray-50 dark:bg-[#0d0d0d] p-4 sm:p-5 rounded-[2rem] shadow-lg border border-gray-100 dark:border-white/5 relative">
+                        <img src="${p.images[0]}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl cursor-pointer hover:scale-105 transition-transform" onclick="closeSidebars(); openModal('${p.id}')">
                         <div class="flex-grow flex flex-col justify-center gap-1">
-                            <h4 class="font-black text-[11px] sm:text-xs uppercase tracking-tight text-brand-black dark:text-white cursor-pointer hover:text-accent transition-colors leading-tight" 
-                                onclick="closeSidebars(); openModal('${p.id}')">
-                                ${p.name}
-                            </h4>
-                            <p class="text-xs font-black text-accent mb-1">
-                                ${CURRENCY}${p.price}
-                            </p>
-                            <button onclick="closeSidebars(); openModal('${p.id}')" 
-                                    class="text-[10px] font-black uppercase text-accent hover:opacity-80 transition-opacity tracking-widest text-left">
-                                MOVE TO BAG
-                            </button>
+                            <h4 class="font-black text-[11px] sm:text-xs uppercase tracking-tight text-brand-black dark:text-white cursor-pointer hover:text-accent transition-colors leading-tight" onclick="closeSidebars(); openModal('${p.id}')">${p.name}</h4>
+                            <p class="text-xs font-black text-accent mb-1">${CURRENCY}${p.price}</p>
+                            <button onclick="closeSidebars(); openModal('${p.id}')" class="text-[10px] font-black uppercase text-accent hover:opacity-80 transition-opacity tracking-widest text-left">MOVE TO BAG</button>
                         </div>
-                        <button onclick="toggleWishlist('${p.id}')" 
-                                class="text-red-500 p-2 hover:scale-125 transition-all shrink-0 ml-auto" 
-                                title="Remove from Favorites">
-                            <i class="fas fa-heart text-xl"></i>
-                        </button>
+                        <button onclick="toggleWishlist('${p.id}')" class="text-red-500 p-2 hover:scale-125 transition-all shrink-0 ml-auto"><i class="fas fa-heart text-xl"></i></button>
                     </div>`;
             }).join('');
         }
@@ -1473,35 +1384,22 @@
             const btn = document.getElementById('modal-wish-btn');
             if (!btn || !currentModalProduct) return;
             const icon = btn.querySelector('i');
-            const isWished = wishlist.includes(currentModalProduct.id);
-            icon.className = isWished ? "fas fa-heart text-red-500 heart-pop" : "far fa-heart text-white";
+            icon.className = wishlist.includes(currentModalProduct.id) ? "fas fa-heart text-red-500 heart-pop" : "far fa-heart text-white";
         }
 
         window.addToCart = function (pid, size, player, priceOverride) {
             const p = products.find(i => i.id === pid);
             const cartId = `${pid}-${size}-${player}`;
             const existing = cart.find(i => i.cartId === cartId);
-            const finalPrice = priceOverride || p.price;
-
-            if (existing) {
-                existing.quantity++;
-            } else {
-                const newItem = { ...p, cartId, size, player, quantity: 1, price: finalPrice };
-                cart.push(newItem);
-            }
-            saveCartItem();
-            showToast("Added to Bag");
-            updateCartUI();
+            if (existing) existing.quantity++;
+            else cart.push({ ...p, cartId, size, player, quantity: 1, price: priceOverride || p.price });
+            saveCartItem(); showToast("Added to Bag"); updateCartUI();
         }
 
         function changeQty(cartId, delta) {
             const item = cart.find(i => i.cartId === cartId);
             if (!item) return;
-            const newQty = item.quantity + delta;
-            if (newQty < 1) return;
-            item.quantity = newQty;
-            saveCartItem();
-            updateCartUI();
+            if (item.quantity + delta >= 1) { item.quantity += delta; saveCartItem(); updateCartUI(); }
         }
 
         function updateCartUI() {
@@ -1511,39 +1409,22 @@
             let sum = 0, items = 0;
             cont.innerHTML = cart.map(i => {
                 sum += (i.price * i.quantity); items += i.quantity;
-                const isMin = i.quantity <= 1;
-                const displayImg = (i.images && i.images.length > 0) ? i.images[0] : '';
                 return `
-                    <div class="flex gap-4 items-center bg-gray-50 dark:bg-[#0d0d0d] p-4 sm:p-5 rounded-[2.5rem] transition-all duration-500 shadow-lg border border-gray-100 dark:border-white/5 relative">
-                        <img src="${displayImg}" 
-                             class="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl cursor-pointer hover:scale-105 transition-transform shrink-0" 
-                             onclick="closeSidebars(); openModal('${i.id}')"
-                             onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
+                    <div class="flex gap-4 items-center bg-gray-50 dark:bg-[#0d0d0d] p-4 sm:p-5 rounded-[2.5rem] shadow-lg border border-gray-100 dark:border-white/5 relative">
+                        <img src="${i.images[0]}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl cursor-pointer hover:scale-105 transition-transform shrink-0" onclick="closeSidebars(); openModal('${i.id}')">
                         <div class="flex-grow flex flex-col justify-center gap-1 overflow-hidden">
-                            <h4 class="font-black text-[11px] sm:text-xs uppercase tracking-tight text-brand-black dark:text-white cursor-pointer hover:text-accent transition-colors leading-tight truncate" 
-                                onclick="closeSidebars(); openModal('${i.id}')">
-                                ${i.name}
-                            </h4>
+                            <h4 class="font-black text-[11px] sm:text-xs uppercase tracking-tight text-brand-black dark:text-white truncate" onclick="closeSidebars(); openModal('${i.id}')">${i.name}</h4>
                             <p class="text-[9px] text-gray-400 font-bold">${i.size} | ${i.player}</p>
                             <div class="flex items-center justify-between mt-1">
-                                <p class="text-xs font-black text-accent shrink-0">
-                                    ${CURRENCY}${i.price}
-                                </p>
+                                <p class="text-xs font-black text-accent">${CURRENCY}${i.price}</p>
                                 <div class="flex items-center bg-white dark:bg-white/5 rounded-full border border-gray-100 dark:border-white/10 p-0.5 shadow-sm">
-                                    <button onclick="changeQty('${i.cartId}', -1)" 
-                                            class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-50 dark:hover:bg-white/10 text-[10px] transition-colors ${isMin ? 'opacity-30 cursor-not-allowed' : ''}">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
+                                    <button onclick="changeQty('${i.cartId}', -1)" class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-50 dark:hover:bg-white/10 text-[10px]"><i class="fas fa-minus"></i></button>
                                     <span class="px-2.5 text-[10px] font-black dark:text-white">${i.quantity}</span>
-                                    <button onclick="changeQty('${i.cartId}', 1)" class="w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-50 dark:hover:bg-white/10 text-[10px] transition-colors text-accent">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                    <button onclick="changeQty('${i.cartId}', 1)" class="w-6 h-6 flex items-center justify-center rounded-full text-accent"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>
-                        <button onclick="removeFromCart('${i.cartId}')" class="text-gray-300 hover:text-red-500 transition-colors p-2 shrink-0">
-                            <i class="fas fa-trash text-sm"></i>
-                        </button>
+                        <button onclick="removeFromCart('${i.cartId}')" class="text-gray-300 hover:text-red-500 transition-colors p-2 shrink-0"><i class="fas fa-trash text-sm"></i></button>
                     </div>`;
             }).join('');
             total.textContent = `${CURRENCY}${sum.toFixed(2)}`;
@@ -1551,12 +1432,7 @@
             document.getElementById('bag-empty-msg').classList.toggle('hidden', cart.length > 0);
         }
 
-        window.removeFromCart = function (id) {
-            cart = cart.filter(i => i.cartId !== id);
-            saveCartItem();
-            updateCartUI();
-        }
-
+        window.removeFromCart = function (id) { cart = cart.filter(i => i.cartId !== id); saveCartItem(); updateCartUI(); }
         function checkoutToWhatsApp() {
             let text = "*ORDER FROM OPEMA*%0A";
             cart.forEach(i => text += `• ${i.name} (${i.size}) x${i.quantity}%0A`);
@@ -1565,39 +1441,522 @@
 
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.replace('translate-y-32', 'translate-y-0'); t.classList.replace('opacity-0', 'opacity-100');
+            t.textContent = msg; t.classList.replace('translate-y-32', 'translate-y-0'); t.classList.replace('opacity-0', 'opacity-100');
             setTimeout(() => { t.classList.replace('translate-y-0', 'translate-y-32'); t.classList.replace('opacity-100', 'opacity-0'); }, 2000);
         }
 
         function shareProduct() { if (currentModalProduct) window.open(`https://wa.me/?text=Check this: ${currentModalProduct.name}`, '_blank'); }
 
-        const initApp = () => {
-            initTheme();
-            loadLocalData();
-            renderProducts();
+        window.onload = () => {
+            initTheme(); loadLocalData(); renderProducts();
             const bar = document.getElementById('preloader-bar');
             if (bar) bar.style.transform = "scaleX(1)";
-            setTimeout(() => {
-                document.getElementById('brand-preloader').classList.add('hidden-loader');
-                document.body.classList.remove('overflow-hidden');
-            }, 2500);
+            setTimeout(() => { document.getElementById('brand-preloader').classList.add('hidden-loader'); document.body.classList.remove('overflow-hidden'); }, 2500);
+            const nav = document.getElementById('main-nav');
+            if (nav) nav.addEventListener('contextmenu', (e) => e.preventDefault());
         };
+    </script>
 
-        window.onload = initApp;
+    <!-- ROBUST BACK GESTURE HANDLING -->
+    <script>
+        (function () {
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
 
-        let resizeTimer;
-        let lastLimit = getItemsPerPage();
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                const currentLimit = getItemsPerPage();
-                if (currentLimit !== lastLimit) {
-                    renderProducts();
-                    lastLimit = currentLimit;
+            const overlayStack = [];
+            let savedScrollPos = 0;
+
+            window.history.replaceState({ id: 'opema_base' }, '');
+            for (let i = 0; i < 5; i++) {
+                window.history.pushState({ id: 'opema_trap', n: i }, '');
+            }
+
+            // Re-arm after preloader too
+            setTimeout(() => {
+                for (let i = 0; i < 5; i++) {
+                    window.history.pushState({ id: 'opema_trap', n: i }, '');
                 }
-            }, 150);
-        });
+            }, 2800);
+
+            function pushOverlay(id, closeAction) {
+                overlayStack.push({ id, closeAction });
+                window.history.pushState({ id: 'opema_trap' }, '');
+            }
+
+            function removeFromStack(id) {
+                const idx = overlayStack.findIndex(o => o.id === id);
+                if (idx > -1) overlayStack.splice(idx, 1);
+            }
+
+            window.addEventListener('popstate', function () {
+                window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
+
+                // Always re-arm with multiple entries first
+                for (let i = 0; i < 5; i++) {
+                    window.history.pushState({ id: 'opema_trap', n: i }, '');
+                }
+
+                if (overlayStack.length > 0) {
+                    const top = overlayStack.pop();
+                    top.closeAction();
+                } else {
+                    const modalOpen = !document.getElementById('product-modal').classList.contains('hidden');
+                    const zoomOpen = !document.getElementById('image-viewer').classList.contains('hidden');
+                    const sizingOpen = !document.getElementById('sizing-modal').classList.contains('hidden');
+                    const cartOpen = document.getElementById('cart-sidebar').classList.contains('open');
+                    const wishOpen = document.getElementById('wishlist-sidebar').classList.contains('open');
+
+                    if (modalOpen || zoomOpen || sizingOpen || cartOpen || wishOpen) {
+                        document.getElementById('product-modal').classList.add('hidden');
+                        document.getElementById('image-viewer').classList.add('hidden');
+                        document.getElementById('sizing-modal').classList.add('hidden');
+                        document.getElementById('cart-sidebar').classList.remove('open');
+                        document.getElementById('wishlist-sidebar').classList.remove('open');
+                        document.getElementById('global-overlay').classList.add('hidden');
+                        document.body.style.overflow = 'auto';
+                        window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
+                        if (typeof window._zoomDestroy === 'function') window._zoomDestroy();
+                    } else {
+                        document.getElementById('exit-modal').classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                        overlayStack.push({
+                            id: 'exit-modal',
+                            closeAction: () => {
+                                document.getElementById('exit-modal').classList.add('hidden');
+                                document.body.style.overflow = 'auto';
+                            }
+                        });
+                    }
+                }
+            });
+
+            function proxyFn(name, wrapper) {
+                Object.defineProperty(window, name, {
+                    configurable: true,
+                    set(realFn) {
+                        Object.defineProperty(window, name, {
+                            configurable: true,
+                            writable: true,
+                            value: wrapper(realFn)
+                        });
+                    }
+                });
+            }
+
+            proxyFn('openModal', function (realOpenModal) {
+                return function (pid) {
+                    savedScrollPos = window.pageYOffset;
+                    realOpenModal(pid);
+                    pushOverlay('product-modal', () => {
+                        document.getElementById('product-modal').classList.add('hidden');
+                        document.body.style.overflow = 'auto';
+                        window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
+                    });
+                };
+            });
+
+            proxyFn('closeModal', function (realCloseModal) {
+                return function () {
+                    removeFromStack('product-modal');
+                    realCloseModal();
+                    window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
+                };
+            });
+
+            proxyFn('openFullImage', function (realOpenFullImage) {
+                return function (index) {
+                    realOpenFullImage(index);
+                    pushOverlay('image-viewer', () => {
+                        document.getElementById('image-viewer').classList.add('hidden');
+                    });
+                };
+            });
+
+            proxyFn('closeFullImage', function (realCloseFullImage) {
+                return function () {
+                    removeFromStack('image-viewer');
+                    realCloseFullImage();
+                };
+            });
+
+            proxyFn('openSizingModal', function (realOpen) {
+                return function () {
+                    realOpen();
+                    pushOverlay('sizing-modal', () => {
+                        document.getElementById('sizing-modal').classList.add('hidden');
+                    });
+                };
+            });
+
+            proxyFn('closeSizingModal', function (realClose) {
+                return function () {
+                    removeFromStack('sizing-modal');
+                    realClose();
+                };
+            });
+
+            proxyFn('toggleCart', function (realToggle) {
+                return function () {
+                    const sidebar = document.getElementById('cart-sidebar');
+                    const isOpen = sidebar.classList.contains('open');
+                    if (!isOpen) {
+                        savedScrollPos = window.pageYOffset;
+                        pushOverlay('cart-sidebar', () => {
+                            sidebar.classList.remove('open');
+                            document.getElementById('global-overlay').classList.add('hidden');
+                        });
+                    } else {
+                        removeFromStack('cart-sidebar');
+                    }
+                    realToggle();
+                };
+            });
+
+            proxyFn('toggleWishlistSidebar', function (realToggle) {
+                return function () {
+                    const sidebar = document.getElementById('wishlist-sidebar');
+                    const isOpen = sidebar.classList.contains('open');
+                    if (!isOpen) {
+                        savedScrollPos = window.pageYOffset;
+                        pushOverlay('wishlist-sidebar', () => {
+                            sidebar.classList.remove('open');
+                            document.getElementById('global-overlay').classList.add('hidden');
+                        });
+                    } else {
+                        removeFromStack('wishlist-sidebar');
+                    }
+                    realToggle();
+                };
+            });
+
+            proxyFn('toggleFilterDropdown', function (realToggle) {
+                return function () {
+                    const dropdown = document.getElementById('filter-dropdown');
+                    const isOpen = dropdown.classList.contains('show');
+                    if (!isOpen) {
+                        pushOverlay('filter-dropdown', () => {
+                            dropdown.classList.remove('show');
+                        });
+                    } else {
+                        removeFromStack('filter-dropdown');
+                    }
+                    realToggle();
+                };
+            });
+
+            proxyFn('closeSidebars', function (realClose) {
+                return function () {
+                    removeFromStack('cart-sidebar');
+                    removeFromStack('wishlist-sidebar');
+                    realClose();
+                };
+            });
+
+            window.stayOnPage = function () {
+                removeFromStack('exit-modal');
+                document.getElementById('exit-modal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            };
+
+            window.exitApp = function () {
+                window.location.href = 'about:blank';
+            };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const catalogLink = document.getElementById('view-catalog-link');
+                if (catalogLink) {
+                    catalogLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
+                    });
+                }
+            });
+
+        })();
+    </script>
+    <!-- Zoom Engine for Full Image Viewer -->
+    <script>
+        (function () {
+
+            // ── State ─────────────────────────────────────────────────────────────
+            let scale = 1;
+            let tx = 0;
+            let ty = 0;
+
+            // Pinch
+            let pinching = false;
+            let pinchStartScale = 1;
+            let pinchStartDist = 0;
+            let pinchStartMidX = 0;
+            let pinchStartMidY = 0;
+            let pinchStartTx = 0;
+            let pinchStartTy = 0;
+
+            // Drag
+            let dragging = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            let dragStartTx = 0;
+            let dragStartTy = 0;
+
+            // Swipe
+            let swipeStartX = 0;
+            let swipeStartY = 0;
+            let swipeStartTime = 0;
+            let didSwipe = false;
+
+            // Double tap
+            let lastTapTime = 0;
+
+            let hintTimer = null;
+            const MIN = 1;
+            const MAX = 5;
+
+            function img() { return document.getElementById('viewer-img'); }
+            function container() { return document.getElementById('viewer-container'); }
+            function backdrop() { return document.getElementById('viewer-backdrop'); }
+
+            function dist(t) {
+                const dx = t[0].clientX - t[1].clientX;
+                const dy = t[0].clientY - t[1].clientY;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+
+            function mid(t, rect) {
+                return {
+                    x: (t[0].clientX + t[1].clientX) / 2 - rect.left,
+                    y: (t[0].clientY + t[1].clientY) / 2 - rect.top
+                };
+            }
+
+            function clamp() {
+                const c = container();
+                const i = img();
+                if (!c || !i) return;
+                const cw = c.clientWidth;
+                const ch = c.clientHeight;
+                const iw = i.clientWidth;
+                const ih = i.clientHeight;
+                const scaledW = iw * scale;
+                const scaledH = ih * scale;
+                const ox = (cw - iw) / 2;
+                const oy = (ch - ih) / 2;
+
+                if (scaledW <= cw) {
+                    tx = ox * (1 - scale);
+                } else {
+                    tx = Math.min(-ox, Math.max(cw - scaledW - ox, tx));
+                }
+                if (scaledH <= ch) {
+                    ty = oy * (1 - scale);
+                } else {
+                    ty = Math.min(-oy, Math.max(ch - scaledH - oy, ty));
+                }
+            }
+
+            function commit(animate) {
+                const i = img();
+                if (!i) return;
+                i.style.transition = animate ? 'transform 0.22s ease' : 'none';
+                i.style.transformOrigin = '0 0';
+                i.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+                const bd = backdrop();
+                if (bd) bd.style.pointerEvents = scale <= 1 ? 'auto' : 'none';
+            }
+
+            function zoomTo(px, py, newScale, animate) {
+                newScale = Math.min(MAX, Math.max(MIN, newScale));
+                const ptX = (px - tx) / scale;
+                const ptY = (py - ty) / scale;
+                tx = px - ptX * newScale;
+                ty = py - ptY * newScale;
+                scale = newScale;
+                clamp();
+                commit(animate);
+            }
+
+            function reset(animate) {
+                scale = 1; tx = 0; ty = 0;
+                commit(animate);
+                if (container()) container().style.cursor = 'default';
+            }
+
+            function showHint() {
+                const h = document.getElementById('zoom-hint');
+                if (!h) return;
+                h.style.opacity = '1';
+                clearTimeout(hintTimer);
+                hintTimer = setTimeout(() => { h.style.opacity = '0'; }, 2500);
+            }
+
+            // ── Mouse ─────────────────────────────────────────────────────────────
+            function onMouseDown(e) {
+                if (scale <= 1) return;
+                e.preventDefault();
+                dragging = true;
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                dragStartTx = tx;
+                dragStartTy = ty;
+                container().style.cursor = 'grabbing';
+            }
+
+            function onMouseMove(e) {
+                if (!dragging) return;
+                e.preventDefault();
+                tx = dragStartTx + (e.clientX - dragStartX);
+                ty = dragStartTy + (e.clientY - dragStartY);
+                clamp();
+                commit(false);
+            }
+
+            function onMouseUp() {
+                if (!dragging) return;
+                dragging = false;
+                container().style.cursor = scale > 1 ? 'grab' : 'default';
+            }
+
+            function onWheel(e) {
+                e.preventDefault();
+                const rect = container().getBoundingClientRect();
+                zoomTo(e.clientX - rect.left, e.clientY - rect.top, scale * (e.deltaY > 0 ? 0.9 : 1.1), false);
+            }
+
+            // ── Touch ─────────────────────────────────────────────────────────────
+            function onTouchStart(e) {
+                const rect = container().getBoundingClientRect();
+
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    pinching = true;
+                    dragging = false;
+                    pinchStartDist = dist(e.touches);
+                    pinchStartScale = scale;
+                    const m = mid(e.touches, rect);
+                    pinchStartMidX = m.x;
+                    pinchStartMidY = m.y;
+                    pinchStartTx = tx;
+                    pinchStartTy = ty;
+
+                } else if (e.touches.length === 1 && !pinching) {
+                    const t = e.touches[0];
+                    swipeStartX = t.clientX;
+                    swipeStartY = t.clientY;
+                    swipeStartTime = Date.now();
+                    didSwipe = false;
+
+                    if (scale > 1) {
+                        e.preventDefault();
+                        dragging = true;
+                        dragStartX = t.clientX;
+                        dragStartY = t.clientY;
+                        dragStartTx = tx;
+                        dragStartTy = ty;
+                    }
+                }
+            }
+
+            function onTouchMove(e) {
+                if (pinching && e.touches.length === 2) {
+                    e.preventDefault();
+                    const rect = container().getBoundingClientRect();
+                    const d = dist(e.touches);
+                    const m = mid(e.touches, rect);
+                    const newScale = Math.min(MAX, Math.max(MIN, pinchStartScale * (d / pinchStartDist)));
+                    // Recompute from pinch start state every frame — no drift
+                    const ptX = (pinchStartMidX - pinchStartTx) / pinchStartScale;
+                    const ptY = (pinchStartMidY - pinchStartTy) / pinchStartScale;
+                    tx = m.x - ptX * newScale;
+                    ty = m.y - ptY * newScale;
+                    scale = newScale;
+                    clamp();
+                    commit(false);
+
+                } else if (dragging && !pinching && e.touches.length === 1) {
+                    e.preventDefault();
+                    tx = dragStartTx + (e.touches[0].clientX - dragStartX);
+                    ty = dragStartTy + (e.touches[0].clientY - dragStartY);
+                    clamp();
+                    commit(false);
+                }
+            }
+
+            function onTouchEnd(e) {
+                // ── PINCH END — hard stop, nothing else runs ──
+                if (pinching) {
+                    if (e.touches.length < 2) {
+                        pinching = false;
+                        dragging = false;
+                        if (scale < 1.05) reset(true);
+                        // else: stay exactly at current zoom & position
+                    }
+                    return; // ← always return from pinch, never fall through to swipe
+                }
+
+                // ── PAN END ──
+                if (dragging) {
+                    dragging = false;
+                    container().style.cursor = scale > 1 ? 'grab' : 'default';
+                    return; // ← was panning, not a swipe
+                }
+
+                // ── SWIPE / TAP — only reaches here if scale === 1 and no pinch ──
+                if (scale <= 1 && e.changedTouches.length === 1 && !didSwipe) {
+                    const t = e.changedTouches[0];
+                    const dx = t.clientX - swipeStartX;
+                    const dy = t.clientY - swipeStartY;
+                    const dt = Date.now() - swipeStartTime;
+
+                    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2 && dt < 400) {
+                        didSwipe = true;
+                        if (dx < 0) window.nextFullImage();
+                        else window.prevFullImage();
+                        return;
+                    }
+
+                    // Double tap to zoom in at tap point
+                    const now = Date.now();
+                    if (now - lastTapTime < 300 && Math.abs(dx) < 20 && Math.abs(dy) < 20) {
+                        const rect = container().getBoundingClientRect();
+                        zoomTo(t.clientX - rect.left, t.clientY - rect.top, 2.5, true);
+                    }
+                    lastTapTime = now;
+                }
+            }
+
+            // ── Public ────────────────────────────────────────────────────────────
+            window._zoomInit = function () {
+                const c = container();
+                if (!c) return;
+                setTimeout(() => { reset(false); showHint(); }, 50);
+                c.addEventListener('wheel', onWheel, { passive: false });
+                c.addEventListener('mousedown', onMouseDown);
+                window.addEventListener('mousemove', onMouseMove);
+                window.addEventListener('mouseup', onMouseUp);
+                c.addEventListener('touchstart', onTouchStart, { passive: false });
+                c.addEventListener('touchmove', onTouchMove, { passive: false });
+                c.addEventListener('touchend', onTouchEnd, { passive: false });
+            };
+
+            window._zoomDestroy = function () {
+                const c = container();
+                if (!c) return;
+                c.removeEventListener('wheel', onWheel);
+                c.removeEventListener('mousedown', onMouseDown);
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+                c.removeEventListener('touchstart', onTouchStart);
+                c.removeEventListener('touchmove', onTouchMove);
+                c.removeEventListener('touchend', onTouchEnd);
+                reset(false);
+                const bd = backdrop();
+                if (bd) bd.style.pointerEvents = 'auto';
+            };
+
+            window._zoomReset = function () { reset(false); };
+
+        })();
     </script>
 </body>
 
