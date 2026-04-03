@@ -7,7 +7,9 @@
     <title>OPEMA Clothing</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="/images/Opema-Icon.png">
+    <link rel="icon" type="image/png" <link rel="icon" type="image/png"
+        href="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto/v1775196576/opema-icon_dr9eqc.png">
+    <link rel="icon" type="image/png" href="images/opema.png">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -396,8 +398,8 @@
 
     <!-- Preloader Section -->
     <div id="brand-preloader">
-        <img src="Images/opema.png" alt="OPEMA" class="loader-logo"
-            onerror="this.src='https://placehold.co/400x150/000/FFF?text=OPEMA'">
+        <img src="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto/v1775196576/opema-icon_dr9eqc.png"
+            alt="OPEMA" class="loader-logo" onerror="this.onerror=null; this.src='images/opema.png'">
         <div class="progress-container">
             <div id="preloader-bar" class="progress-bar"></div>
         </div>
@@ -469,14 +471,17 @@
         <div class="max-w-7xl mx-auto w-full flex flex-col lg:grid lg:grid-cols-2 gap-12 items-center relative z-10">
             <div id="mobile-hero-container"
                 class="mobile-hero-carousel w-full h-72 sm:h-[400px] rounded-[40px] overflow-hidden relative lg:hidden bg-transparent touch-pan-y">
-                <div class="carousel-item active"><img src="Images/neymer11.PNG" loading="eager"
-                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+1'"
+                <div class="carousel-item active"><img
+                        src=src="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_800/v1775196579/neymer11_pzlvoa.png"  loading="eager"
+                        onerror="this.onerror=null; this.src='images/neymer11.PNG'"
                         class="w-full h-full object-contain"></div>
-                <div class="carousel-item"><img src="Images/opema main.png" loading="eager"
-                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+2'"
+                <div class="carousel-item"><img
+                        src="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_800/v1775196593/opema_main_gif_ymiq9d.gif"
+                        loading="eager" onerror="this.onerror=null; this.src='images/opema main.png'"
                         class="w-full h-full object-contain"></div>
-                <div class="carousel-item"><img src="Images/opema carousal.png" loading="eager"
-                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+3'"
+                <div class="carousel-item"><img
+                        src="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_800/v1775196577/opema_heua5a.png"
+                        loading="eager" onerror="this.onerror=null; this.src='images/opema carousal.png'"
                         class="w-full h-full object-contain"></div>
             </div>
 
@@ -498,14 +503,17 @@
 
             <div id="desktop-hero-container"
                 class="relative hidden lg:block h-[550px] xl:h-[650px] w-full rounded-[40px] overflow-hidden bg-transparent touch-pan-y">
-                <div class="carousel-item active"><img src="Images/neymer11.PNG" loading="eager"
-                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+1'"
+                <div class="carousel-item active"><img
+                        src="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_800/v1775196579/neymer11_pzlvoa.png"
+                        loading="eager" onerror="this.onerror=null; this.src='images/neymer11.PNG'"
                         class="w-full h-full object-contain"></div>
-                <div class="carousel-item"><img src="Images/opema main.png" loading="eager"
-                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+2'"
+                <div class="carousel-item"><img
+                        src="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_800/v1775196593/opema_main_gif_ymiq9d.gif"
+                        loading="eager" onerror="this.onerror=null; this.src='images/opema main.png'"
                         class="w-full h-full object-contain"></div>
-                <div class="carousel-item"><img src="Images/opema carousal.png" loading="eager"
-                        onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=Hero+3'"
+                <div class="carousel-item"><img
+                        src="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_800/v1775196577/opema_heua5a.png"
+                        loading="eager" onerror="this.onerror=null; this.src='images/opema carousal.png'"
                         class="w-full h-full object-contain"></div>
             </div>
         </div>
@@ -966,7 +974,7 @@
         let selectedPlayer = "";
         let activeZoomSlide = 0;
 
-        const WHATSAPP_NUMBER = "8089408747";
+        const WHATSAPP_NUMBER = "918089408747";
         const CURRENCY = "₹";
 
         const precisionMap = {
@@ -1434,11 +1442,28 @@
 
         window.removeFromCart = function (id) { cart = cart.filter(i => i.cartId !== id); saveCartItem(); updateCartUI(); }
         function checkoutToWhatsApp() {
-            let text = "*ORDER FROM OPEMA*%0A";
-            cart.forEach(i => text += `• ${i.name} (${i.size}) x${i.quantity}%0A`);
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
-        }
+            let itemLines = '';
+            let grandTotal = 0;
 
+            cart.forEach((i, idx) => {
+                const sum = i.price * i.quantity;
+                grandTotal += sum;
+                itemLines += `${idx + 1}. *${i.name} | ${i.size}*%0AQty: ${i.quantity} × ₹${i.price} = *₹${sum}*%0A%0A`;
+            });
+
+            const msg =
+                `☘️ *Greetings from ØOpema Store* 👕%0A` +
+                `_Your order is being processed! We will contact you shortly._%0A%0A` +
+                `*ORDER SUMMARY*%0A` +
+                `*━━━━━━━━━━━━━━━━━━━━━*%0A` +
+                itemLines +
+                `━━━━━━━━━━━━━━━━━━━━━%0A` +
+                `💰 *Grand Total: ₹${grandTotal}*%0A%0A` +
+                `⚠️ _Please confirm availability before making payment! You can provide your number or call us._%0A%0A` +
+                `Thanks for shopping! 🤗`;
+
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+        }
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg; t.classList.replace('translate-y-32', 'translate-y-0'); t.classList.replace('opacity-0', 'opacity-100');
