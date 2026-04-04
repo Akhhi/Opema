@@ -588,7 +588,7 @@
 
     <!-- Product Modal -->
     <div id="product-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeModal()"></div>
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-lg" onclick="closeModal()"></div>
         <div
             class="relative bg-white dark:bg-[#111] w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[32px] sm:rounded-[40px] shadow-2xl flex flex-col lg:flex-row">
             <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-[110] flex flex-row items-center gap-2">
@@ -1701,289 +1701,290 @@
 
         })();
     </script>
-    <!-- Zoom Engine for Full Image Viewer -->
-    <script>
-        (function () {
+<!-- Zoom Engine for Full Image Viewer -->
+<script>
+(function () {
 
-            // ── State ─────────────────────────────────────────────────────────────
-            let scale = 1;
-            let tx = 0;
-            let ty = 0;
+    let scale = 1;
+    let tx = 0;
+    let ty = 0;
 
-            // Pinch
-            let pinching = false;
-            let pinchStartScale = 1;
-            let pinchStartDist = 0;
-            let pinchStartMidX = 0;
-            let pinchStartMidY = 0;
-            let pinchStartTx = 0;
-            let pinchStartTy = 0;
+    let pinching = false;
+    let pinchStartScale = 1;
+    let pinchStartDist = 0;
+    let pinchStartMidX = 0;
+    let pinchStartMidY = 0;
+    let pinchStartTx = 0;
+    let pinchStartTy = 0;
 
-            // Drag
-            let dragging = false;
-            let dragStartX = 0;
-            let dragStartY = 0;
-            let dragStartTx = 0;
-            let dragStartTy = 0;
+    let dragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragStartTx = 0;
+    let dragStartTy = 0;
 
-            // Swipe
-            let swipeStartX = 0;
-            let swipeStartY = 0;
-            let swipeStartTime = 0;
-            let didSwipe = false;
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    let swipeStartTime = 0;
+    let didSwipe = false;
 
-            // Double tap
-            let lastTapTime = 0;
+    let lastTapTime = 0;
+    let hintTimer = null;
 
-            let hintTimer = null;
-            const MIN = 1;
-            const MAX = 5;
+    const MIN = 1;
+    const MAX = 5;
 
-            function img() { return document.getElementById('viewer-img'); }
-            function container() { return document.getElementById('viewer-container'); }
-            function backdrop() { return document.getElementById('viewer-backdrop'); }
+    function img() { return document.getElementById('viewer-img'); }
+    function container() { return document.getElementById('viewer-container'); }
+    function backdrop() { return document.getElementById('viewer-backdrop'); }
 
-            function dist(t) {
-                const dx = t[0].clientX - t[1].clientX;
-                const dy = t[0].clientY - t[1].clientY;
-                return Math.sqrt(dx * dx + dy * dy);
-            }
+    function dist(t) {
+        const dx = t[0].clientX - t[1].clientX;
+        const dy = t[0].clientY - t[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 
-            function mid(t, rect) {
-                return {
-                    x: (t[0].clientX + t[1].clientX) / 2 - rect.left,
-                    y: (t[0].clientY + t[1].clientY) / 2 - rect.top
-                };
-            }
+    function mid(t, rect) {
+        return {
+            x: (t[0].clientX + t[1].clientX) / 2 - rect.left,
+            y: (t[0].clientY + t[1].clientY) / 2 - rect.top
+        };
+    }
 
-            function clamp() {
-                const c = container();
-                const i = img();
-                if (!c || !i) return;
-                const cw = c.clientWidth;
-                const ch = c.clientHeight;
-                const iw = i.clientWidth;
-                const ih = i.clientHeight;
-                const scaledW = iw * scale;
-                const scaledH = ih * scale;
-                const ox = (cw - iw) / 2;
-                const oy = (ch - ih) / 2;
+    function clamp() {
+        const c = container();
+        const i = img();
+        if (!c || !i) return;
+        const cw = c.clientWidth;
+        const ch = c.clientHeight;
+        const iw = i.clientWidth;
+        const ih = i.clientHeight;
+        const scaledW = iw * scale;
+        const scaledH = ih * scale;
+        const ox = (cw - iw) / 2;
+        const oy = (ch - ih) / 2;
 
-                if (scaledW <= cw) {
-                    tx = ox * (1 - scale);
-                } else {
-                    tx = Math.min(-ox, Math.max(cw - scaledW - ox, tx));
-                }
-                if (scaledH <= ch) {
-                    ty = oy * (1 - scale);
-                } else {
-                    ty = Math.min(-oy, Math.max(ch - scaledH - oy, ty));
-                }
-            }
+        if (scaledW <= cw) {
+            tx = ox * (1 - scale);
+        } else {
+            tx = Math.min(-ox, Math.max(cw - scaledW - ox, tx));
+        }
+        if (scaledH <= ch) {
+            ty = oy * (1 - scale);
+        } else {
+            ty = Math.min(-oy, Math.max(ch - scaledH - oy, ty));
+        }
+    }
 
-            function commit(animate) {
-                const i = img();
-                if (!i) return;
-                i.style.transition = animate ? 'transform 0.22s ease' : 'none';
-                i.style.transformOrigin = '0 0';
-                i.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-                const bd = backdrop();
-                if (bd) bd.style.pointerEvents = scale <= 1 ? 'auto' : 'none';
-            }
+    function commit(animate) {
+        const i = img();
+        if (!i) return;
+        i.style.transition = animate ? 'transform 0.22s ease' : 'none';
+        i.style.transformOrigin = '0 0';
+        i.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+        const bd = backdrop();
+        if (bd) bd.style.pointerEvents = scale <= 1 ? 'auto' : 'none';
+    }
 
-            function zoomTo(px, py, newScale, animate) {
-                newScale = Math.min(MAX, Math.max(MIN, newScale));
-                const ptX = (px - tx) / scale;
-                const ptY = (py - ty) / scale;
-                tx = px - ptX * newScale;
-                ty = py - ptY * newScale;
-                scale = newScale;
-                clamp();
-                commit(animate);
-            }
+    function zoomTo(px, py, newScale, animate) {
+        newScale = Math.min(MAX, Math.max(MIN, newScale));
+        const ptX = (px - tx) / scale;
+        const ptY = (py - ty) / scale;
+        tx = px - ptX * newScale;
+        ty = py - ptY * newScale;
+        scale = newScale;
+        clamp();
+        commit(animate);
+    }
 
-            function reset(animate) {
-                scale = 1; tx = 0; ty = 0;
-                commit(animate);
-                if (container()) container().style.cursor = 'default';
-            }
+    function reset(animate) {
+        scale = 1; tx = 0; ty = 0;
+        commit(animate);
+        if (container()) container().style.cursor = 'default';
+    }
 
-            function showHint() {
-                const h = document.getElementById('zoom-hint');
-                if (!h) return;
-                h.style.opacity = '1';
-                clearTimeout(hintTimer);
-                hintTimer = setTimeout(() => { h.style.opacity = '0'; }, 2500);
-            }
+    function showHint() {
+        const h = document.getElementById('zoom-hint');
+        if (!h) return;
+        h.style.opacity = '1';
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(() => { h.style.opacity = '0'; }, 2500);
+    }
 
-            // ── Mouse ─────────────────────────────────────────────────────────────
-            function onMouseDown(e) {
-                if (scale <= 1) return;
+    // ── Mouse ────────────────────────────────────────────────────────────
+    function onMouseDown(e) {
+        if (scale <= 1) return;
+        e.preventDefault();
+        dragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        dragStartTx = tx;
+        dragStartTy = ty;
+        container().style.cursor = 'grabbing';
+    }
+
+    function onMouseMove(e) {
+        if (!dragging) return;
+        e.preventDefault();
+        tx = dragStartTx + (e.clientX - dragStartX);
+        ty = dragStartTy + (e.clientY - dragStartY);
+        clamp();
+        commit(false);
+    }
+
+    function onMouseUp() {
+        if (!dragging) return;
+        dragging = false;
+        container().style.cursor = scale > 1 ? 'grab' : 'default';
+    }
+
+    function onWheel(e) {
+        e.preventDefault();
+        const rect = container().getBoundingClientRect();
+        zoomTo(e.clientX - rect.left, e.clientY - rect.top, scale * (e.deltaY > 0 ? 0.9 : 1.1), false);
+    }
+
+    // ── Touch ────────────────────────────────────────────────────────────
+    function onTouchStart(e) {
+        const rect = container().getBoundingClientRect();
+
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            pinching = true;
+            dragging = false;
+            didSwipe = true; // poison swipe for this session
+            pinchStartDist = dist(e.touches);
+            pinchStartScale = scale;
+            const m = mid(e.touches, rect);
+            pinchStartMidX = m.x;
+            pinchStartMidY = m.y;
+            pinchStartTx = tx;
+            pinchStartTy = ty;
+
+        } else if (e.touches.length === 1 && !pinching) {
+            const t = e.touches[0];
+            swipeStartX = t.clientX;
+            swipeStartY = t.clientY;
+            swipeStartTime = Date.now();
+            didSwipe = false;
+
+            if (scale > 1) {
                 e.preventDefault();
                 dragging = true;
-                dragStartX = e.clientX;
-                dragStartY = e.clientY;
+                dragStartX = t.clientX;
+                dragStartY = t.clientY;
                 dragStartTx = tx;
                 dragStartTy = ty;
-                container().style.cursor = 'grabbing';
             }
+        }
+    }
 
-            function onMouseMove(e) {
-                if (!dragging) return;
-                e.preventDefault();
-                tx = dragStartTx + (e.clientX - dragStartX);
-                ty = dragStartTy + (e.clientY - dragStartY);
-                clamp();
-                commit(false);
-            }
+    function onTouchMove(e) {
+        if (pinching && e.touches.length === 2) {
+            e.preventDefault();
+            const rect = container().getBoundingClientRect();
+            const d = dist(e.touches);
+            const m = mid(e.touches, rect);
+            const newScale = Math.min(MAX, Math.max(MIN, pinchStartScale * (d / pinchStartDist)));
+            const ptX = (pinchStartMidX - pinchStartTx) / pinchStartScale;
+            const ptY = (pinchStartMidY - pinchStartTy) / pinchStartScale;
+            tx = m.x - ptX * newScale;
+            ty = m.y - ptY * newScale;
+            scale = newScale;
+            clamp();
+            commit(false);
 
-            function onMouseUp() {
-                if (!dragging) return;
+        } else if (dragging && !pinching && e.touches.length === 1) {
+            e.preventDefault();
+            tx = dragStartTx + (e.touches[0].clientX - dragStartX);
+            ty = dragStartTy + (e.touches[0].clientY - dragStartY);
+            clamp();
+            commit(false);
+        }
+    }
+
+    function onTouchEnd(e) {
+        // ── PINCH END ──
+        if (pinching) {
+            if (e.touches.length < 2) {
+                pinching = false;
                 dragging = false;
-                container().style.cursor = scale > 1 ? 'grab' : 'default';
+                if (scale < 1.05) reset(true);
+            }
+            return;
+        }
+
+        // ── PAN END ──
+        if (dragging) {
+            dragging = false;
+            container().style.cursor = scale > 1 ? 'grab' : 'default';
+            return;
+        }
+
+        // ── SWIPE / DOUBLE TAP ── runs at any scale, no pinch, no drag
+        if (!didSwipe && e.touches.length === 0 && e.changedTouches.length === 1) {
+            const t = e.changedTouches[0];
+            const dx = t.clientX - swipeStartX;
+            const dy = t.clientY - swipeStartY;
+            const dt = Date.now() - swipeStartTime;
+            const vx = Math.abs(dx) / dt;
+
+            // Swipe — only at scale 1
+            if (scale <= 1 && vx > 0.3 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 2) {
+                didSwipe = true;
+                if (dx < 0) window.nextFullImage();
+                else window.prevFullImage();
+                return;
             }
 
-            function onWheel(e) {
-                e.preventDefault();
-                const rect = container().getBoundingClientRect();
-                zoomTo(e.clientX - rect.left, e.clientY - rect.top, scale * (e.deltaY > 0 ? 0.9 : 1.1), false);
-            }
-
-            // ── Touch ─────────────────────────────────────────────────────────────
-            function onTouchStart(e) {
-                const rect = container().getBoundingClientRect();
-
-                if (e.touches.length === 2) {
-                    e.preventDefault();
-                    pinching = true;
-                    dragging = false;
-                    pinchStartDist = dist(e.touches);
-                    pinchStartScale = scale;
-                    const m = mid(e.touches, rect);
-                    pinchStartMidX = m.x;
-                    pinchStartMidY = m.y;
-                    pinchStartTx = tx;
-                    pinchStartTy = ty;
-
-                } else if (e.touches.length === 1 && !pinching) {
-                    const t = e.touches[0];
-                    swipeStartX = t.clientX;
-                    swipeStartY = t.clientY;
-                    swipeStartTime = Date.now();
-                    didSwipe = false;
-
-                    if (scale > 1) {
-                        e.preventDefault();
-                        dragging = true;
-                        dragStartX = t.clientX;
-                        dragStartY = t.clientY;
-                        dragStartTx = tx;
-                        dragStartTy = ty;
-                    }
-                }
-            }
-
-            function onTouchMove(e) {
-                if (pinching && e.touches.length === 2) {
-                    e.preventDefault();
+            // Double tap — works at ANY scale
+            const now = Date.now();
+            if (now - lastTapTime < 300 && Math.abs(dx) < 20 && Math.abs(dy) < 20) {
+                if (scale > 1) {
+                    reset(true); // zoomed in → reset to fit
+                } else {
                     const rect = container().getBoundingClientRect();
-                    const d = dist(e.touches);
-                    const m = mid(e.touches, rect);
-                    const newScale = Math.min(MAX, Math.max(MIN, pinchStartScale * (d / pinchStartDist)));
-                    // Recompute from pinch start state every frame — no drift
-                    const ptX = (pinchStartMidX - pinchStartTx) / pinchStartScale;
-                    const ptY = (pinchStartMidY - pinchStartTy) / pinchStartScale;
-                    tx = m.x - ptX * newScale;
-                    ty = m.y - ptY * newScale;
-                    scale = newScale;
-                    clamp();
-                    commit(false);
-
-                } else if (dragging && !pinching && e.touches.length === 1) {
-                    e.preventDefault();
-                    tx = dragStartTx + (e.touches[0].clientX - dragStartX);
-                    ty = dragStartTy + (e.touches[0].clientY - dragStartY);
-                    clamp();
-                    commit(false);
+                    zoomTo(t.clientX - rect.left, t.clientY - rect.top, 2.5, true); // zoomed out → zoom in
                 }
+                lastTapTime = 0; // prevent triple tap
+                return;
             }
+            lastTapTime = now;
+        }
+    }
 
-            function onTouchEnd(e) {
-                // ── PINCH END — hard stop, nothing else runs ──
-                if (pinching) {
-                    if (e.touches.length < 2) {
-                        pinching = false;
-                        dragging = false;
-                        if (scale < 1.05) reset(true);
-                        // else: stay exactly at current zoom & position
-                    }
-                    return; // ← always return from pinch, never fall through to swipe
-                }
+    // ── Public ───────────────────────────────────────────────────────────
+    window._zoomInit = function () {
+        const c = container();
+        if (!c) return;
+        setTimeout(() => { reset(false); showHint(); }, 50);
+        c.addEventListener('wheel', onWheel, { passive: false });
+        c.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        c.addEventListener('touchstart', onTouchStart, { passive: false });
+        c.addEventListener('touchmove', onTouchMove, { passive: false });
+        c.addEventListener('touchend', onTouchEnd, { passive: false });
+    };
 
-                // ── PAN END ──
-                if (dragging) {
-                    dragging = false;
-                    container().style.cursor = scale > 1 ? 'grab' : 'default';
-                    return; // ← was panning, not a swipe
-                }
+    window._zoomDestroy = function () {
+        const c = container();
+        if (!c) return;
+        c.removeEventListener('wheel', onWheel);
+        c.removeEventListener('mousedown', onMouseDown);
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+        c.removeEventListener('touchstart', onTouchStart);
+        c.removeEventListener('touchmove', onTouchMove);
+        c.removeEventListener('touchend', onTouchEnd);
+        reset(false);
+        const bd = backdrop();
+        if (bd) bd.style.pointerEvents = 'auto';
+    };
 
-                // ── SWIPE / TAP — only reaches here if scale === 1 and no pinch ──
-                if (scale <= 1 && e.changedTouches.length === 1 && !didSwipe) {
-                    const t = e.changedTouches[0];
-                    const dx = t.clientX - swipeStartX;
-                    const dy = t.clientY - swipeStartY;
-                    const dt = Date.now() - swipeStartTime;
+    window._zoomReset = function () { reset(false); };
 
-                    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 2 && dt < 400) {
-                        didSwipe = true;
-                        if (dx < 0) window.nextFullImage();
-                        else window.prevFullImage();
-                        return;
-                    }
-
-                    // Double tap to zoom in at tap point
-                    const now = Date.now();
-                    if (now - lastTapTime < 300 && Math.abs(dx) < 20 && Math.abs(dy) < 20) {
-                        const rect = container().getBoundingClientRect();
-                        zoomTo(t.clientX - rect.left, t.clientY - rect.top, 2.5, true);
-                    }
-                    lastTapTime = now;
-                }
-            }
-
-            // ── Public ────────────────────────────────────────────────────────────
-            window._zoomInit = function () {
-                const c = container();
-                if (!c) return;
-                setTimeout(() => { reset(false); showHint(); }, 50);
-                c.addEventListener('wheel', onWheel, { passive: false });
-                c.addEventListener('mousedown', onMouseDown);
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onMouseUp);
-                c.addEventListener('touchstart', onTouchStart, { passive: false });
-                c.addEventListener('touchmove', onTouchMove, { passive: false });
-                c.addEventListener('touchend', onTouchEnd, { passive: false });
-            };
-
-            window._zoomDestroy = function () {
-                const c = container();
-                if (!c) return;
-                c.removeEventListener('wheel', onWheel);
-                c.removeEventListener('mousedown', onMouseDown);
-                window.removeEventListener('mousemove', onMouseMove);
-                window.removeEventListener('mouseup', onMouseUp);
-                c.removeEventListener('touchstart', onTouchStart);
-                c.removeEventListener('touchmove', onTouchMove);
-                c.removeEventListener('touchend', onTouchEnd);
-                reset(false);
-                const bd = backdrop();
-                if (bd) bd.style.pointerEvents = 'auto';
-            };
-
-            window._zoomReset = function () { reset(false); };
-
-        })();
-    </script>
-</body>
+})();
+</script></body>
 
 </html>
