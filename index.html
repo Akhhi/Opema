@@ -410,7 +410,6 @@
             transition: none;
             -webkit-user-select: none;
             user-select: none;
-            -webkit-user-drag: none;
         }
 
         .zoom-hint {
@@ -431,6 +430,13 @@
             border-radius: 100px;
             pointer-events: none;
             transition: opacity 0.5s ease;
+        }
+
+        #scroll-top-btn {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(16px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
     </style>
 </head>
@@ -489,8 +495,10 @@
                         <i id="theme-icon" class="fas fa-moon text-base sm:text-lg"></i>
                     </button>
 
-                    <button onclick="toggleWishlistSidebar()" aria-label="Open wishlist" title="Open wishlist"
+                    <button type="button" onclick="toggleWishlistSidebar()" aria-label="Open wishlist"
+                        title="Open wishlist"
                         class="p-2 sm:p-2.5 mr-2 sm:mr-3 relative group transition-colors duration-300">
+                        <span class="sr-only">Open wishlist</span>
                         <i
                             class="fas fa-heart text-base sm:text-lg group-hover:text-accent transition-colors duration-300"></i>
                         <span id="wishlist-count"
@@ -639,8 +647,7 @@
         <div
             class="relative bg-white dark:bg-[#111] w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-[32px] sm:rounded-[40px] shadow-2xl flex flex-col lg:flex-row">
             <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-[110] flex flex-row items-center gap-2">
-                <button id="modal-wish-btn" aria-label="Add to wishlist" class="w-10 h-10 flex items-center justify-center bg-black/60
-                    class=" w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full
+                <button id="modal-wish-btn" aria-label="Add to wishlist" class=" w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full
                     hover:scale-110 transition-all border border-white/10 text-white shadow-xl"><i
                         class="far fa-heart text-base sm:text-lg"></i></button>
                 <button onclick="closeModal()"
@@ -698,13 +705,14 @@
                         Select Variant</h4>
                     <div id="modal-players" class="flex flex-wrap gap-2"></div>
                 </div>
-                <div class="mt-auto flex flex-col sm:flex-row gap-3 pt-6 border-t dark:border-white/10">
-                    <button id="modal-add-btn"
+                <div class="mt-auto flex flex-row gap-3 pt-6 border-t dark:border-white/10">
+                    <button id="modal-add-btn" aria-label="Add to Bag"
                         class="flex-grow bg-accent text-white py-3.5 rounded-2xl text-sm font-black uppercase transition-all duration-500 active:scale-95">Add
                         to Bag</button>
-                    <button onclick="shareProduct()"
-                        class="w-full sm:w-14 h-12 sm:h-auto border dark:border-white/20 rounded-2xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300"><i
-                            class="fas fa-share-alt dark:text-white"></i></button>
+                    <button onclick="shareProduct()" aria-label="Share product"
+                        class="w-12 h-12 shrink-0 border dark:border-white/20 rounded-2xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300">
+                        <i class="fas fa-share-alt dark:text-white"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -881,7 +889,7 @@
         class="sidebar fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-black z-[70] shadow-2xl flex flex-col transition-transform duration-400">
         <div class="p-8 border-b dark:border-white/10 flex justify-between items-center transition-colors duration-500">
             <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Your Bag</h2>
-            <button onclick="toggleCart()"
+            <button type="button" onclick="toggleCart()" aria-label="toggle cart"
                 class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-colors duration-300"><i
                     class="fas fa-times"></i></button>
         </div>
@@ -904,7 +912,7 @@
             <div class="flex items-center gap-3"><i class="fas fa-heart text-accent"></i>
                 <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Wishlist</h2>
             </div>
-            <button onclick="toggleWishlistSidebar()"
+            <button onclick="toggleWishlistSidebar()" type="button" aria-label="toggle wishlist"
                 class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-colors duration-300"><i
                     class="fas fa-times"></i></button>
         </div>
@@ -918,12 +926,68 @@
         class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-brand-black dark:bg-white text-white dark:text-brand-black px-8 py-4 rounded-full shadow-2xl z-[200] transform translate-y-32 opacity-0 transition-all duration-500 font-black text-xs uppercase tracking-widest">
         Added to bag</div><!-- Scroll to Top Button -->
     <!-- Scroll to Top Button -->
-    <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
-        class="fixed bottom-8 right-6 z-[150] w-16 h-16 flex items-center justify-center rounded-full bg-accent text-white shadow-xl"
-        style="opacity:0; pointer-events:none; transform:translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease;"
-        aria-label="Scroll to top">
-        <i class="fas fa-chevron-up font-size: 18px"></i>
+    <button id="scroll-top-btn" type="button" aria-label="Scroll to top"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        class="fixed bottom-8 right-6 z-[150] w-16 h-16 flex items-center justify-center rounded-full bg-accent text-white shadow-xl">
+        <i class="fas fa-chevron-up text-sm"></i>
     </button>
+
+    <!-- Custom Share Modal -->
+    <div id="share-modal" class="fixed inset-0 z-[400] hidden items-end justify-center sm:items-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeShareModal()"></div>
+        <div
+            class="relative bg-white dark:bg-[#111] w-full max-w-sm rounded-t-[32px] sm:rounded-[32px] p-6 shadow-2xl border dark:border-white/10">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-sm font-black uppercase tracking-widest dark:text-white">Share Product</h3>
+                <button onclick="closeShareModal()" aria-label="Close share"
+                    class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 dark:text-white">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+            <div id="share-product-name"
+                class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-6 truncate"></div>
+            <div class="grid grid-cols-4 gap-4 mb-6">
+                <button onclick="shareVia('whatsapp')" class="flex flex-col items-center gap-2 group">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <span class="text-[9px] font-black uppercase text-gray-400">WhatsApp</span>
+                </button>
+                <button onclick="shareVia('instagram')" class="flex flex-col items-center gap-2 group">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <span class="text-[9px] font-black uppercase text-gray-400">Instagram</span>
+                </button>
+                <button onclick="shareVia('twitter')" class="flex flex-col items-center gap-2 group">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
+                        <i class="fab fa-x-twitter"></i>
+                    </div>
+                    <span class="text-[9px] font-black uppercase text-gray-400">X</span>
+                </button>
+                <button onclick="shareVia('messenger')" class="flex flex-col items-center gap-2 group">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
+                        <i class="fab fa-facebook-messenger"></i>
+                    </div>
+                    <span class="text-[9px] font-black uppercase text-gray-400">Messenger</span>
+                </button>
+            </div>
+            <button onclick="shareVia('copy')" id="copy-link-btn"
+                class="w-full flex items-center gap-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors active:scale-95">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10 flex items-center justify-center shrink-0">
+                    <i class="fas fa-link text-gray-600 dark:text-white text-sm"></i>
+                </div>
+                <span class="text-xs font-black uppercase text-gray-600 dark:text-white tracking-widest">Copy
+                    Link</span>
+                <i id="copy-check" class="fas fa-check text-green-500 ml-auto hidden"></i>
+            </button>
+        </div>
+    </div>
     <script>
             (function () {
                 const btn = document.getElementById('scroll-top-btn');
@@ -1516,10 +1580,102 @@
             setTimeout(() => { t.classList.replace('translate-y-0', 'translate-y-32'); t.classList.replace('opacity-100', 'opacity-0'); }, 2000);
         }
 
-        function shareProduct() { if (currentModalProduct) window.open(`https://wa.me/?text=Check this: ${currentModalProduct.name}`, '_blank'); }
+        function shareProduct() {
+            if (!currentModalProduct) return;
+            const url = `${window.location.origin}${window.location.pathname}?product=${currentModalProduct.id}`;
+            const shareData = {
+                title: currentModalProduct.name,
+                text: `Check out this product at OPEMA Clothing: ${currentModalProduct.name}`,
+                url: url
+            };
 
+            // Use native share sheet if available (iOS Safari, some Android browsers)
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                navigator.share(shareData).catch(() => { });
+            } else {
+                // Show custom share modal
+                document.getElementById('share-product-name').textContent = currentModalProduct.name;
+                document.getElementById('share-modal').classList.remove('hidden');
+                document.getElementById('share-modal').classList.add('flex');
+                document.getElementById('copy-check').classList.add('hidden');
+            }
+        }
+
+        window.closeShareModal = function () {
+            document.getElementById('share-modal').classList.add('hidden');
+            document.getElementById('share-modal').classList.remove('flex');
+        };
+
+        window.shareVia = function (platform) {
+            if (!currentModalProduct) return;
+            const rawUrl = `${window.location.origin}${window.location.pathname}?product=${currentModalProduct.id}`;
+            const encodedUrl = encodeURIComponent(rawUrl);
+            const text = encodeURIComponent(`Check out ${currentModalProduct.name} at OPEMA Clothing!`);
+
+            const copyAndOpen = (appUrl, toastMsg) => {
+                navigator.clipboard.writeText(rawUrl).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = rawUrl;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                });
+                showToast(toastMsg);
+                setTimeout(() => window.open(appUrl, '_blank'), 600);
+            };
+
+            if (platform === 'whatsapp') {
+                // WhatsApp supports direct URL — link opens as clickable message
+                window.open(`https://wa.me/?text=${text}%20${encodedUrl}`, '_blank');
+
+            } else if (platform === 'instagram') {
+                // Instagram has no web share URL — copy link first, then open app
+                copyAndOpen('instagram://direct', 'Link copied — paste in Instagram DM');
+
+            } else if (platform === 'twitter') {
+                // Twitter/X supports direct URL sharing as tweet
+                window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`, '_blank');
+
+            } else if (platform === 'messenger') {
+                // Messenger supports send dialog — opens as a message
+                window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&app_id=291494947950990&redirect_uri=${encodedUrl}`, '_blank');
+
+            } else if (platform === 'copy') {
+                navigator.clipboard.writeText(rawUrl).then(() => {
+                    const check = document.getElementById('copy-check');
+                    check.classList.remove('hidden');
+                    setTimeout(() => check.classList.add('hidden'), 2000);
+                }).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = rawUrl;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    const check = document.getElementById('copy-check');
+                    check.classList.remove('hidden');
+                    setTimeout(() => check.classList.add('hidden'), 2000);
+                });
+            }
+        };
         window.onload = () => {
-            initTheme(); loadLocalData(); renderProducts();
+            initTheme(); loadLocalData(); renderProducts();// Auto-open product from shared link
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedProductId = urlParams.get('product');
+            if (sharedProductId) {
+                // Wait for products to load from Firebase, then open modal
+                const tryOpen = () => {
+                    const p = products.find(i => i.id === sharedProductId);
+                    if (p) {
+                        openModal(sharedProductId);
+                    } else {
+                        // Products not loaded yet, retry
+                        setTimeout(tryOpen, 300);
+                    }
+                };
+                setTimeout(tryOpen, 500);
+            }
             const bar = document.getElementById('preloader-bar');
             if (bar) bar.style.transform = "scaleX(1)";
             setTimeout(() => { document.getElementById('brand-preloader').classList.add('hidden-loader'); document.body.classList.remove('overflow-hidden'); }, 2500);
