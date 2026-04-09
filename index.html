@@ -37,9 +37,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
 
         :root {
-            --accent-color: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.8);
-            --accent-glow-bright: rgba(99, 102, 241, 1);
+            --accent-color: #FF0800;
+            --accent-glow: rgba(255, 8, 0, 0.8);
+            --accent-glow-bright: rgba(255, 8, 0, 1);
         }
 
         * {
@@ -98,9 +98,8 @@
         }
 
         #pagination-container {
-            flex-direction: row;
-            display: flex;
-            justify-content: space-evenly;
+            overflow: visible;
+            padding: 1.5rem 0;
         }
 
         @keyframes logoPulse {
@@ -399,6 +398,11 @@
             align-items: center;
             justify-content: center;
             cursor: grab;
+            touch-action: none;
+        }
+
+        #image-viewer {
+            touch-action: none;
         }
 
         .viewer-img {
@@ -472,9 +476,9 @@
                 <div class="flex items-center gap-1.5 sm:gap-4 relative shrink-0">
                     <div id="accent-picker"
                         class="flex items-center gap-2 bg-white/95 dark:bg-black/95 p-2 rounded-2xl border border-gray-200 dark:border-white/10 backdrop-blur-xl shadow-2xl">
-                        <button onclick="setAccent('#FF0800')"
-                            class="w-6 h-6 rounded-full bg-[#FF0800] hover:scale-125 transition-transform"
-                            title="Candy Apple Red"></button>
+                        <button onclick="setAccent('#6366f1')"
+                            class="w-6 h-6 rounded-full bg-indigo-500 hover:scale-125 transition-transform"
+                            title="Indigo"></button>
                         <button onclick="setAccent('#22c55e')"
                             class="w-6 h-6 rounded-full bg-[#22c55e] hover:scale-125 transition-transform"
                             title="Success Green"></button>
@@ -485,8 +489,8 @@
                             class="w-6 h-6 rounded-full bg-amber-500 hover:scale-125 transition-transform"
                             title="Amber"></button>
                         <div class="w-px h-4 bg-gray-300 dark:bg-white/20 mx-1"></div>
-                        <button onclick="setAccent('#6366f1')"
-                            class="w-6 h-6 rounded-full bg-indigo-500 border-2 border-white dark:border-brand-black hover:scale-125 transition-transform"
+                        <button onclick="setAccent('#FF0800')"
+                            class="w-6 h-6 rounded-full bg-[#FF0800] border-2 border-white dark:border-brand-black hover:scale-125 transition-transform"
                             title="Default Brand"></button>
                     </div>
 
@@ -624,11 +628,12 @@
 
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
 
-        <div id="pagination-container" class="mt-16 hidden flex-col items-center gap-6">
-            <div id="page-numbers" class="flex flex-wrap justify-center gap-3"></div>
+        <div id="pagination-container"
+            class="mt-16 hidden flex-row flex-wrap items-center justify-center gap-4 sm:gap-6">
+            <div id="page-numbers" class="flex flex-nowrap items-center gap-2 overflow-visible"></div>
             <button id="next-page-btn" onclick="nextPage()"
-                class="hidden bg-accent text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">Next
-                Page <i class="fas fa-chevron-right ml-2 text-[10px]"></i></button>
+                class="hidden bg-accent text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl whitespace-nowrap">Next<i
+                    class="fas fa-chevron-right ml-2 text-[10px]"></i></button>
         </div>
 
         <div id="no-results" class="hidden flex flex-col items-center justify-center py-20 text-center animate-fade-in">
@@ -650,22 +655,16 @@
                 <button id="modal-wish-btn" aria-label="Add to wishlist" class=" w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full
                     hover:scale-110 transition-all border border-white/10 text-white shadow-xl"><i
                         class="far fa-heart text-base sm:text-lg"></i></button>
+                <button id="modal-share-btn" onclick="shareProduct()" aria-label="Share product"
+                    class="w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full hover:scale-110 transition-all border border-white/10 text-white shadow-xl"><i
+                        class="fas fa-share-alt text-base sm:text-lg"></i></button>
                 <button onclick="closeModal()"
-                    class="w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full hover:scale-110 transition-transform border border-white/10 text-white shadow-xl"><i
+                    class="hidden sm:block w-10 h-10 flex items-center justify-center bg-black/60 backdrop-blur-md rounded-full hover:scale-110 transition-transform border border-white/10 text-white shadow-xl"><i
                         class="fas fa-times text-base sm:text-lg"></i></button>
             </div>
             <div id="modal-carousel-parent"
                 class="w-full lg:w-1/2 min-h-[300px] h-[300px] sm:h-[400px] lg:min-h-0 lg:h-auto relative bg-gray-50 dark:bg-white/5 group flex-shrink-0 touch-pan-y">
                 <div id="modal-carousel-container" class="w-full h-full overflow-hidden relative"></div>
-                <div
-                    class="absolute inset-0 flex items-center justify-between px-4 transition-opacity lg:opacity-0 lg:group-hover:opacity-100 pointer-events-none">
-                    <button onclick="prevModalSlide()"
-                        class="w-10 h-10 bg-white/90 dark:bg-black/80 rounded-full pointer-events-auto hover:scale-110 shadow-lg flex items-center justify-center transition-transform"><i
-                            class="fas fa-chevron-left text-sm"></i></button>
-                    <button onclick="nextModalSlide()"
-                        class="w-10 h-10 bg-white/90 dark:bg-black/80 rounded-full pointer-events-auto hover:scale-110 shadow-lg flex items-center justify-center transition-transform"><i
-                            class="fas fa-chevron-right text-sm"></i></button>
-                </div>
                 <div id="modal-dots" class="absolute bottom-6 left-0 right-0 flex justify-center gap-2"></div>
             </div>
             <div class="w-full lg:w-1/2 p-5 sm:p-8 lg:p-10 flex flex-col">
@@ -709,17 +708,13 @@
                     <button id="modal-add-btn" aria-label="Add to Bag"
                         class="flex-grow bg-accent text-white py-3.5 rounded-2xl text-sm font-black uppercase transition-all duration-500 active:scale-95">Add
                         to Bag</button>
-                    <button onclick="shareProduct()" aria-label="Share product"
-                        class="w-12 h-12 shrink-0 border dark:border-white/20 rounded-2xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors duration-300">
-                        <i class="fas fa-share-alt dark:text-white"></i>
-                    </button>
                 </div>
             </div>
         </div>
     </div>
     <!-- Image Fullscreen Viewer -->
     <div id="image-viewer"
-        class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/5 backdrop-blur-3xl transition-all duration-500 touch-none">
+        class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/5 backdrop-blur-3xl transition-all duration-500">
         <div id="viewer-backdrop" class="absolute inset-0 cursor-zoom-out" onclick="closeFullImage()"></div>
         <button onclick="closeFullImage()"
             class="absolute top-8 right-8 w-12 h-12 sm:w-14 sm:h-14 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl sm:text-2xl transition-all z-[210]">
@@ -736,14 +731,8 @@
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
-        <!-- Zoomable container -->
-        <div id="viewer-container">
-            <img id="viewer-img" class="viewer-img" src="">
-        </div>
-        <!-- Zoom hint -->
-        <div id="zoom-hint" class="zoom-hint">
-            Pinch or scroll to zoom
-        </div>
+        <div id="viewer-container"><img id="viewer-img" class="viewer-img" src=""></div>
+        <div id="zoom-hint" class="zoom-hint">Pinch or scroll to zoom</div>
     </div>
     <!-- Sizing Guide Modal -->
     <div id="sizing-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
@@ -887,11 +876,29 @@
     </div>
     <div id="cart-sidebar"
         class="sidebar fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-brand-black z-[70] shadow-2xl flex flex-col transition-transform duration-400">
-        <div class="p-8 border-b dark:border-white/10 flex justify-between items-center transition-colors duration-500">
+        <div
+            class="p-8 border-b dark:border-white/10 flex justify-between items-center transition-colors duration-500 relative">
             <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Your Bag</h2>
-            <button type="button" onclick="toggleCart()" aria-label="toggle cart"
-                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-colors duration-300"><i
-                    class="fas fa-times"></i></button>
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <button id="auth-btn" onclick="handleAuth()" title="Login" aria-label="Login with Google"
+                        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-all overflow-hidden">
+                        <i id="auth-icon" class="fas fa-user-circle text-xl"></i>
+                    </button>
+                    <!-- Small Logout Menu -->
+                    <div id="user-menu"
+                        class="absolute top-full right-0 mt-3 w-40 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl opacity-0 scale-95 pointer-events-none transition-all z-[80]">
+                        <div class="p-4">
+                            <button onclick="handleSignOut()"
+                                class="w-full text-left text-xs font-black uppercase text-red-500 hover:opacity-80 transition-opacity">Sign
+                                Out</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="toggleCart()" aria-label="toggle cart"
+                    class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-colors duration-300"><i
+                        class="fas fa-times"></i></button>
+            </div>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto p-8 space-y-6"></div>
         <div id="bag-empty-msg" class="hidden text-center py-20 text-gray-400">
@@ -924,7 +931,8 @@
 
     <div id="toast"
         class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-brand-black dark:bg-white text-white dark:text-brand-black px-8 py-4 rounded-full shadow-2xl z-[200] transform translate-y-32 opacity-0 transition-all duration-500 font-black text-xs uppercase tracking-widest">
-        Added to bag</div><!-- Scroll to Top Button -->
+        Added to bag</div>
+
     <!-- Scroll to Top Button -->
     <button id="scroll-top-btn" type="button" aria-label="Scroll to top"
         onclick="window.scrollTo({top:0,behavior:'smooth'})"
@@ -932,7 +940,6 @@
         <i class="fas fa-chevron-up text-sm"></i>
     </button>
 
-    <!-- Custom Share Modal -->
     <div id="share-modal" class="fixed inset-0 z-[400] hidden items-end justify-center sm:items-center p-4">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeShareModal()"></div>
         <div
@@ -950,29 +957,25 @@
                 <button onclick="shareVia('whatsapp')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-whatsapp"></i>
-                    </div>
+                        <i class="fab fa-whatsapp"></i></div>
                     <span class="text-[9px] font-black uppercase text-gray-400">WhatsApp</span>
                 </button>
                 <button onclick="shareVia('instagram')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-instagram"></i>
-                    </div>
+                        <i class="fab fa-instagram"></i></div>
                     <span class="text-[9px] font-black uppercase text-gray-400">Instagram</span>
                 </button>
                 <button onclick="shareVia('twitter')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-x-twitter"></i>
-                    </div>
+                        <i class="fab fa-x-twitter"></i></div>
                     <span class="text-[9px] font-black uppercase text-gray-400">X</span>
                 </button>
                 <button onclick="shareVia('messenger')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-facebook-messenger"></i>
-                    </div>
+                        <i class="fab fa-facebook-messenger"></i></div>
                     <span class="text-[9px] font-black uppercase text-gray-400">Messenger</span>
                 </button>
             </div>
@@ -980,70 +983,18 @@
                 class="w-full flex items-center gap-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors active:scale-95">
                 <div
                     class="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10 flex items-center justify-center shrink-0">
-                    <i class="fas fa-link text-gray-600 dark:text-white text-sm"></i>
-                </div>
+                    <i class="fas fa-link text-gray-600 dark:text-white text-sm"></i></div>
                 <span class="text-xs font-black uppercase text-gray-600 dark:text-white tracking-widest">Copy
                     Link</span>
                 <i id="copy-check" class="fas fa-check text-green-500 ml-auto hidden"></i>
             </button>
         </div>
     </div>
-    <script>
-            (function () {
-                const btn = document.getElementById('scroll-top-btn');
-                let lastScrollY = window.scrollY;
-                let hideTimer = null;
 
-                function showBtn() {
-                    btn.style.opacity = '1';
-                    btn.style.pointerEvents = 'auto';
-                    btn.style.transform = 'translateY(0) scale(1)';
-                }
-
-                function hideBtn() {
-                    btn.style.opacity = '0';
-                    btn.style.pointerEvents = 'none';
-                    btn.style.transform = 'translateY(16px) scale(0.9)';
-                }
-
-                // Subtle hover shimmer via JS (can't use :hover in inline styles)
-                btn.addEventListener('mouseenter', () => {
-                    btn.style.background = 'rgba(255,255,255,0.22)';
-                    btn.style.boxShadow = '0 6px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.4)';
-                    btn.style.transform = 'translateY(-2px) scale(1.08)';
-                });
-                btn.addEventListener('mouseleave', () => {
-                    btn.style.background = 'rgba(255,255,255,0.12)';
-                    btn.style.boxShadow = '0 4px 24px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.3)';
-                    btn.style.transform = 'translateY(0) scale(1)';
-                });
-                btn.addEventListener('mousedown', () => {
-                    btn.style.transform = 'translateY(0) scale(0.95)';
-                });
-                btn.addEventListener('mouseup', () => {
-                    btn.style.transform = 'translateY(0) scale(1)';
-                });
-
-                window.addEventListener('scroll', () => {
-                    const currentScrollY = window.scrollY;
-                    const scrollingUp = currentScrollY < lastScrollY;
-                    lastScrollY = currentScrollY;
-
-                    clearTimeout(hideTimer);
-
-                    if (scrollingUp && currentScrollY > 200) {
-                        showBtn();
-                        hideTimer = setTimeout(hideBtn, 1500);
-                    } else {
-                        hideBtn();
-                    }
-                }, { passive: true });
-            })();
-    </script>
-
+    <!-- MAIN APP SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -1069,6 +1020,7 @@
             }
         }
 
+        const googleProvider = new GoogleAuthProvider();
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         let userId = null;
@@ -1131,6 +1083,8 @@
         window.prevFullImage = prevFullImage;
         window.nextFullImage = nextFullImage;
         window.changeQty = changeQty;
+        window.handleAuth = handleAuth;
+        window.handleSignOut = handleSignOut;
 
         function loadLocalData() {
             cart = JSON.parse(localStorage.getItem('opema_cart')) || [];
@@ -1142,14 +1096,73 @@
 
         if (isFirebaseActive) {
             onAuthStateChanged(auth, (user) => {
-                if (user) { userId = user.uid; setupRealtimeListeners(); }
+                if (user) {
+                    userId = user.uid;
+                    setupRealtimeListeners();
+                    updateAuthUI(user);
+                } else {
+                    updateAuthUI(null);
+                }
             });
             (async () => {
                 try {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
-                    else await signInAnonymously(auth);
+                    else if (!auth.currentUser) await signInAnonymously(auth);
                 } catch (e) { isFirebaseActive = false; }
             })();
+        }
+
+        async function handleAuth() {
+            if (!isFirebaseActive) return;
+            const user = auth.currentUser;
+            if (user && !user.isAnonymous) {
+                // Toggle logout menu
+                const menu = document.getElementById('user-menu');
+                menu.classList.toggle('opacity-0');
+                menu.classList.toggle('pointer-events-none');
+                menu.classList.toggle('scale-95');
+                return;
+            }
+            try {
+                await signInWithPopup(auth, googleProvider);
+                showToast("Login Successful");
+            } catch (e) {
+                console.error("Auth failed", e);
+                showToast("Login Failed. Check authorized domains.");
+            }
+        }
+
+        async function handleSignOut() {
+            try {
+                await signOut(auth);
+                await signInAnonymously(auth);
+                document.getElementById('user-menu').classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                showToast("Signed Out");
+            } catch (e) {
+                console.error("Signout failed", e);
+            }
+        }
+
+        // Close user menu if clicking outside
+        document.addEventListener('click', (e) => {
+            const btn = document.getElementById('auth-btn');
+            const menu = document.getElementById('user-menu');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            }
+        });
+
+        function updateAuthUI(user) {
+            const btn = document.getElementById('auth-btn');
+            if (!btn) return;
+
+            if (user && !user.isAnonymous) {
+                btn.innerHTML = `<img src="${user.photoURL}" alt="Profile" class="w-full h-full object-cover rounded-full border border-gray-200 dark:border-white/10">`;
+                btn.title = `Logout (${user.displayName})`;
+            } else {
+                btn.innerHTML = `<i id="auth-icon" class="fas fa-user-circle text-xl"></i>`;
+                btn.title = "Login with Google";
+            }
         }
 
         function setupRealtimeListeners() {
@@ -1199,15 +1212,27 @@
         }
 
         function initTheme() {
-            if (localStorage.theme === 'light') document.documentElement.classList.remove('dark');
-            else document.documentElement.classList.add('dark');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            if (localStorage.accentColor === '#6366f1') localStorage.removeItem('accentColor');
             if (localStorage.accentColor) setAccent(localStorage.accentColor);
-            updateThemeIcon(document.documentElement.classList.contains('dark'));
-        }
+            updateThemeIcon(prefersDark);
 
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (e.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                updateThemeIcon(e.matches);
+            });
+        }
         function toggleTheme() {
             const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.theme = isDark ? 'dark' : 'light';
             updateThemeIcon(isDark);
         }
 
@@ -1261,29 +1286,51 @@
             const empty = document.getElementById('no-results');
             const pagination = document.getElementById('pagination-container');
             const nextBtn = document.getElementById('next-page-btn');
+            const pageNumbers = document.getElementById('page-numbers');
             if (!grid) return;
 
+            if (pagination) {
+                pagination.style.display = 'none';
+                pagination.classList.add('hidden');
+                pagination.classList.remove('flex');
+            }
+            if (nextBtn) {
+                nextBtn.style.display = 'none';
+                nextBtn.classList.add('hidden');
+                nextBtn.style.pointerEvents = 'none';
+            }
+            if (pageNumbers) {
+                pageNumbers.innerHTML = '';
+            }
+
             const filtered = products.filter(p => {
-                const pCat = p.category ? p.category.toLowerCase() : '';
-                const pSubCat = p.sub_category ? p.sub_category.toLowerCase() : '';
+                const pCat = (p.category || '').toLowerCase();
+                const pSubCat = (p.sub_category || '').toLowerCase();
                 const matchCat = currentCategory === 'all' || pCat === currentCategory.toLowerCase() || pSubCat === currentCategory.toLowerCase();
-                const pName = p.name ? p.name.toLowerCase() : '';
+                const pName = (p.name || '').toLowerCase();
                 const pKeywords = Array.isArray(p.keywords) ? p.keywords.join(' ').toLowerCase() : '';
                 const matchSearch = searchQuery === '' || pName.includes(searchQuery) || pKeywords.includes(searchQuery);
                 const matchPrecision = activePrecision.length === 0 || (p.specs && activePrecision.every(opt => p.specs.includes(opt)));
                 return matchCat && matchSearch && matchPrecision;
             });
 
-            if (pagination) pagination.classList.add('hidden');
-            if (nextBtn) nextBtn.classList.add('hidden');
-
             if (filtered.length === 0) {
-                grid.classList.add('hidden'); grid.innerHTML = ''; empty.classList.remove('hidden'); empty.classList.add('flex');
-                const numCont = document.getElementById('page-numbers');
-                if (numCont) numCont.innerHTML = ''; return;
+                grid.classList.add('hidden');
+                grid.innerHTML = '';
+                if (empty) {
+                    empty.classList.remove('hidden');
+                    empty.classList.add('flex');
+                }
+                return;
             }
 
-            grid.classList.remove('hidden'); grid.classList.add('grid'); empty.classList.add('hidden'); empty.classList.remove('flex');
+            grid.classList.remove('hidden');
+            grid.classList.add('grid');
+            if (empty) {
+                empty.classList.add('hidden');
+                empty.classList.remove('flex');
+            }
+
             const limit = getItemsPerPage();
             const totalPages = Math.ceil(filtered.length / limit);
             const start = (currentPage - 1) * limit;
@@ -1319,18 +1366,57 @@
             const container = document.getElementById('page-numbers');
             const nextBtn = document.getElementById('next-page-btn');
             const pagination = document.getElementById('pagination-container');
+
             if (totalPages <= 1) {
-                if (container) container.innerHTML = ''; if (nextBtn) nextBtn.classList.add('hidden');
-                if (pagination) pagination.classList.add('hidden'); return;
+                if (container) container.innerHTML = '';
+                if (nextBtn) {
+                    nextBtn.style.display = 'none';
+                    nextBtn.classList.add('hidden');
+                    nextBtn.style.pointerEvents = 'none';
+                }
+                if (pagination) {
+                    pagination.style.display = 'none';
+                    pagination.classList.add('hidden');
+                    pagination.classList.remove('flex');
+                }
+                return;
             }
-            if (pagination) pagination.classList.remove('hidden');
-            container.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1).map(num => `
-                <button onclick="goToPage(${num})" class="page-dot w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs transition-all border border-gray-100 dark:border-white/10 dark:text-white ${currentPage === num ? 'active' : 'hover:bg-gray-50 dark:hover:bg-white/5'}">
-                    ${num}
-                </button>
-            `).join('');
-            if (currentPage < totalPages) nextBtn.classList.remove('hidden');
-            else nextBtn.classList.add('hidden');
+
+            if (pagination) {
+                pagination.style.display = 'flex';
+                pagination.classList.remove('hidden');
+            }
+
+            const maxVisible = window.innerWidth < 400 ? 3 : window.innerWidth < 640 ? 4 : 6;
+            let pages = [];
+            if (totalPages <= maxVisible + 1) {
+                pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+            } else {
+                pages.push(1);
+                const start = Math.max(2, currentPage - 1);
+                const end = Math.min(totalPages - 1, currentPage + 1);
+                if (start > 2) pages.push('...');
+                for (let i = start; i <= end; i++) pages.push(i);
+                if (end < totalPages - 1) pages.push('...');
+                pages.push(totalPages);
+            }
+
+            container.innerHTML = pages.map(num => {
+                if (num === '...') return `<span class="w-10 h-10 flex items-center justify-center text-gray-400 text-xs font-black shrink-0">···</span>`;
+                const isActive = currentPage === num;
+                const activeStyle = isActive ? `style="background-color:var(--accent-color);color:white;box-shadow:0 4px 10px var(--accent-glow);border-color:var(--accent-color);"` : '';
+                return `<button onclick="goToPage(${num})" ${activeStyle} class="page-dot w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs transition-all border border-gray-100 dark:border-white/10 dark:text-white shrink-0 ${isActive ? '' : 'hover:bg-gray-50 dark:hover:bg-white/5'}">${num}</button>`;
+            }).join('');
+
+            if (currentPage < totalPages && totalPages > 1) {
+                nextBtn.style.display = 'flex';
+                nextBtn.classList.remove('hidden');
+                nextBtn.style.pointerEvents = 'auto';
+            } else {
+                nextBtn.style.display = 'none';
+                nextBtn.classList.add('hidden');
+                nextBtn.style.pointerEvents = 'none';
+            }
         }
 
         function goToPage(num) { currentPage = num; renderProducts(); document.getElementById('collection').scrollIntoView({ behavior: 'smooth' }); }
@@ -1340,6 +1426,9 @@
         function openModal(pid) {
             const p = products.find(i => i.id === pid);
             if (!p) return;
+
+            if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn();
+
             currentModalProduct = p; activeModalSlide = 0; selectedSize = ""; selectedPlayer = "";
             document.getElementById('modal-title').textContent = p.name;
             document.getElementById('modal-price').textContent = `${CURRENCY}${p.price}`;
@@ -1353,6 +1442,28 @@
                     <img src="${img}" onclick="openFullImage(${i})" onload="removePlaceholder(this)" class="w-full h-full object-contain cursor-zoom-in" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
                 </div>
             `).join('');
+
+            let startX, startY;
+            carousel.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }, { passive: true });
+            carousel.addEventListener('touchend', (e) => {
+                if (!startX || !startY) return;
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const diffX = startX - endX;
+                const diffY = startY - endY;
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        nextModalSlide();
+                    } else {
+                        prevModalSlide();
+                    }
+                }
+                startX = null;
+                startY = null;
+            }, { passive: true });
 
             const dots = document.getElementById('modal-dots');
             dots.innerHTML = gallery.length > 1 ? gallery.map((_, i) => `<div class="w-2.5 h-2.5 rounded-full bg-gray-200 dark:bg-white/20 ${i === 0 ? 'bg-accent' : ''}"></div>`).join('') : '';
@@ -1383,16 +1494,16 @@
         }
 
         function closeModal() { document.getElementById('product-modal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
-        function openSizingModal() { document.getElementById('sizing-modal').classList.remove('hidden'); }
+        function openSizingModal() { if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn(); document.getElementById('sizing-modal').classList.remove('hidden'); }
         function closeSizingModal() { document.getElementById('sizing-modal').classList.add('hidden'); }
 
         function openFullImage(index) {
             if (!currentModalProduct) return;
+            if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn();
             activeZoomSlide = index;
             updateFullImageView();
             document.getElementById('image-viewer').classList.remove('hidden');
             window._zoomInit();
-            // ← NO handleTouchStart / handleTouchEnd listeners here at all
         }
 
         function updateFullImageView() {
@@ -1409,14 +1520,14 @@
         function prevFullImage() {
             const gallery = currentModalProduct.images || [];
             if (!currentModalProduct || gallery.length <= 1) return;
-            window._zoomReset(); // reset zoom before switching
+            window._zoomReset();
             activeZoomSlide = (activeZoomSlide - 1 + gallery.length) % gallery.length;
             updateFullImageView();
         }
         function nextFullImage() {
             const gallery = currentModalProduct.images || [];
             if (!currentModalProduct || gallery.length <= 1) return;
-            window._zoomReset(); // reset zoom before switching
+            window._zoomReset();
             activeZoomSlide = (activeZoomSlide + 1) % gallery.length;
             updateFullImageView();
         }
@@ -1453,8 +1564,8 @@
             dots.forEach((dot, i) => dot.style.backgroundColor = i === activeModalSlide ? getComputedStyle(document.documentElement).getPropertyValue('--accent-color') : "");
         }
 
-        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('hidden'); }
-        function toggleWishlistSidebar() { document.getElementById('wishlist-sidebar').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('hidden'); }
+        function toggleCart() { if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn(); document.getElementById('cart-sidebar').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('hidden'); }
+        function toggleWishlistSidebar() { if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn(); document.getElementById('wishlist-sidebar').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('hidden'); }
         function closeSidebars() { document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('open')); document.getElementById('global-overlay').classList.add('hidden'); }
 
         window.toggleWishlist = function (pid, event) {
@@ -1551,29 +1662,19 @@
         }
 
         window.removeFromCart = function (id) { cart = cart.filter(i => i.cartId !== id); saveCartItem(); updateCartUI(); }
+
         function checkoutToWhatsApp() {
             let itemLines = '';
             let grandTotal = 0;
-
             cart.forEach((i, idx) => {
                 const sum = i.price * i.quantity;
                 grandTotal += sum;
                 itemLines += `${idx + 1}. *${i.name} | ${i.size}*%0AQty: ${i.quantity} × ₹${i.price} = *₹${sum}*%0A%0A`;
             });
-
-            const msg =
-                `☘️ *Greetings from ØOpema Store* 👕%0A` +
-                `_Your order is being processed! We will contact you shortly._%0A%0A` +
-                `*ORDER SUMMARY*%0A` +
-                `*━━━━━━━━━━━━━━━━━━━━━*%0A` +
-                itemLines +
-                `━━━━━━━━━━━━━━━━━━━━━%0A` +
-                `💰 *Grand Total: ₹${grandTotal}*%0A%0A` +
-                `⚠️ _Please confirm availability before making payment! You can provide your number or call us._%0A%0A` +
-                `Thanks for shopping! 🤗`;
-
+            const msg = `☘️ *Greetings from ØOpema Store* 👕%0A_Your order is being processed! We will contact you shortly._%0A%0A*ORDER SUMMARY*%0A*━━━━━━━━━━━━━━━━━━━━━*%0A` + itemLines + `━━━━━━━━━━━━━━━━━━━━━%0A💰 *Grand Total: ₹${grandTotal}*%0A%0A⚠️ _Please confirm availability before making payment! You can provide your number or call us._%0A%0AThanks for shopping! 🤗`;
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
         }
+
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg; t.classList.replace('translate-y-32', 'translate-y-0'); t.classList.replace('opacity-0', 'opacity-100');
@@ -1582,18 +1683,12 @@
 
         function shareProduct() {
             if (!currentModalProduct) return;
+            if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn();
             const url = `${window.location.origin}${window.location.pathname}?product=${currentModalProduct.id}`;
-            const shareData = {
-                title: currentModalProduct.name,
-                text: `Check out this product at OPEMA Clothing: ${currentModalProduct.name}`,
-                url: url
-            };
-
-            // Use native share sheet if available (iOS Safari, some Android browsers)
+            const shareData = { title: currentModalProduct.name, text: `Check out this product at OPEMA Clothing: ${currentModalProduct.name}`, url: url };
             if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                 navigator.share(shareData).catch(() => { });
             } else {
-                // Show custom share modal
                 document.getElementById('share-product-name').textContent = currentModalProduct.name;
                 document.getElementById('share-modal').classList.remove('hidden');
                 document.getElementById('share-modal').classList.add('flex');
@@ -1611,68 +1706,36 @@
             const rawUrl = `${window.location.origin}${window.location.pathname}?product=${currentModalProduct.id}`;
             const encodedUrl = encodeURIComponent(rawUrl);
             const text = encodeURIComponent(`Check out ${currentModalProduct.name} at OPEMA Clothing!`);
-
             const copyAndOpen = (appUrl, toastMsg) => {
                 navigator.clipboard.writeText(rawUrl).catch(() => {
-                    const ta = document.createElement('textarea');
-                    ta.value = rawUrl;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
+                    const ta = document.createElement('textarea'); ta.value = rawUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
                 });
                 showToast(toastMsg);
                 setTimeout(() => window.open(appUrl, '_blank'), 600);
             };
-
-            if (platform === 'whatsapp') {
-                // WhatsApp supports direct URL — link opens as clickable message
-                window.open(`https://wa.me/?text=${text}%20${encodedUrl}`, '_blank');
-
-            } else if (platform === 'instagram') {
-                // Instagram has no web share URL — copy link first, then open app
-                copyAndOpen('instagram://direct', 'Link copied — paste in Instagram DM');
-
-            } else if (platform === 'twitter') {
-                // Twitter/X supports direct URL sharing as tweet
-                window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`, '_blank');
-
-            } else if (platform === 'messenger') {
-                // Messenger supports send dialog — opens as a message
-                window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&app_id=291494947950990&redirect_uri=${encodedUrl}`, '_blank');
-
-            } else if (platform === 'copy') {
+            if (platform === 'whatsapp') { window.open(`https://wa.me/?text=${text}%20${encodedUrl}`, '_blank'); }
+            else if (platform === 'instagram') { copyAndOpen('instagram://direct', 'Link copied — paste in Instagram DM'); }
+            else if (platform === 'twitter') { window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`, '_blank'); }
+            else if (platform === 'messenger') { window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&app_id=291494947950990&redirect_uri=${encodedUrl}`, '_blank'); }
+            else if (platform === 'copy') {
                 navigator.clipboard.writeText(rawUrl).then(() => {
-                    const check = document.getElementById('copy-check');
-                    check.classList.remove('hidden');
-                    setTimeout(() => check.classList.add('hidden'), 2000);
+                    const check = document.getElementById('copy-check'); check.classList.remove('hidden'); setTimeout(() => check.classList.add('hidden'), 2000);
                 }).catch(() => {
-                    const ta = document.createElement('textarea');
-                    ta.value = rawUrl;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                    const check = document.getElementById('copy-check');
-                    check.classList.remove('hidden');
-                    setTimeout(() => check.classList.add('hidden'), 2000);
+                    const ta = document.createElement('textarea'); ta.value = rawUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                    const check = document.getElementById('copy-check'); check.classList.remove('hidden'); setTimeout(() => check.classList.add('hidden'), 2000);
                 });
             }
         };
+
         window.onload = () => {
-            initTheme(); loadLocalData(); renderProducts();// Auto-open product from shared link
+            initTheme(); loadLocalData(); renderProducts();
             const urlParams = new URLSearchParams(window.location.search);
             const sharedProductId = urlParams.get('product');
             if (sharedProductId) {
-                // Wait for products to load from Firebase, then open modal
                 const tryOpen = () => {
                     const p = products.find(i => i.id === sharedProductId);
-                    if (p) {
-                        openModal(sharedProductId);
-                    } else {
-                        // Products not loaded yet, retry
-                        setTimeout(tryOpen, 300);
-                    }
+                    if (p) openModal(sharedProductId);
+                    else setTimeout(tryOpen, 300);
                 };
                 setTimeout(tryOpen, 500);
             }
@@ -1681,59 +1744,39 @@
             setTimeout(() => { document.getElementById('brand-preloader').classList.add('hidden-loader'); document.body.classList.remove('overflow-hidden'); }, 2500);
             const nav = document.getElementById('main-nav');
             if (nav) nav.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            const catalogLink = document.getElementById('view-catalog-link');
+            const collectionSection = document.getElementById('collection');
+            if (catalogLink && collectionSection) {
+                catalogLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    collectionSection.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
         };
     </script>
 
     <!-- ROBUST BACK GESTURE HANDLING -->
     <script>
         (function () {
-            if ('scrollRestoration' in history) {
-                history.scrollRestoration = 'manual';
-            }
-
+            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
             const overlayStack = [];
             let savedScrollPos = 0;
-
             window.history.replaceState({ id: 'opema_base' }, '');
-            for (let i = 0; i < 5; i++) {
-                window.history.pushState({ id: 'opema_trap', n: i }, '');
-            }
-
-            // Re-arm after preloader too
-            setTimeout(() => {
-                for (let i = 0; i < 5; i++) {
-                    window.history.pushState({ id: 'opema_trap', n: i }, '');
-                }
-            }, 2800);
-
-            function pushOverlay(id, closeAction) {
-                overlayStack.push({ id, closeAction });
-                window.history.pushState({ id: 'opema_trap' }, '');
-            }
-
-            function removeFromStack(id) {
-                const idx = overlayStack.findIndex(o => o.id === id);
-                if (idx > -1) overlayStack.splice(idx, 1);
-            }
-
+            for (let i = 0; i < 5; i++) { window.history.pushState({ id: 'opema_trap', n: i }, ''); }
+            setTimeout(() => { for (let i = 0; i < 5; i++) { window.history.pushState({ id: 'opema_trap', n: i }, ''); } }, 2800);
+            function pushOverlay(id, closeAction) { overlayStack.push({ id, closeAction }); window.history.pushState({ id: 'opema_trap' }, ''); }
+            function removeFromStack(id) { const idx = overlayStack.findIndex(o => o.id === id); if (idx > -1) overlayStack.splice(idx, 1); }
             window.addEventListener('popstate', function () {
                 window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
-
-                // Always re-arm with multiple entries first
-                for (let i = 0; i < 5; i++) {
-                    window.history.pushState({ id: 'opema_trap', n: i }, '');
-                }
-
-                if (overlayStack.length > 0) {
-                    const top = overlayStack.pop();
-                    top.closeAction();
-                } else {
+                for (let i = 0; i < 5; i++) { window.history.pushState({ id: 'opema_trap', n: i }, ''); }
+                if (overlayStack.length > 0) { const top = overlayStack.pop(); top.closeAction(); }
+                else {
                     const modalOpen = !document.getElementById('product-modal').classList.contains('hidden');
                     const zoomOpen = !document.getElementById('image-viewer').classList.contains('hidden');
                     const sizingOpen = !document.getElementById('sizing-modal').classList.contains('hidden');
                     const cartOpen = document.getElementById('cart-sidebar').classList.contains('open');
                     const wishOpen = document.getElementById('wishlist-sidebar').classList.contains('open');
-
                     if (modalOpen || zoomOpen || sizingOpen || cartOpen || wishOpen) {
                         document.getElementById('product-modal').classList.add('hidden');
                         document.getElementById('image-viewer').classList.add('hidden');
@@ -1747,394 +1790,171 @@
                     } else {
                         document.getElementById('exit-modal').classList.remove('hidden');
                         document.body.style.overflow = 'hidden';
-                        overlayStack.push({
-                            id: 'exit-modal',
-                            closeAction: () => {
-                                document.getElementById('exit-modal').classList.add('hidden');
-                                document.body.style.overflow = 'auto';
-                            }
-                        });
+                        overlayStack.push({ id: 'exit-modal', closeAction: () => { document.getElementById('exit-modal').classList.add('hidden'); document.body.style.overflow = 'auto'; } });
                     }
                 }
             });
-
-            function proxyFn(name, wrapper) {
-                Object.defineProperty(window, name, {
-                    configurable: true,
-                    set(realFn) {
-                        Object.defineProperty(window, name, {
-                            configurable: true,
-                            writable: true,
-                            value: wrapper(realFn)
-                        });
-                    }
-                });
-            }
-
-            proxyFn('openModal', function (realOpenModal) {
-                return function (pid) {
-                    savedScrollPos = window.pageYOffset;
-                    realOpenModal(pid);
-                    pushOverlay('product-modal', () => {
-                        document.getElementById('product-modal').classList.add('hidden');
-                        document.body.style.overflow = 'auto';
-                        window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
-                    });
-                };
-            });
-
-            proxyFn('closeModal', function (realCloseModal) {
-                return function () {
-                    removeFromStack('product-modal');
-                    realCloseModal();
-                    window.scrollTo({ top: savedScrollPos, behavior: 'instant' });
-                };
-            });
-
-            proxyFn('openFullImage', function (realOpenFullImage) {
-                return function (index) {
-                    realOpenFullImage(index);
-                    pushOverlay('image-viewer', () => {
-                        document.getElementById('image-viewer').classList.add('hidden');
-                    });
-                };
-            });
-
-            proxyFn('closeFullImage', function (realCloseFullImage) {
-                return function () {
-                    removeFromStack('image-viewer');
-                    realCloseFullImage();
-                };
-            });
-
-            proxyFn('openSizingModal', function (realOpen) {
-                return function () {
-                    realOpen();
-                    pushOverlay('sizing-modal', () => {
-                        document.getElementById('sizing-modal').classList.add('hidden');
-                    });
-                };
-            });
-
-            proxyFn('closeSizingModal', function (realClose) {
-                return function () {
-                    removeFromStack('sizing-modal');
-                    realClose();
-                };
-            });
-
-            proxyFn('toggleCart', function (realToggle) {
-                return function () {
-                    const sidebar = document.getElementById('cart-sidebar');
-                    const isOpen = sidebar.classList.contains('open');
-                    if (!isOpen) {
-                        savedScrollPos = window.pageYOffset;
-                        pushOverlay('cart-sidebar', () => {
-                            sidebar.classList.remove('open');
-                            document.getElementById('global-overlay').classList.add('hidden');
-                        });
-                    } else {
-                        removeFromStack('cart-sidebar');
-                    }
-                    realToggle();
-                };
-            });
-
-            proxyFn('toggleWishlistSidebar', function (realToggle) {
-                return function () {
-                    const sidebar = document.getElementById('wishlist-sidebar');
-                    const isOpen = sidebar.classList.contains('open');
-                    if (!isOpen) {
-                        savedScrollPos = window.pageYOffset;
-                        pushOverlay('wishlist-sidebar', () => {
-                            sidebar.classList.remove('open');
-                            document.getElementById('global-overlay').classList.add('hidden');
-                        });
-                    } else {
-                        removeFromStack('wishlist-sidebar');
-                    }
-                    realToggle();
-                };
-            });
-
-            proxyFn('toggleFilterDropdown', function (realToggle) {
-                return function () {
-                    const dropdown = document.getElementById('filter-dropdown');
-                    const isOpen = dropdown.classList.contains('show');
-                    if (!isOpen) {
-                        pushOverlay('filter-dropdown', () => {
-                            dropdown.classList.remove('show');
-                        });
-                    } else {
-                        removeFromStack('filter-dropdown');
-                    }
-                    realToggle();
-                };
-            });
-
-            proxyFn('closeSidebars', function (realClose) {
-                return function () {
-                    removeFromStack('cart-sidebar');
-                    removeFromStack('wishlist-sidebar');
-                    realClose();
-                };
-            });
-
-            window.stayOnPage = function () {
-                removeFromStack('exit-modal');
-                document.getElementById('exit-modal').classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            };
-
-            window.exitApp = function () {
-                window.location.href = 'about:blank';
-            };
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const catalogLink = document.getElementById('view-catalog-link');
-                if (catalogLink) {
-                    catalogLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
-                    });
-                }
-            });
-
+            function proxyFn(name, wrapper) { Object.defineProperty(window, name, { configurable: true, set(realFn) { Object.defineProperty(window, name, { configurable: true, writable: true, value: wrapper(realFn) }); } }); }
+            proxyFn('openModal', (real) => (pid) => { savedScrollPos = window.pageYOffset; real(pid); pushOverlay('product-modal', () => { document.getElementById('product-modal').classList.add('hidden'); document.body.style.overflow = 'auto'; window.scrollTo({ top: savedScrollPos, behavior: 'instant' }); }); });
+            proxyFn('closeModal', (real) => () => { removeFromStack('product-modal'); real(); window.scrollTo({ top: savedScrollPos, behavior: 'instant' }); });
+            proxyFn('openFullImage', (real) => (idx) => { real(idx); pushOverlay('image-viewer', () => { document.getElementById('image-viewer').classList.add('hidden'); }); });
+            proxyFn('closeFullImage', (real) => () => { removeFromStack('image-viewer'); real(); });
+            proxyFn('openSizingModal', (real) => () => { real(); pushOverlay('sizing-modal', () => { document.getElementById('sizing-modal').classList.add('hidden'); }); });
+            proxyFn('closeSizingModal', (real) => () => { removeFromStack('sizing-modal'); real(); });
+            proxyFn('toggleCart', (real) => () => { const s = document.getElementById('cart-sidebar'); if (!s.classList.contains('open')) { savedScrollPos = window.pageYOffset; pushOverlay('cart-sidebar', () => { s.classList.remove('open'); document.getElementById('global-overlay').classList.add('hidden'); }); } else { removeFromStack('cart-sidebar'); } real(); });
+            proxyFn('toggleWishlistSidebar', (real) => () => { const s = document.getElementById('wishlist-sidebar'); if (!s.classList.contains('open')) { savedScrollPos = window.pageYOffset; pushOverlay('wishlist-sidebar', () => { s.classList.remove('open'); document.getElementById('global-overlay').classList.add('hidden'); }); } else { removeFromStack('wishlist-sidebar'); } real(); });
+            proxyFn('toggleFilterDropdown', (real) => () => { const d = document.getElementById('filter-dropdown'); if (!d.classList.contains('show')) { pushOverlay('filter-dropdown', () => { d.classList.remove('show'); }); } else { removeFromStack('filter-dropdown'); } real(); });
+            proxyFn('closeSidebars', (real) => () => { removeFromStack('cart-sidebar'); removeFromStack('wishlist-sidebar'); real(); });
+            window.stayOnPage = () => { removeFromStack('exit-modal'); document.getElementById('exit-modal').classList.add('hidden'); document.body.style.overflow = 'auto'; };
+            window.exitApp = () => { window.location.href = 'about:blank'; };
         })();
     </script>
-    <!-- Zoom Engine for Full Image Viewer -->
+
+    <!-- SCROLL BUTTON SCRIPT (Restricted to Catalogue Only) -->
     <script>
         (function () {
+            const btn = document.getElementById('scroll-top-btn');
+            const collectionSection = document.getElementById('collection');
+            let lastScrollY = window.scrollY;
+            let hideTimer = null;
 
+            function isVisible(id) {
+                const el = document.getElementById(id);
+                return el && !el.classList.contains('hidden');
+            }
+            function isSidebarOpen(id) {
+                const el = document.getElementById(id);
+                return el && el.classList.contains('open');
+            }
+
+            function isOverlayActive() {
+                return isVisible('product-modal') || isVisible('sizing-modal') || isVisible('image-viewer') ||
+                    isVisible('share-modal') || isVisible('exit-modal') ||
+                    isSidebarOpen('cart-sidebar') || isSidebarOpen('wishlist-sidebar');
+            }
+
+            function showBtn() {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                btn.style.transform = 'translateY(0) scale(1)';
+            }
+
+            function hideBtn() {
+                btn.style.opacity = '0';
+                btn.style.pointerEvents = 'none';
+                btn.style.transform = 'translateY(16px) scale(0.9)';
+            }
+
+            window.forceHideScrollBtn = hideBtn;
+
+            btn.addEventListener('mouseenter', () => {
+                btn.style.background = 'rgba(255,255,255,0.22)';
+                btn.style.boxShadow = '0 6px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.4)';
+                btn.style.transform = 'translateY(-2px) scale(1.08)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.background = '';
+                btn.style.boxShadow = '';
+                btn.style.transform = 'translateY(0) scale(1)';
+            });
+
+            window.addEventListener('scroll', () => {
+                const currentScrollY = window.scrollY;
+                const scrollingUp = currentScrollY < lastScrollY;
+                lastScrollY = currentScrollY;
+
+                const catalogTop = collectionSection.offsetTop;
+                const catalogBottom = catalogTop + collectionSection.offsetHeight;
+
+                const inCatalogue = (currentScrollY + window.innerHeight > catalogTop + 100) && (currentScrollY < catalogBottom);
+
+                clearTimeout(hideTimer);
+
+                if (scrollingUp && inCatalogue && !isOverlayActive() && currentScrollY > 400) {
+                    showBtn();
+                    hideTimer = setTimeout(hideBtn, 2000);
+                } else {
+                    hideBtn();
+                }
+            }, { passive: true });
+        })();
+    </script>
+
+    <!-- ZOOM ENGINE -->
+    <script>
+        (function () {
             let scale = 1, tx = 0, ty = 0;
-            let pinching = false, pinchStartScale = 1, pinchStartDist = 0;
-            let pinchStartMidX = 0, pinchStartMidY = 0, pinchStartTx = 0, pinchStartTy = 0;
+            let pinching = false, pinchStartScale = 1, pinchStartDist = 0, pinchStartMidX = 0, pinchStartMidY = 0, pinchStartTx = 0, pinchStartTy = 0;
             let dragging = false, dragStartX = 0, dragStartY = 0, dragStartTx = 0, dragStartTy = 0;
             let swipeStartX = 0, swipeStartY = 0, swipeStartTime = 0, didSwipe = false;
             let lastTapTime = 0, hintTimer = null;
             const MIN = 1, MAX = 5;
-
             function img() { return document.getElementById('viewer-img'); }
             function container() { return document.getElementById('viewer-container'); }
             function backdrop() { return document.getElementById('viewer-backdrop'); }
-
-            function dist(t) {
-                const dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY;
-                return Math.sqrt(dx * dx + dy * dy);
-            }
-
-            function mid(t, rect) {
-                return { x: (t[0].clientX + t[1].clientX) / 2 - rect.left, y: (t[0].clientY + t[1].clientY) / 2 - rect.top };
-            }
-
+            function dist(t) { const dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY; return Math.sqrt(dx * dx + dy * dy); }
+            function mid(t, rect) { return { x: (t[0].clientX + t[1].clientX) / 2 - rect.left, y: (t[0].clientY + t[1].clientY) / 2 - rect.top }; }
             function clamp() {
-                const c = container(), i = img();
-                if (!c || !i) return;
-                const cw = c.clientWidth, ch = c.clientHeight;
-                const iw = i.clientWidth, ih = i.clientHeight;
-                const scaledW = iw * scale, scaledH = ih * scale;
-                const ox = (cw - iw) / 2, oy = (ch - ih) / 2;
-                if (scaledW <= cw) { tx = ox * (1 - scale); } else { tx = Math.min(-ox, Math.max(cw - scaledW - ox, tx)); }
-                if (scaledH <= ch) { ty = oy * (1 - scale); } else { ty = Math.min(-oy, Math.max(ch - scaledH - oy, ty)); }
+                const c = container(), i = img(); if (!c || !i) return;
+                const cw = c.clientWidth, ch = c.clientHeight, iw = i.clientWidth, ih = i.clientHeight;
+                const sW = iw * scale, sH = ih * scale, ox = (cw - iw) / 2, oy = (ch - ih) / 2;
+                if (sW <= cw) tx = ox * (1 - scale); else tx = Math.min(-ox, Math.max(cw - sW - ox, tx));
+                if (sH <= ch) ty = oy * (1 - scale); else ty = Math.min(-oy, Math.max(ch - sH - oy, ty));
             }
-
             function commit(animate) {
-                const i = img();
-                if (!i) return;
-                i.style.transition = animate ? 'transform 0.22s ease' : 'none';
-                i.style.transformOrigin = '0 0';
-                i.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-                const bd = backdrop();
-                if (bd) bd.style.pointerEvents = scale <= 1 ? 'auto' : 'none';
+                const i = img(); if (!i) return;
+                i.style.transition = animate ? 'transform 0.22s ease' : 'none'; i.style.transformOrigin = '0 0'; i.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+                const bd = backdrop(); if (bd) bd.style.pointerEvents = scale <= 1 ? 'auto' : 'none';
             }
-
-            function zoomTo(px, py, newScale, animate) {
-                newScale = Math.min(MAX, Math.max(MIN, newScale));
-                const ptX = (px - tx) / scale, ptY = (py - ty) / scale;
-                tx = px - ptX * newScale;
-                ty = py - ptY * newScale;
-                scale = newScale;
-                clamp();
-                commit(animate);
+            function zoomTo(px, py, nS, animate) {
+                nS = Math.min(MAX, Math.max(MIN, nS)); const ptX = (px - tx) / scale, ptY = (py - ty) / scale;
+                tx = px - ptX * nS; ty = py - ptY * nS; scale = nS; clamp(); commit(animate);
             }
-
-            function reset(animate) {
-                scale = 1; tx = 0; ty = 0;
-                commit(animate);
-                if (container()) container().style.cursor = 'default';
-            }
-
-            function showHint() {
-                const h = document.getElementById('zoom-hint');
-                if (!h) return;
-                h.style.opacity = '1';
-                clearTimeout(hintTimer);
-                hintTimer = setTimeout(() => { h.style.opacity = '0'; }, 2500);
-            }
-
-            function onMouseDown(e) {
-                if (scale <= 1) return;
-                e.preventDefault();
-                dragging = true;
-                dragStartX = e.clientX; dragStartY = e.clientY;
-                dragStartTx = tx; dragStartTy = ty;
-                container().style.cursor = 'grabbing';
-            }
-
-            function onMouseMove(e) {
-                if (!dragging) return;
-                e.preventDefault();
-                tx = dragStartTx + (e.clientX - dragStartX);
-                ty = dragStartTy + (e.clientY - dragStartY);
-                clamp(); commit(false);
-            }
-
-            function onMouseUp() {
-                if (!dragging) return;
-                dragging = false;
-                container().style.cursor = scale > 1 ? 'grab' : 'default';
-            }
-
-            function onWheel(e) {
-                e.preventDefault();
-                const rect = container().getBoundingClientRect();
-                zoomTo(e.clientX - rect.left, e.clientY - rect.top, scale * (e.deltaY > 0 ? 0.9 : 1.1), false);
-            }
-
+            function reset(animate) { scale = 1; tx = 0; ty = 0; commit(animate); if (container()) container().style.cursor = 'default'; }
+            function showHint() { const h = document.getElementById('zoom-hint'); if (!h) return; h.style.opacity = '1'; clearTimeout(hintTimer); hintTimer = setTimeout(() => h.style.opacity = '0', 2500); }
+            function onMouseDown(e) { if (scale <= 1) return; e.preventDefault(); dragging = true; dragStartX = e.clientX; dragStartY = e.clientY; dragStartTx = tx; dragStartTy = ty; container().style.cursor = 'grabbing'; }
+            function onMouseMove(e) { if (!dragging) return; e.preventDefault(); tx = dragStartTx + (e.clientX - dragStartX); ty = dragStartTy + (e.clientY - dragStartY); clamp(); commit(false); }
+            function onMouseUp() { if (!dragging) return; dragging = false; container().style.cursor = scale > 1 ? 'grab' : 'default'; }
+            function onWheel(e) { e.preventDefault(); const rect = container().getBoundingClientRect(); zoomTo(e.clientX - rect.left, e.clientY - rect.top, scale * (e.deltaY > 0 ? 0.9 : 1.1), false); }
             function onTouchStart(e) {
                 const rect = container().getBoundingClientRect();
                 if (e.touches.length === 2) {
-                    e.preventDefault();
-                    pinching = true;
-                    dragging = false;
-                    didSwipe = true;
-                    pinchStartDist = dist(e.touches);
-                    pinchStartScale = scale;
-                    const m = mid(e.touches, rect);
-                    pinchStartMidX = m.x; pinchStartMidY = m.y;
-                    pinchStartTx = tx; pinchStartTy = ty;
+                    e.preventDefault(); pinching = true; dragging = false; didSwipe = true; pinchStartDist = dist(e.touches); pinchStartScale = scale;
+                    const m = mid(e.touches, rect); pinchStartMidX = m.x; pinchStartMidY = m.y; pinchStartTx = tx; pinchStartTy = ty;
                 } else if (e.touches.length === 1 && !pinching) {
-                    const t = e.touches[0];
-                    swipeStartX = t.clientX; swipeStartY = t.clientY;
-                    swipeStartTime = Date.now();
-                    didSwipe = false;
-                    if (scale > 1) {
-                        e.preventDefault();
-                        dragging = true;
-                        dragStartX = t.clientX; dragStartY = t.clientY;
-                        dragStartTx = tx; dragStartTy = ty;
-                    }
+                    const t = e.touches[0]; swipeStartX = t.clientX; swipeStartY = t.clientY; swipeStartTime = Date.now(); didSwipe = false;
+                    if (scale > 1) { e.preventDefault(); dragging = true; dragStartX = t.clientX; dragStartY = t.clientY; dragStartTx = tx; dragStartTy = ty; }
                 }
             }
-
             function onTouchMove(e) {
                 if (pinching && e.touches.length === 2) {
-                    e.preventDefault();
-                    const rect = container().getBoundingClientRect();
-                    const d = dist(e.touches);
-                    const m = mid(e.touches, rect);
-                    const newScale = Math.min(MAX, Math.max(MIN, pinchStartScale * (d / pinchStartDist)));
-                    const ptX = (pinchStartMidX - pinchStartTx) / pinchStartScale;
-                    const ptY = (pinchStartMidY - pinchStartTy) / pinchStartScale;
-                    tx = m.x - ptX * newScale;
-                    ty = m.y - ptY * newScale;
-                    scale = newScale;
-                    clamp(); commit(false);
+                    e.preventDefault(); const rect = container().getBoundingClientRect(); const d = dist(e.touches), m = mid(e.touches, rect), nS = Math.min(MAX, Math.max(MIN, pinchStartScale * (d / pinchStartDist)));
+                    const ptX = (pinchStartMidX - pinchStartTx) / pinchStartScale, ptY = (pinchStartMidY - pinchStartTy) / pinchStartScale;
+                    tx = m.x - ptX * nS; ty = m.y - ptY * nS; scale = nS; clamp(); commit(false);
                 } else if (dragging && !pinching && e.touches.length === 1) {
-                    e.preventDefault();
-                    tx = dragStartTx + (e.touches[0].clientX - dragStartX);
-                    ty = dragStartTy + (e.touches[0].clientY - dragStartY);
-                    clamp(); commit(false);
+                    e.preventDefault(); tx = dragStartTx + (e.touches[0].clientX - dragStartX); ty = dragStartTy + (e.touches[0].clientY - dragStartY); clamp(); commit(false);
                 }
             }
-
             function onTouchEnd(e) {
-                if (pinching) {
-                    if (e.touches.length < 2) {
-                        pinching = false;
-                        dragging = false;
-                        if (scale < 1.05) reset(true);
-                    }
-                    return;
-                }
-
+                if (pinching) { if (e.touches.length < 2) { pinching = false; dragging = false; if (scale < 1.05) reset(true); } return; }
                 if (dragging) {
-                    dragging = false;
-                    container().style.cursor = scale > 1 ? 'grab' : 'default';
+                    dragging = false; container().style.cursor = scale > 1 ? 'grab' : 'default';
                     if (!didSwipe && e.touches.length === 0 && e.changedTouches.length === 1) {
-                        const t = e.changedTouches[0];
-                        const dx = t.clientX - swipeStartX;
-                        const dy = t.clientY - swipeStartY;
-                        const now = Date.now();
-                        if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && now - lastTapTime < 300) {
-                            if (scale > 1) reset(true);
-                            lastTapTime = 0;
-                            return;
-                        }
+                        const t = e.changedTouches[0], now = Date.now(); if (Math.abs(t.clientX - swipeStartX) < 15 && Math.abs(t.clientY - swipeStartY) < 15 && now - lastTapTime < 300) { if (scale > 1) reset(true); lastTapTime = 0; return; }
                         lastTapTime = now;
                     }
                     return;
                 }
-
                 if (!didSwipe && e.touches.length === 0 && e.changedTouches.length === 1) {
-                    const t = e.changedTouches[0];
-                    const dx = t.clientX - swipeStartX;
-                    const dy = t.clientY - swipeStartY;
-                    const dt = Date.now() - swipeStartTime;
-                    const vx = Math.abs(dx) / dt;
-
-                    if (scale <= 1 && vx > 0.3 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 2) {
-                        didSwipe = true;
-                        if (dx < 0) window.nextFullImage();
-                        else window.prevFullImage();
-                        return;
-                    }
-
-                    const now = Date.now();
-                    if (now - lastTapTime < 300 && Math.abs(dx) < 20 && Math.abs(dy) < 20) {
-                        if (scale > 1) {
-                            reset(true);
-                        } else {
-                            const rect = container().getBoundingClientRect();
-                            zoomTo(t.clientX - rect.left, t.clientY - rect.top, 2.5, true);
-                        }
-                        lastTapTime = 0;
-                        return;
-                    }
+                    const t = e.changedTouches[0], dx = t.clientX - swipeStartX, dt = Date.now() - swipeStartTime;
+                    if (scale <= 1 && (Math.abs(dx) / dt) > 0.3 && Math.abs(dx) > 50) { didSwipe = true; if (dx < 0) window.nextFullImage(); else window.prevFullImage(); return; }
+                    const now = Date.now(); if (now - lastTapTime < 300 && Math.abs(dx) < 20) { if (scale > 1) reset(true); else zoomTo(t.clientX - container().getBoundingClientRect().left, t.clientY - container().getBoundingClientRect().top, 2.5, true); lastTapTime = 0; return; }
                     lastTapTime = now;
                 }
             }
-
-            window._zoomInit = function () {
-                const c = container();
-                if (!c) return;
-                setTimeout(() => { reset(false); showHint(); }, 50);
-                c.addEventListener('wheel', onWheel, { passive: false });
-                c.addEventListener('mousedown', onMouseDown);
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onMouseUp);
-                c.addEventListener('touchstart', onTouchStart, { passive: false });
-                c.addEventListener('touchmove', onTouchMove, { passive: false });
-                c.addEventListener('touchend', onTouchEnd, { passive: false });
-            };
-
-            window._zoomDestroy = function () {
-                const c = container();
-                if (!c) return;
-                c.removeEventListener('wheel', onWheel);
-                c.removeEventListener('mousedown', onMouseDown);
-                window.removeEventListener('mousemove', onMouseMove);
-                window.removeEventListener('mouseup', onMouseUp);
-                c.removeEventListener('touchstart', onTouchStart);
-                c.removeEventListener('touchmove', onTouchMove);
-                c.removeEventListener('touchend', onTouchEnd);
-                reset(false);
-                const bd = backdrop();
-                if (bd) bd.style.pointerEvents = 'auto';
-            };
-
-            window._zoomReset = function () { reset(false); };
-
+            window._zoomInit = () => { const c = container(); if (!c) return; setTimeout(() => { reset(false); showHint(); }, 50); c.addEventListener('wheel', onWheel, { passive: false }); c.addEventListener('mousedown', onMouseDown); window.addEventListener('mousemove', onMouseMove); window.addEventListener('mouseup', onMouseUp); c.addEventListener('touchstart', onTouchStart, { passive: false }); c.addEventListener('touchmove', onTouchMove, { passive: false }); c.addEventListener('touchend', onTouchEnd, { passive: false }); };
+            window._zoomDestroy = () => { const c = container(); if (!c) return; c.removeEventListener('wheel', onWheel); c.removeEventListener('mousedown', onMouseDown); window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); c.removeEventListener('touchstart', onTouchStart); c.removeEventListener('touchmove', onTouchMove); c.removeEventListener('touchend', onTouchEnd); reset(false); };
+            window._zoomReset = () => reset(false);
         })();
     </script>
 </body>
