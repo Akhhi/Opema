@@ -814,7 +814,130 @@
             </div>
         </div>
     </div>
+    <!-- ── CHECKOUT MODAL ─────────────────────────────────────── -->
+    <div id="checkout-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 sm:p-6">
+        <div class="absolute inset-0 bg-black/5 backdrop-blur-xl" onclick="closeCheckoutModal()"></div>
 
+        <div class="relative w-full max-w-4xl max-h-[92vh] rounded-[40px] overflow-hidden shadow-2xl
+              border dark:border-white/10 flex flex-col md:flex-row
+              bg-white dark:bg-brand-black transition-colors duration-500">
+
+            <!-- ── LEFT: Order Summary — mirrors Your Bag sidebar ──── -->
+            <div class="hidden md:flex md:w-[40%] flex-col border-r dark:border-white/5">
+
+                <!-- Header — same as "Your Bag" heading row -->
+                <div class="p-8 border-b dark:border-white/10 flex items-center transition-colors duration-500">
+                    <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Your Order</h2>
+                </div>
+
+                <!-- Items list — same scroll area as cart-items -->
+                <div id="checkout-summary-items" class="flex-grow overflow-y-auto p-8 space-y-6"></div>
+
+                <!-- Total footer — same as cart total row -->
+                <div
+                    class="p-8 border-t dark:border-white/10 bg-gray-50 dark:bg-white/5 transition-colors duration-500">
+                    <div class="flex justify-between text-xl font-black mb-0 uppercase dark:text-white">
+                        <span>Total:</span>
+                        <span id="checkout-summary-total" class="text-accent">₹0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RIGHT: Delivery Details ────────────────────────── -->
+            <div class="w-full md:w-[60%] flex flex-col overflow-y-auto">
+
+                <!-- Header — same style as cart sidebar header -->
+                <div
+                    class="p-8 border-b dark:border-white/10 flex justify-between items-center transition-colors duration-500">
+                    <h2 class="text-2xl font-black uppercase tracking-tighter dark:text-white">Delivery Details</h2>
+                    <button onclick="closeCheckoutModal()" aria-label="Close" class="w-10 h-10 flex items-center justify-center rounded-full
+                 hover:bg-gray-100 dark:hover:bg-white/5 dark:text-white transition-colors duration-300">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Form -->
+                <div class="flex-grow p-8">
+                    <form id="checkout-form" class="space-y-5">
+
+                        <div>
+                            <label for="checkout-name"
+                                class="block text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Full
+                                Name</label>
+                            <input type="text" id="checkout-name" name="name" autocomplete="name"
+                                placeholder="Receiver's name" class="w-full px-5 py-4 rounded-2xl border border-gray-200 dark:border-white/10
+                     bg-gray-50 dark:bg-white/5 dark:text-white placeholder-gray-400
+                     text-sm font-bold focus:outline-none focus:border-accent transition-colors" required>
+                        </div>
+
+                        <div>
+                            <label for="checkout-address"
+                                class="block text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Shipping
+                                Address</label>
+                            <textarea id="checkout-address" name="address" autocomplete="street-address"
+                                placeholder="Complete address with pincode" class="w-full px-5 py-4 rounded-2xl border border-gray-200 dark:border-white/10
+                     bg-gray-50 dark:bg-white/5 dark:text-white placeholder-gray-400
+                     text-sm font-bold focus:outline-none focus:border-accent transition-colors resize-none" rows="3"
+                                required></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="checkout-mobile"
+                                    class="block text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Mobile</label>
+                                <input type="tel" id="checkout-mobile" name="tel" autocomplete="tel"
+                                    placeholder="10-digit number" class="w-full px-5 py-4 rounded-2xl border border-gray-200 dark:border-white/10
+                       bg-gray-50 dark:bg-white/5 dark:text-white placeholder-gray-400
+                       text-sm font-bold focus:outline-none focus:border-accent transition-colors" required>
+                            </div>
+                            <div>
+                                <label for="checkout-email"
+                                    class="block text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Email</label>
+                                <input type="email" id="checkout-email" name="email" autocomplete="email"
+                                    placeholder="For order updates" class="w-full px-5 py-4 rounded-2xl border border-gray-200 dark:border-white/10
+                       bg-gray-50 dark:bg-white/5 dark:text-white placeholder-gray-400
+                       text-sm font-bold focus:outline-none focus:border-accent transition-colors" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="checkout-remarks"
+                                class="block text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">
+                                Order Note <span
+                                    class="normal-case tracking-normal font-normal text-gray-400">(optional)</span>
+                            </label>
+                            <input type="text" id="checkout-remarks" placeholder="Any special instructions..." class="w-full px-5 py-4 rounded-2xl border border-gray-200 dark:border-white/10
+                     bg-gray-50 dark:bg-white/5 dark:text-white placeholder-gray-400
+                     text-sm font-bold focus:outline-none focus:border-accent transition-colors">
+                        </div>
+
+                        <label class="flex items-center gap-3 cursor-pointer select-none pt-1">
+                            <input type="checkbox" id="save-details" class="custom-checkbox shrink-0">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                                Save details for next time
+                            </span>
+                        </label>
+
+                        <div id="checkout-error"
+                            class="hidden text-red-500 text-[10px] font-black uppercase text-center animate-shake">
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- Submit footer — same bg treatment as cart footer -->
+                <div
+                    class="p-8 border-t dark:border-white/10 bg-gray-50 dark:bg-white/5 transition-colors duration-500">
+                    <button form="checkout-form" type="submit" class="w-full bg-accent text-white py-5 rounded-2xl font-black uppercase
+                 flex items-center justify-center gap-3 active:scale-95 transition-transform duration-300
+                 shadow-xl shadow-accent/20">
+                        <i class="fab fa-whatsapp text-2xl"></i> Checkout via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ── END CHECKOUT MODAL ──────────────────────────────────── -->
     <!-- Footer -->
     <footer
         class="bg-gray-50 dark:bg-brand-gray/50 border-t dark:border-white/5 pt-16 pb-8 transition-colors duration-500">
@@ -957,25 +1080,29 @@
                 <button onclick="shareVia('whatsapp')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-green-500 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-whatsapp"></i></div>
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
                     <span class="text-[9px] font-black uppercase text-gray-400">WhatsApp</span>
                 </button>
                 <button onclick="shareVia('instagram')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-instagram"></i></div>
+                        <i class="fab fa-instagram"></i>
+                    </div>
                     <span class="text-[9px] font-black uppercase text-gray-400">Instagram</span>
                 </button>
                 <button onclick="shareVia('twitter')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-x-twitter"></i></div>
+                        <i class="fab fa-x-twitter"></i>
+                    </div>
                     <span class="text-[9px] font-black uppercase text-gray-400">X</span>
                 </button>
                 <button onclick="shareVia('messenger')" class="flex flex-col items-center gap-2 group">
                     <div
                         class="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center text-white text-2xl group-active:scale-95 transition-transform">
-                        <i class="fab fa-facebook-messenger"></i></div>
+                        <i class="fab fa-facebook-messenger"></i>
+                    </div>
                     <span class="text-[9px] font-black uppercase text-gray-400">Messenger</span>
                 </button>
             </div>
@@ -983,7 +1110,8 @@
                 class="w-full flex items-center gap-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl px-4 py-3 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors active:scale-95">
                 <div
                     class="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10 flex items-center justify-center shrink-0">
-                    <i class="fas fa-link text-gray-600 dark:text-white text-sm"></i></div>
+                    <i class="fas fa-link text-gray-600 dark:text-white text-sm"></i>
+                </div>
                 <span class="text-xs font-black uppercase text-gray-600 dark:text-white tracking-widest">Copy
                     Link</span>
                 <i id="copy-check" class="fas fa-check text-green-500 ml-auto hidden"></i>
@@ -1073,6 +1201,9 @@
         window.toggleWishlistSidebar = toggleWishlistSidebar;
         window.closeSidebars = closeSidebars;
         window.checkoutToWhatsApp = checkoutToWhatsApp;
+        window.openCheckoutModal = openCheckoutModal;
+        window.closeCheckoutModal = closeCheckoutModal;
+        window.toggleMobileSummary = toggleMobileSummary;
         window.shareProduct = shareProduct;
         window.togglePrecision = togglePrecision;
         window.resetFilters = resetFilters;
@@ -1664,28 +1795,130 @@
         window.removeFromCart = function (id) { cart = cart.filter(i => i.cartId !== id); saveCartItem(); updateCartUI(); }
 
         function checkoutToWhatsApp() {
-            let itemLines = '';
+            if (cart.length === 0) return;
+            openCheckoutModal();
+        }
+
+        function openCheckoutModal() {
+            if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn();
+            _populateCheckoutSummary();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            document.getElementById('checkout-modal').classList.add('flex');
+        }
+        function toggleMobileSummary() {
+            const w = window.innerWidth;
+            if (w < 768 || w >= 1024) return; // only active on tablet
+            const container = document.getElementById('checkout-items-container');
+            const backdrop = document.getElementById('mobile-summary-backdrop');
+            const isOpen = container.style.transform === 'translateY(0%)';
+            container.style.transform = isOpen ? 'translateY(100%)' : 'translateY(0%)';
+            backdrop.style.opacity = isOpen ? '0' : '1';
+            backdrop.style.pointerEvents = isOpen ? 'none' : 'auto';
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+            document.getElementById('checkout-modal').classList.remove('flex');
+        }
+        function _populateCheckoutSummary() {
+            const summaryEl = document.getElementById('checkout-summary-items');
+            const totalEl = document.getElementById('checkout-summary-total');
+            if (!summaryEl) return;
+
             let grandTotal = 0;
-            cart.forEach((i, idx) => {
-                const sum = i.price * i.quantity;
-                grandTotal += sum;
-                itemLines += `${idx + 1}. *${i.name} | ${i.size}*%0AQty: ${i.quantity} × ₹${i.price} = *₹${sum}*%0A%0A`;
+            summaryEl.innerHTML = cart.map(i => {
+                const lineTotal = i.price * i.quantity;
+                grandTotal += lineTotal;
+                return `
+      <div class="flex items-center gap-3 bg-white dark:bg-white/[0.04]
+                  border border-gray-100 dark:border-white/[0.06] rounded-2xl p-3">
+        <img src="${i.images[0]}" alt="${i.name}"
+          class="w-12 h-12 object-contain rounded-xl bg-gray-50 dark:bg-white/[0.03] shrink-0"
+          onerror="this.src='https://placehold.co/100x100/1a1a1a/FFF?text=OPEMA'">
+        <div class="flex-grow min-w-0">
+          <p class="text-[11px] font-black uppercase tracking-tight dark:text-white truncate">${i.name}</p>
+          <p class="text-[10px] text-gray-400 mt-0.5">${i.size} · ${i.player}</p>
+        </div>
+        <div class="text-right shrink-0">
+          <p class="text-[10px] text-gray-400">×${i.quantity}</p>
+          <p class="text-sm font-black text-accent">₹${lineTotal}</p>
+        </div>
+      </div>`;
+            }).join('');
+
+            const formatted = `₹${grandTotal.toLocaleString('en-IN')}`;
+            if (totalEl) totalEl.textContent = formatted;
+        }
+
+        function submitCheckoutForm(name, address, mobile, email, remarks) {
+            const orderId = 'OPM-' + Math.floor(1000 + Math.random() * 9000);
+
+            const date = new Date().toLocaleDateString('en-IN', {
+                year: 'numeric', month: 'long', day: 'numeric'
             });
-            const msg = `☘️ *Greetings from ØOpema Store* 👕%0A_Your order is being processed! We will contact you shortly._%0A%0A*ORDER SUMMARY*%0A*━━━━━━━━━━━━━━━━━━━━━*%0A` + itemLines + `━━━━━━━━━━━━━━━━━━━━━%0A💰 *Grand Total: ₹${grandTotal}*%0A%0A⚠️ _Please confirm availability before making payment! You can provide your number or call us._%0A%0AThanks for shopping! 🤗`;
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            let grandTotal = 0;
+            const itemLines = cart.map(i => {
+                const lineTotal = i.price * i.quantity;
+                grandTotal += lineTotal;
+                const variant = (i.player && i.player !== 'Standard') ? i.player + ' | ' : '';
+                const link = baseUrl + '?product=' + i.id;
+                return '⚽ ' + i.name + '\n' +
+                    variant + 'Size: ' + i.size + ' | Qty: ' + i.quantity + ' × ₹' + i.price + ' = *₹' + lineTotal + '*' + '\n' +
+                    '🔗 ' + link;
+            }).join('\n\n');
+
+            const sep = '─────────────────────';
+
+            const lines = [
+                '✅ *ORDER RECEIVED!*',
+                '',
+                'Hi ' + name + ', thanks for shopping with *ØOpema Store*. We\'ve reserved your items and are preparing them for dispatch.',
+                '',
+                '📄 *Order ID:* #' + orderId,
+                '📅 *Date:* ' + date,
+                '',
+                '*ITEM SUMMARY*',
+                sep,
+                itemLines,
+                remarks ? '\n💬 *Note:* ' + remarks : null,
+                '',
+                '💰 *Grand Total: ₹' + grandTotal.toFixed(2) + '*',
+                sep,
+                '',
+                '*DELIVERY TO:*',
+                '📍 ' + address,
+                '📞 ' + mobile,
+                email ? '📧 ' + email : null,
+                '',
+                '🕒 *Next Steps:* Your order is currently being verified. You will receive a call from us (usually within 2 hours).',
+                '',
+                'Need help? Just reply to this chat!'
+            ].filter(l => l !== null).join('\n');
+
+            window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(lines), '_blank');
+            closeCheckoutModal();
         }
 
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg; t.classList.replace('translate-y-32', 'translate-y-0'); t.classList.replace('opacity-0', 'opacity-100');
-            setTimeout(() => { t.classList.replace('translate-y-0', 'translate-y-32'); t.classList.replace('opacity-100', 'opacity-0'); }, 2000);
+            t.textContent = msg; t.classList.replace('translate-y-32', 'translate-y-0'); t.classList.replace('opacity-0',
+                'opacity-100');
+            setTimeout(() => {
+                t.classList.replace('translate-y-0', 'translate-y-32'); t.classList.replace('opacity-100',
+                    'opacity-0');
+            }, 2000);
         }
 
         function shareProduct() {
             if (!currentModalProduct) return;
             if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn();
             const url = `${window.location.origin}${window.location.pathname}?product=${currentModalProduct.id}`;
-            const shareData = { title: currentModalProduct.name, text: `Check out this product at OPEMA Clothing: ${currentModalProduct.name}`, url: url };
+            const shareData = {
+                title: currentModalProduct.name, text: `Check out this product at OPEMA Clothing:
+    ${currentModalProduct.name}`, url: url
+            };
             if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                 navigator.share(shareData).catch(() => { });
             } else {
@@ -1708,21 +1941,31 @@
             const text = encodeURIComponent(`Check out ${currentModalProduct.name} at OPEMA Clothing!`);
             const copyAndOpen = (appUrl, toastMsg) => {
                 navigator.clipboard.writeText(rawUrl).catch(() => {
-                    const ta = document.createElement('textarea'); ta.value = rawUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                    const ta = document.createElement('textarea'); ta.value = rawUrl; document.body.appendChild(ta); ta.select();
+                    document.execCommand('copy'); document.body.removeChild(ta);
                 });
                 showToast(toastMsg);
                 setTimeout(() => window.open(appUrl, '_blank'), 600);
             };
             if (platform === 'whatsapp') { window.open(`https://wa.me/?text=${text}%20${encodedUrl}`, '_blank'); }
             else if (platform === 'instagram') { copyAndOpen('instagram://direct', 'Link copied — paste in Instagram DM'); }
-            else if (platform === 'twitter') { window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`, '_blank'); }
-            else if (platform === 'messenger') { window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&app_id=291494947950990&redirect_uri=${encodedUrl}`, '_blank'); }
+            else if (platform === 'twitter') {
+                window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`,
+                    '_blank');
+            }
+            else if (platform === 'messenger') {
+                window.open(`https://www.facebook.com/dialog/send?link=${encodedUrl}&app_id=291494947950990&redirect_uri=${encodedUrl}`,
+                    '_blank');
+            }
             else if (platform === 'copy') {
                 navigator.clipboard.writeText(rawUrl).then(() => {
-                    const check = document.getElementById('copy-check'); check.classList.remove('hidden'); setTimeout(() => check.classList.add('hidden'), 2000);
+                    const check = document.getElementById('copy-check'); check.classList.remove('hidden'); setTimeout(() =>
+                        check.classList.add('hidden'), 2000);
                 }).catch(() => {
-                    const ta = document.createElement('textarea'); ta.value = rawUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-                    const check = document.getElementById('copy-check'); check.classList.remove('hidden'); setTimeout(() => check.classList.add('hidden'), 2000);
+                    const ta = document.createElement('textarea'); ta.value = rawUrl; document.body.appendChild(ta); ta.select();
+                    document.execCommand('copy'); document.body.removeChild(ta);
+                    const check = document.getElementById('copy-check'); check.classList.remove('hidden'); setTimeout(() =>
+                        check.classList.add('hidden'), 2000);
                 });
             }
         };
@@ -1741,7 +1984,10 @@
             }
             const bar = document.getElementById('preloader-bar');
             if (bar) bar.style.transform = "scaleX(1)";
-            setTimeout(() => { document.getElementById('brand-preloader').classList.add('hidden-loader'); document.body.classList.remove('overflow-hidden'); }, 2500);
+            setTimeout(() => {
+                document.getElementById('brand-preloader').classList.add('hidden-loader');
+                document.body.classList.remove('overflow-hidden');
+            }, 2500);
             const nav = document.getElementById('main-nav');
             if (nav) nav.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -1751,6 +1997,37 @@
                 catalogLink.addEventListener('click', (e) => {
                     e.preventDefault();
                     collectionSection.scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
+            // Checkout form handler
+            const checkoutForm = document.getElementById('checkout-form');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('checkout-name').value.trim();
+                    const address = document.getElementById('checkout-address').value.trim();
+                    const mobile = document.getElementById('checkout-mobile').value.trim();
+                    const email = document.getElementById('checkout-email').value.trim();
+                    const remarks = document.getElementById('checkout-remarks').value.trim();
+                    const errorDiv = document.getElementById('checkout-error');
+                    errorDiv.classList.add('hidden');
+
+                    if (!name || !address || !mobile || !email) {
+                        errorDiv.textContent = 'Please fill in all required fields';
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Basic email validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        errorDiv.textContent = 'Please enter a valid email address';
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+
+                    submitCheckoutForm(name, address, mobile, email, remarks);
                 });
             }
         };
