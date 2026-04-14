@@ -2,7 +2,7 @@ const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 
 const BASE_URL = "https://opema.netlify.app"; // replace with your real domain
-const APP_ID = "1:98655439502:web:1dbab35ea74aa766c297df"; // same appId from your index.html
+const APP_ID = "default-app-id"; // same appId from your index.html
 
 function initFirebase() {
     if (getApps().length > 0) return;

@@ -2,7 +2,7 @@ const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 
 const BASE_URL = "https://opema.netlify.app";
-const APP_ID = "1:98655439502:web:1dbab35ea74aa766c297df";
+const APP_ID = "default-app-id";
 
 const BOT_AGENTS = [
   "whatsapp", "facebookexternalhit", "twitterbot", "linkedinbot",
@@ -97,24 +97,24 @@ exports.handler = async (event) => {
   <meta name="twitter:image" content="${image}">
   <script type="application/ld+json">
   ${JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": p.name,
-    "description": p.description || "",
-    "image": p.images || [],
-    "url": productUrl,
-    "sku": productId,
-    "brand": { "@type": "Brand", "name": "OPEMA Clothing" },
-    "category": p.category || "Jersey",
-    "offers": {
-      "@type": "Offer",
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": p.name,
+      "description": p.description || "",
+      "image": p.images || [],
       "url": productUrl,
-      "priceCurrency": "INR",
-      "price": p.price,
-      "availability": "https://schema.org/InStock",
-      "seller": { "@type": "Organization", "name": "OPEMA Clothing" }
-    }
-  }, null, 2)}
+      "sku": productId,
+      "brand": { "@type": "Brand", "name": "OPEMA Clothing" },
+      "category": p.category || "Jersey",
+      "offers": {
+        "@type": "Offer",
+        "url": productUrl,
+        "priceCurrency": "INR",
+        "price": p.price,
+        "availability": "https://schema.org/InStock",
+        "seller": { "@type": "Organization", "name": "OPEMA Clothing" }
+      }
+    }, null, 2)}
   </script>
   <meta http-equiv="refresh" content="0;url=${BASE_URL}/?product=${productId}">
   <link rel="canonical" href="${productUrl}">
