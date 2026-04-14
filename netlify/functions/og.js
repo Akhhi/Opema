@@ -2,7 +2,7 @@ const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 
 const BASE_URL = "https://opema.netlify.app";
-const APP_ID = "your-app-id";
+const APP_ID = "1:98655439502:web:1dbab35ea74aa766c297df";
 
 const BOT_AGENTS = [
   "whatsapp", "facebookexternalhit", "twitterbot", "linkedinbot",
