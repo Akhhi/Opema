@@ -4,8 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourdomain.com/">
+    <meta property="og:site_name" content="OPEMA Clothing">
+    <meta property="og:title" content="OPEMA Clothing — Elite Gear. Fan Prices.">
+    <meta property="og:description"
+        content="High-grade football jersey replicas for the high-energy fan. Why pay for the brand name when you can play for the crest?">
+    <meta property="og:image"
+        content="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_1200/v1775196577/opema_heua5a.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="OPEMA Clothing - Elite Gear, Fan Prices">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@opemaclothing">
+    <meta name="twitter:creator" content="@opemaclothing">
+    <meta name="twitter:title" content="OPEMA Clothing — Elite Gear. Fan Prices.">
+    <meta name="twitter:description"
+        content="High-grade football jersey replicas for the high-energy fan. Why pay for the brand name when you can play for the crest?">
+    <meta name="twitter:image"
+        content="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto,w_1200/v1775196577/opema_heua5a.png">
+
+    <!-- Standard SEO meta -->
+    <meta name="description"
+        content="High-grade football jersey replicas for the high-energy fan. Shop OPEMA Clothing for elite gear at fan prices.">
+    <meta name="keywords"
+        content="football jersey, replica jersey, football kit, fan jersey, cheap football jersey, India">
+    <meta name="author" content="OPEMA Clothing">
+    <meta name="theme-color" content="#FF0800">
+
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <!-- WhatsApp / Product share OG (dynamic — inject per product via JS if needed) -->
+    <meta property="og:image:type" content="image/png">
     <title>OPEMA Clothing</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="canonical" href="https://opema.netlify.app/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="icon" type="image/png"
         href="https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto/v1775196576/opema-icon_dr9eqc.png">
@@ -33,6 +69,71 @@
             }
         }
     </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://opema.netlify.app/#organization",
+      "name": "OPEMA Clothing",
+      "url": "https://opema.netlify.app/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto/v1775196576/opema-icon_dr9eqc.png"
+      },
+      "sameAs": [
+        "https://www.instagram.com/opema.clothing",
+        "https://www.facebook.com/profile.php?id=61587546661640",
+        "https://x.com/opemaclothing",
+        "https://www.youtube.com/@opemaclothing"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-7845203811",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Tamil", "Malayalam"]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://opema.netlify.app/#website",
+      "url": "https://opema.netlify.app/",
+      "name": "OPEMA Clothing",
+      "publisher": { "@id": "https://opema.netlify.app/#organization" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://opema.netlify.app/?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Store",
+      "@id": "https://opema.netlify.app/#store",
+      "name": "OPEMA Clothing",
+      "description": "High-grade football jersey replicas at fan prices. Shop football kits, apparel and more.",
+      "url": "https://opema.netlify.app/",
+      "image": "https://res.cloudinary.com/dlnnerkiu/image/upload/f_auto,q_auto/v1775196576/opema-icon_dr9eqc.png",
+      "telephone": "+91-7845203811",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Coimbatore",
+        "addressRegion": "Tamil Nadu",
+        "addressCountry": "IN"
+      },
+      "parentOrganization": { "@id": "https://opema.netlify.app/#organization" },
+      "areaServed": "IN",
+      "priceRange": "₹₹",
+      "currenciesAccepted": "INR",
+      "paymentAccepted": "Cash, UPI",
+      "openingHours": "Mo-Su 09:00-21:00"
+    }
+  ]
+}
+</script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
 
@@ -971,7 +1072,7 @@
                         </div>
                     </div>
                     <div class="flex gap-8 pt-6 w-full justify-center">
-                        <a href="https://www.instagram.com/opema_clothing"
+                        <a href="https://www.instagram.com/opema.clothing"
                             class="social-glow text-gray-400 text-2xl transition-all" title="Instagram"><i
                                 class="fab fa-instagram"></i></a>
                         <a href="https://www.facebook.com/profile.php?id=61587546661640&sk"
@@ -1558,6 +1659,41 @@
             const p = products.find(i => i.id === pid);
             if (!p) return;
 
+            // ── JSON-LD: inject product structured data ──────────────
+            const existingLd = document.getElementById('ld-product');
+            if (existingLd) existingLd.remove();
+            const productUrl = `${window.location.origin}/share?product=${pid}`;
+            const ldScript = document.createElement('script');
+            ldScript.type = 'application/ld+json';
+            ldScript.id = 'ld-product';
+            ldScript.textContent = JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                "name": p.name,
+                "description": p.description || "",
+                "image": p.images || [],
+                "url": productUrl,
+                "sku": pid,
+                "brand": { "@type": "Brand", "name": "OPEMA Clothing" },
+                "category": p.category || "Jersey",
+                "offers": {
+                    "@type": "Offer",
+                    "url": productUrl,
+                    "priceCurrency": "INR",
+                    "price": p.price,
+                    "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+                    "availability": "https://schema.org/InStock",
+                    "seller": { "@type": "Organization", "name": "OPEMA Clothing" },
+                    "shippingDetails": {
+                        "@type": "OfferShippingDetails",
+                        "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "INR" },
+                        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "IN" }
+                    }
+                }
+            });
+            document.head.appendChild(ldScript);
+            // ── end JSON-LD ──────────────────────────────────────────
+
             if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn();
 
             currentModalProduct = p; activeModalSlide = 0; selectedSize = ""; selectedPlayer = "";
@@ -1569,31 +1705,19 @@
             const gallery = p.images || [];
             const carousel = document.getElementById('modal-carousel-container');
             carousel.innerHTML = gallery.map((img, i) => `
-                <div class="absolute inset-0 w-full h-full image-placeholder transition-opacity duration-500 ${i === 0 ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}">
-                    <img src="${img}" onclick="openFullImage(${i})" onload="removePlaceholder(this)" class="w-full h-full object-contain cursor-zoom-in" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
-                </div>
-            `).join('');
+        <div class="absolute inset-0 w-full h-full image-placeholder transition-opacity duration-500 ${i === 0 ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}">
+            <img src="${img}" onclick="openFullImage(${i})" onload="removePlaceholder(this)" class="w-full h-full object-contain cursor-zoom-in" onerror="this.src='https://placehold.co/600x800/1a1a1a/FFF?text=OPEMA'">
+        </div>
+    `).join('');
 
             let startX, startY;
-            carousel.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-            }, { passive: true });
+            carousel.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, { passive: true });
             carousel.addEventListener('touchend', (e) => {
                 if (!startX || !startY) return;
-                const endX = e.changedTouches[0].clientX;
-                const endY = e.changedTouches[0].clientY;
-                const diffX = startX - endX;
-                const diffY = startY - endY;
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                    if (diffX > 0) {
-                        nextModalSlide();
-                    } else {
-                        prevModalSlide();
-                    }
-                }
-                startX = null;
-                startY = null;
+                const endX = e.changedTouches[0].clientX, endY = e.changedTouches[0].clientY;
+                const diffX = startX - endX, diffY = startY - endY;
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) { diffX > 0 ? nextModalSlide() : prevModalSlide(); }
+                startX = null; startY = null;
             }, { passive: true });
 
             const dots = document.getElementById('modal-dots');
@@ -1623,8 +1747,15 @@
                 closeModal();
             };
         }
+        function closeModal() {
+            // ── JSON-LD: remove product structured data on close ─────
+            const ld = document.getElementById('ld-product');
+            if (ld) ld.remove();
+            // ── end JSON-LD ──────────────────────────────────────────
 
-        function closeModal() { document.getElementById('product-modal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
+            document.getElementById('product-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
         function openSizingModal() { if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn(); document.getElementById('sizing-modal').classList.remove('hidden'); }
         function closeSizingModal() { document.getElementById('sizing-modal').classList.add('hidden'); }
 
@@ -1863,7 +1994,7 @@
                 const lineTotal = i.price * i.quantity;
                 grandTotal += lineTotal;
                 const variant = (i.player && i.player !== 'Standard') ? i.player + ' | ' : '';
-                const link = baseUrl + '?product=' + i.id;
+                const link = window.location.origin + '/share?product=' + i.id;
                 return '⚽ ' + i.name + '\n' +
                     variant + 'Size: ' + i.size + ' | Qty: ' + i.quantity + ' × ₹' + i.price + ' = *₹' + lineTotal + '*' + '\n' +
                     '🔗 ' + link;
@@ -1914,7 +2045,7 @@
         function shareProduct() {
             if (!currentModalProduct) return;
             if (typeof window.forceHideScrollBtn === 'function') window.forceHideScrollBtn();
-            const url = `${window.location.origin}${window.location.pathname}?product=${currentModalProduct.id}`;
+            const url = `${window.location.origin}/share?product=${currentModalProduct.id}`;
             const shareData = {
                 title: currentModalProduct.name, text: `Check out this product at OPEMA Clothing:
     ${currentModalProduct.name}`, url: url
@@ -1936,7 +2067,7 @@
 
         window.shareVia = function (platform) {
             if (!currentModalProduct) return;
-            const rawUrl = `${window.location.origin}${window.location.pathname}?product=${currentModalProduct.id}`;
+            const rawUrl = `${window.location.origin}/share?product=${currentModalProduct.id}`;
             const encodedUrl = encodeURIComponent(rawUrl);
             const text = encodeURIComponent(`Check out ${currentModalProduct.name} at OPEMA Clothing!`);
             const copyAndOpen = (appUrl, toastMsg) => {
