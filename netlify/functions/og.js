@@ -95,7 +95,8 @@ exports.handler = async (event) => {
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <meta name="twitter:image" content="${escapeHtml(image)}">
   <script type="application/ld+json">
-  ${JSON.stringify({
+  ${JSON.stringify([
+    {
       "@context": "https://schema.org",
       "@type": "Product",
       "name": p.name,
@@ -110,10 +111,41 @@ exports.handler = async (event) => {
         "url": productUrl,
         "priceCurrency": "INR",
         "price": p.price,
+        "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
         "availability": "https://schema.org/InStock",
-        "seller": { "@type": "Organization", "name": "OPEMA Clothing" }
+        "seller": { "@type": "Organization", "name": "OPEMA Clothing" },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "INR" },
+          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "IN" }
+        }
       }
-    }, null, 2)}
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": BASE_URL
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": p.category || "Jersey",
+          "item": `${BASE_URL}/#collection`
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": p.name,
+          "item": productUrl
+        }
+      ]
+    }
+  ], null, 2)}
   </script>
   <meta http-equiv="refresh" content="0;url=${BASE_URL}/?product=${productId}">
   <script>
