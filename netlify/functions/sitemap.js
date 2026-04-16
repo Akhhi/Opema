@@ -1,18 +1,29 @@
-const { initializeApp, cert, getApps } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
+const BASE_URL = "https://opema.netlify.app";
 
-const BASE_URL = "https://opema.netlify.app"; // replace with your real domain
-const APP_ID = "default-app-id"; // same appId from your index.html
+function extractValue(field) {
+    if (!field) return null;
+    if ('stringValue' in field) return field.stringValue;
+    if ('integerValue' in field) return Number(field.integerValue);
+    if ('doubleValue' in field) return field.doubleValue;
+    if ('booleanValue' in field) return field.booleanValue;
+    if ('arrayValue' in field) return (field.arrayValue.values || []).map(extractValue);
+    if ('mapValue' in field) {
+        const obj = {};
+        for (const key in field.mapValue.fields) {
+            obj[key] = extractValue(field.mapValue.fields[key]);
+        }
+        return obj;
+    }
+    return null;
+}
 
-function initFirebase() {
-    if (getApps().length > 0) return;
-    initializeApp({
-        credential: cert({
-            projectId: process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-        }),
-    });
+function parseFirestore(fields) {
+    if (!fields) return {};
+    const result = {};
+    for (const key in fields) {
+        result[key] = extractValue(fields[key]);
+    }
+    return result;
 }
 
 function escapeXml(str) {
@@ -26,28 +37,30 @@ function escapeXml(str) {
 
 exports.handler = async () => {
     try {
-        initFirebase();
-        const db = getFirestore();
-        const snap = await db
-            .collection("artifacts")
-            .doc(APP_ID)
-            .collection("public")
-            .doc("data")
-            .collection("products")
-            .get();
+        const firestoreUrl = "https://firestore.googleapis.com/v1/projects/opema-clothing/databases/(default)/documents/artifacts/default-app-id/public/data/products";
+        const response = await fetch(firestoreUrl);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch products: ${response.statusText}`);
+        }
 
+        const data = await response.json();
+        const documents = data.documents || [];
         const today = new Date().toISOString().split("T")[0];
 
-        const productUrls = snap.docs.map((doc) => {
-            const p = doc.data();
+        const productUrls = documents.map((doc) => {
+            const p = parseFirestore(doc.fields);
+            const docId = doc.name.split('/').pop();
             const image = p.images && p.images[0] ? p.images[0] : "";
-            const lastmod = p.updatedAt
-                ? new Date(p.updatedAt._seconds * 1000).toISOString().split("T")[0]
+            
+            // Use REST API's updateTime or fallback
+            const lastmod = doc.updateTime 
+                ? doc.updateTime.split("T")[0] 
                 : today;
 
             return `
   <url>
-    <loc>${BASE_URL}/share?product=${doc.id}</loc>
+    <loc>${BASE_URL}/share?product=${docId}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

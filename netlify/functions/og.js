@@ -1,24 +1,29 @@
-const { initializeApp, cert, getApps } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
-
 const BASE_URL = "https://opema.netlify.app";
-const APP_ID = "default-app-id";
 
-const BOT_AGENTS = [
-  "whatsapp", "facebookexternalhit", "twitterbot", "linkedinbot",
-  "slackbot", "telegrambot", "googlebot", "bingbot", "discordbot",
-  "applebot", "pinterest", "yandex"
-];
+function extractValue(field) {
+  if (!field) return null;
+  if ('stringValue' in field) return field.stringValue;
+  if ('integerValue' in field) return Number(field.integerValue);
+  if ('doubleValue' in field) return field.doubleValue;
+  if ('booleanValue' in field) return field.booleanValue;
+  if ('arrayValue' in field) return (field.arrayValue.values || []).map(extractValue);
+  if ('mapValue' in field) {
+    const obj = {};
+    for (const key in field.mapValue.fields) {
+      obj[key] = extractValue(field.mapValue.fields[key]);
+    }
+    return obj;
+  }
+  return null;
+}
 
-function initFirebase() {
-  if (getApps().length > 0) return;
-  initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    }),
-  });
+function parseFirestore(fields) {
+  if (!fields) return {};
+  const result = {};
+  for (const key in fields) {
+    result[key] = extractValue(fields[key]);
+  }
+  return result;
 }
 
 function escapeHtml(str) {
@@ -31,37 +36,29 @@ function escapeHtml(str) {
 
 exports.handler = async (event) => {
   const productId = event.queryStringParameters?.product;
-  const userAgent = (event.headers["user-agent"] || "").toLowerCase();
-  const isBot = BOT_AGENTS.some((b) => userAgent.includes(b));
 
   if (!productId) {
     return { statusCode: 302, headers: { Location: BASE_URL } };
   }
 
-  if (!isBot) {
-    return {
-      statusCode: 302,
-      headers: { Location: `${BASE_URL}/?product=${productId}` },
-    };
-  }
-
   try {
-    initFirebase();
-    const db = getFirestore();
-    const docSnap = await db
-      .collection("artifacts")
-      .doc(APP_ID)
-      .collection("public")
-      .doc("data")
-      .collection("products")
-      .doc(productId)
-      .get();
+    const firestoreUrl = `https://firestore.googleapis.com/v1/projects/opema-clothing/databases/(default)/documents/artifacts/default-app-id/public/data/products/${productId}`;
 
-    if (!docSnap.exists) {
+    // Instead of using firebase-admin which requires credentials, we use native fetch
+    // since this product database is public.
+    const response = await fetch(firestoreUrl);
+
+    if (!response.ok) {
       return { statusCode: 302, headers: { Location: BASE_URL } };
     }
 
-    const p = docSnap.data();
+    const docSnap = await response.json();
+
+    if (!docSnap || !docSnap.fields) {
+      return { statusCode: 302, headers: { Location: BASE_URL } };
+    }
+
+    const p = parseFirestore(docSnap.fields);
     const productUrl = `${BASE_URL}/share?product=${productId}`;
     const image = p.images && p.images[0]
       ? p.images[0].replace("/upload/", "/upload/f_auto,q_auto,w_1200,h_630,c_pad,b_white/")
@@ -69,9 +66,11 @@ exports.handler = async (event) => {
 
     const title = `${p.name} — OPEMA Clothing`;
     const description = p.description
-      ? `${p.description} · ₹${p.price} · Free shipping across India.`
+      ? `${p.description} · ₹${p.price} · Best Quality, Best Price`
       : `Shop ${p.name} at OPEMA Clothing. Elite gear at fan prices. ₹${p.price}.`;
 
+    // Removing user-agent sniffing ensures all preview bots function properly.
+    // The meta refresh and JS redirect handles human visitors.
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,22 +78,22 @@ exports.handler = async (event) => {
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}">
   <meta property="og:type" content="product">
-  <meta property="og:url" content="${productUrl}">
+  <meta property="og:url" content="${escapeHtml(productUrl)}">
   <meta property="og:site_name" content="OPEMA Clothing">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
-  <meta property="og:image" content="${image}">
+  <meta property="og:image" content="${escapeHtml(image)}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="${escapeHtml(p.name)}">
   <meta property="og:locale" content="en_IN">
-  <meta property="product:price:amount" content="${p.price}">
+  <meta property="product:price:amount" content="${escapeHtml(p.price)}">
   <meta property="product:price:currency" content="INR">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@opemaclothing">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
-  <meta name="twitter:image" content="${image}">
+  <meta name="twitter:image" content="${escapeHtml(image)}">
   <script type="application/ld+json">
   ${JSON.stringify({
       "@context": "https://schema.org",
@@ -117,7 +116,10 @@ exports.handler = async (event) => {
     }, null, 2)}
   </script>
   <meta http-equiv="refresh" content="0;url=${BASE_URL}/?product=${productId}">
-  <link rel="canonical" href="${productUrl}">
+  <script>
+    // Fallback JavaScript redirect for real users
+    window.location.replace("${BASE_URL}/?product=${productId}");
+  </script>
 </head>
 <body>
   <p>Redirecting to <a href="${BASE_URL}/?product=${productId}">${escapeHtml(p.name)}</a>...</p>
