@@ -61,7 +61,7 @@ exports.handler = async (event) => {
     const p = parseFirestore(docSnap.fields);
     const productUrl = `${BASE_URL}/share?product=${productId}`;
     const image = p.images && p.images[0]
-      ? p.images[0].replace("/upload/", "/upload/f_auto,q_auto,w_1200,h_630,c_pad,b_white/")
+      ? p.images[0].replace("/upload/", "/upload/f_auto,q_auto,w_1080,h_1350,c_pad,b_white/")
       : `${BASE_URL}/og-default.png`;
 
     const title = `${p.name} — OPEMA Clothing`;
@@ -83,8 +83,8 @@ exports.handler = async (event) => {
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:image" content="${escapeHtml(image)}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:width" content="1080">
+  <meta property="og:image:height" content="1350">
   <meta property="og:image:alt" content="${escapeHtml(p.name)}">
   <meta property="og:locale" content="en_IN">
   <meta property="product:price:amount" content="${escapeHtml(p.price)}">
