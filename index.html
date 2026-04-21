@@ -782,8 +782,7 @@
                     class="text-xl sm:text-3xl font-black uppercase leading-tight mb-1 dark:text-white lg:pr-20"></h2>
                 <div class="flex items-baseline gap-3 mb-5">
                     <span id="modal-price" class="text-xl sm:text-2xl font-black text-accent"></span>
-                    <span class="text-gray-400 line-through text-xs font-bold italic tracking-tighter">₹12000.00
-                        (Retail)</span>
+                    <span id="modal-retail-price" class="text-gray-400 line-through text-xs font-bold italic tracking-tighter"></span>
                 </div>
                 <div class="mb-5">
                     <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Description</h4>
@@ -1725,6 +1724,13 @@
             currentModalProduct = p; activeModalSlide = 0; selectedSize = ""; selectedPlayer = "";
             document.getElementById('modal-title').textContent = p.name;
             document.getElementById('modal-price').textContent = `${CURRENCY}${p.price}`;
+            const refSpan = document.getElementById('modal-retail-price');
+            if (p.retail_price && p.retail_price > 0) {
+                refSpan.textContent = `${CURRENCY}${p.retail_price.toLocaleString('en-IN')} (Retail)`;
+                refSpan.style.display = 'inline';
+            } else {
+                refSpan.style.display = 'none';
+            }
             document.getElementById('modal-description').textContent = p.description || "";
             document.getElementById('modal-tag').textContent = p.tag || "Available";
 
