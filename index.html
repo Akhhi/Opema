@@ -818,7 +818,7 @@
         class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/5 backdrop-blur-3xl transition-all duration-500">
         <div id="viewer-backdrop" class="absolute inset-0 cursor-zoom-out" onclick="closeFullImage()"></div>
         <button onclick="closeFullImage()"
-            class="absolute top-8 right-8 w-12 h-12 sm:w-14 sm:h-14 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl sm:text-2xl transition-all z-[210]">
+            class="absolute top-8 right-8 w-12 h-12 sm:w-14 sm:h-14 bg-white/10 hover:bg-white/20 text-white rounded-full hidden sm:flex items-center justify-center text-xl sm:text-2xl transition-all z-[210]">
             <i class="fas fa-times"></i>
         </button>
         <div id="zoom-nav-controls"
@@ -2380,9 +2380,10 @@
                     return;
                 }
                 if (!didSwipe && e.touches.length === 0 && e.changedTouches.length === 1) {
-                    const t = e.changedTouches[0], dx = t.clientX - swipeStartX, dt = Date.now() - swipeStartTime;
+                    const t = e.changedTouches[0], dx = t.clientX - swipeStartX, dy = t.clientY - swipeStartY, dt = Date.now() - swipeStartTime;
+                    if (scale <= 1 && dy > 60 && Math.abs(dy) > Math.abs(dx)) { window.closeFullImage(); return; }
                     if (scale <= 1 && (Math.abs(dx) / dt) > 0.3 && Math.abs(dx) > 50) { didSwipe = true; if (dx < 0) window.nextFullImage(); else window.prevFullImage(); return; }
-                    const now = Date.now(); if (now - lastTapTime < 300 && Math.abs(dx) < 20) { if (scale > 1) reset(true); else zoomTo(t.clientX - container().getBoundingClientRect().left, t.clientY - container().getBoundingClientRect().top, 2.5, true); lastTapTime = 0; return; }
+                    const now = Date.now(); if (now - lastTapTime < 300 && Math.abs(dx) < 20 && Math.abs(dy) < 20) { if (scale > 1) reset(true); else zoomTo(t.clientX - container().getBoundingClientRect().left, t.clientY - container().getBoundingClientRect().top, 2.5, true); lastTapTime = 0; return; }
                     lastTapTime = now;
                 }
             }
